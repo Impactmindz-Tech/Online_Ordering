@@ -3,6 +3,7 @@ import React from 'react'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+const AddProduct = React.lazy(() => import('./views/restaurant/products/Addproduct'))
 
 //restaurantt
 
@@ -10,7 +11,9 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 const Accordion = React.lazy(() => import('./views/restaurant/accordion/Accordion'))
 const Category = React.lazy(() => import('./views/restaurant/category/Category'))
 const Product = React.lazy(() => import('./views/restaurant/products/Product'))
-const Carousels = React.lazy(() => import('./views/restaurant/carousels/Carousels'))
+const Order = React.lazy(() => import('./views/restaurant/orders/Order'))
+
+
 const Collapses = React.lazy(() => import('./views/restaurant/collapses/Collapses'))
 const ListGroups = React.lazy(() => import('./views/restaurant/list-groups/ListGroups'))
 const Navs = React.lazy(() => import('./views/restaurant/navs/Navs'))
@@ -64,8 +67,10 @@ const routes = [
   { path: '/restaurant/accordion', name: 'Accordion', element: Accordion },
 
   { path: '/restaurant/category', name: 'Category', element: Category },
-  { path: '/restaurant/products', name: 'Product', element: Product },
-  { path: '/restaurant/carousels', name: 'Carousel', element: Carousels },
+  { path: '/restaurant/allproducts', name: 'Product', element: Product },
+  { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
+
+  { path: '/restaurant/orders', name: 'Orders', element: Order },
   { path: '/restaurant/collapses', name: 'Collapse', element: Collapses },
   { path: '/restaurant/list-groups', name: 'List Groups', element: ListGroups },
   { path: '/restaurant/navs', name: 'Navs', element: Navs },
