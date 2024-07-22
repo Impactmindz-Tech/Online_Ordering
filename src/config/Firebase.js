@@ -8,6 +8,7 @@ const firebaseConfig = {
   messagingSenderId: '708945464297',
   appId: '1:708945464297:web:013ad425143ac741d75978',
   measurementId: 'G-NG3PNKQLT5',
+  databaseURL:'https://onlineordering-3025e-default-rtdb.firebaseio.com/'
 }
 
 export const app = initializeApp(firebaseConfig)

@@ -9,7 +9,7 @@ import {
   setDoc,
   doc,
   getDoc,
-  getFirestore,
+  getFirestore,deleteDoc,updateDoc
 } from 'firebase/firestore'
 
 export const OnlineContext = createContext(null)
@@ -49,20 +49,35 @@ export const OnlineContextProvider = (props) => {
   const getAllcategory = async () => {
     const q = query(collection(db, 'Categories'), orderBy('Id', 'asc'))
 
-    const querySnapshot = await getDocs(q)
-    const categories = []
-    querySnapshot.forEach((doc) => {
-      categories.push(doc.data())
-    })
+    const querySnapshots = await getDocs(q);
+    const categories = querySnapshots.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    setcategory(categories)
+
+    setcategory(categories);
+    console.log(categories);
   }
 
+
+  const deletedoc = async(id)=>{
+    await deleteDoc(doc(db, "Categories", `${id}`));
+    console.log(id);
+
+  }
+
+  const updatedata = async(id,data)=>{
+
+    const docref = doc(db,"Categories",id);
+    await updateDoc(docref,{
+      Name:data
+    })
+  
+}
+
   useEffect(() => {
-    getAllcategory()
+    getAllcategory();
   }, [])
 
-  const contextValue = { Addcategory, getcategory, getAllcategory }
+  const contextValue = { Addcategory, getcategory, getAllcategory, deletedoc, updatedata}
 
   return <OnlineContext.Provider value={contextValue}>{props.children}</OnlineContext.Provider>
 }
