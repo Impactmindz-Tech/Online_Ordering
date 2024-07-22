@@ -143,7 +143,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Buttons groups',
+        name: 'Buttons groups', 
         to: '/buttons/button-groups',
       },
       {
