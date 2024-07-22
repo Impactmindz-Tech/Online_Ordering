@@ -4,22 +4,24 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
-// Base
-const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
-const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'))
-const Cards = React.lazy(() => import('./views/base/cards/Cards'))
-const Carousels = React.lazy(() => import('./views/base/carousels/Carousels'))
-const Collapses = React.lazy(() => import('./views/base/collapses/Collapses'))
-const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'))
-const Navs = React.lazy(() => import('./views/base/navs/Navs'))
-const Paginations = React.lazy(() => import('./views/base/paginations/Paginations'))
-const Placeholders = React.lazy(() => import('./views/base/placeholders/Placeholders'))
-const Popovers = React.lazy(() => import('./views/base/popovers/Popovers'))
-const Progress = React.lazy(() => import('./views/base/progress/Progress'))
-const Spinners = React.lazy(() => import('./views/base/spinners/Spinners'))
-const Tabs = React.lazy(() => import('./views/base/tabs/Tabs'))
-const Tables = React.lazy(() => import('./views/base/tables/Tables'))
-const Tooltips = React.lazy(() => import('./views/base/tooltips/Tooltips'))
+//restaurantt
+
+// restaurant
+const Accordion = React.lazy(() => import('./views/restaurant/accordion/Accordion'))
+const Category = React.lazy(() => import('./views/restaurant/category/Category'))
+const Product = React.lazy(() => import('./views/restaurant/products/Product'))
+const Carousels = React.lazy(() => import('./views/restaurant/carousels/Carousels'))
+const Collapses = React.lazy(() => import('./views/restaurant/collapses/Collapses'))
+const ListGroups = React.lazy(() => import('./views/restaurant/list-groups/ListGroups'))
+const Navs = React.lazy(() => import('./views/restaurant/navs/Navs'))
+const Paginations = React.lazy(() => import('./views/restaurant/paginations/Paginations'))
+const Placeholders = React.lazy(() => import('./views/restaurant/placeholders/Placeholders'))
+const Popovers = React.lazy(() => import('./views/restaurant/popovers/Popovers'))
+const Progress = React.lazy(() => import('./views/restaurant/progress/Progress'))
+const Spinners = React.lazy(() => import('./views/restaurant/spinners/Spinners'))
+const Tabs = React.lazy(() => import('./views/restaurant/tabs/Tabs'))
+const Tables = React.lazy(() => import('./views/restaurant/tables/Tables'))
+const Tooltips = React.lazy(() => import('./views/restaurant/tooltips/Tooltips'))
 
 // Buttons
 const Buttons = React.lazy(() => import('./views/buttons/buttons/Buttons'))
@@ -54,25 +56,27 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
-  { path: '/base', name: 'Base', element: Cards, exact: true },
-  { path: '/base/accordion', name: 'Accordion', element: Accordion },
-  { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
-  { path: '/base/cards', name: 'Cards', element: Cards },
-  { path: '/base/carousels', name: 'Carousel', element: Carousels },
-  { path: '/base/collapses', name: 'Collapse', element: Collapses },
-  { path: '/base/list-groups', name: 'List Groups', element: ListGroups },
-  { path: '/base/navs', name: 'Navs', element: Navs },
-  { path: '/base/paginations', name: 'Paginations', element: Paginations },
-  { path: '/base/placeholders', name: 'Placeholders', element: Placeholders },
-  { path: '/base/popovers', name: 'Popovers', element: Popovers },
-  { path: '/base/progress', name: 'Progress', element: Progress },
-  { path: '/base/spinners', name: 'Spinners', element: Spinners },
-  { path: '/base/tabs', name: 'Tabs', element: Tabs },
-  { path: '/base/tables', name: 'Tables', element: Tables },
-  { path: '/base/tooltips', name: 'Tooltips', element: Tooltips },
+
+  { path: '/restaurant/accordion', name: 'Accordion', element: Accordion },
+
+  { path: '/restaurant/category', name: 'Category', element: Category },
+  { path: '/restaurant/products', name: 'Product', element: Product },
+  { path: '/restaurant/carousels', name: 'Carousel', element: Carousels },
+  { path: '/restaurant/collapses', name: 'Collapse', element: Collapses },
+  { path: '/restaurant/list-groups', name: 'List Groups', element: ListGroups },
+  { path: '/restaurant/navs', name: 'Navs', element: Navs },
+  { path: '/restaurant/paginations', name: 'Paginations', element: Paginations },
+  { path: '/restaurant/placeholders', name: 'Placeholders', element: Placeholders },
+  { path: '/restaurant/popovers', name: 'Popovers', element: Popovers },
+  { path: '/restaurant/progress', name: 'Progress', element: Progress },
+  { path: '/restaurant/spinners', name: 'Spinners', element: Spinners },
+  { path: '/restaurant/tabs', name: 'Tabs', element: Tabs },
+  { path: '/restaurant/tables', name: 'Tables', element: Tables },
+  { path: '/restaurant/tooltips', name: 'Tooltips', element: Tooltips },
   { path: '/buttons', name: 'Buttons', element: Buttons, exact: true },
   { path: '/buttons/buttons', name: 'Buttons', element: Buttons },
   { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
