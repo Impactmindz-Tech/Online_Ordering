@@ -1,5 +1,7 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
+import CategoryIcon from '@mui/icons-material/Category';
+import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import {
   cilBell,
   cilCalculator,
@@ -31,12 +33,13 @@ const _nav = [
     component: CNavGroup,
     name: 'Restaurant',
     to: '/restaurant',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <LunchDiningIcon />,
     items: [
       {
         component: CNavItem,
-        name: 'Category',
+        name: ' Category',
         to: '/restaurant/category',
+        icon:<CategoryIcon/>
       },
       {
         component: CNavItem,

@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import './category.css'
-
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import {
   CForm,
@@ -109,8 +110,8 @@ export default function Category() {
                 <CTableDataCell>{item.Id}</CTableDataCell>
                 <CTableDataCell>{item.Name}</CTableDataCell>
                 <CTableDataCell>
-                  <CButton onClick={() => handleedit(item.id)}></CButton>
-                  <CButton onClick={() => handledelete(item.id)}>Delete</CButton>
+                  <CButton onClick={() => handleedit(item.id)}> <ModeEditIcon/> </CButton>
+                  <CButton onClick={() => handledelete(item.id)}><DeleteIcon style={{color:'#dd0000'}}/></CButton>
                 </CTableDataCell>
               </CTableRow>
             ))}
