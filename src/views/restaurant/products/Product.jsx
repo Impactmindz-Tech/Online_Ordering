@@ -1,9 +1,59 @@
-import React from 'react'
+import React from "react";
+import {
+  CForm,
+  CFormInput,
+  CButton,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CRow,
+  CCol,
+} from "@coreui/react";
+import { DocsExample } from "src/components";
 
-export default function Product() {
+const Product = () => {
   return (
-    <div>
-      <h1>All Products </h1>
-    </div>
-  )
-}
+    <>
+      <div className="category_list mt-lg-5">
+        <CTable>
+          <CTableHead>
+            <CTableRow>
+              <CTableHeaderCell scope="col">#</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Class</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            <CTableRow>
+              <CTableHeaderCell scope="row">1</CTableHeaderCell>
+              <CTableDataCell>Mark</CTableDataCell>
+              <CTableDataCell>Otto</CTableDataCell>
+              <CTableDataCell>@mdo</CTableDataCell>
+            </CTableRow>
+            <CTableRow>
+              <CTableHeaderCell scope="row">2</CTableHeaderCell>
+              <CTableDataCell>Jacob</CTableDataCell>
+              <CTableDataCell>Thornton</CTableDataCell>
+              <CTableDataCell>@fat</CTableDataCell>
+            </CTableRow>
+            <CTableRow>
+              <CTableHeaderCell scope="row">3</CTableHeaderCell>
+              <CTableDataCell colSpan={2}>Larry the Bird</CTableDataCell>
+              <CTableDataCell>@twitter</CTableDataCell>
+            </CTableRow>
+          </CTableBody>
+        </CTable>
+      </div>
+    </>
+  );
+};
+
+export default Product;

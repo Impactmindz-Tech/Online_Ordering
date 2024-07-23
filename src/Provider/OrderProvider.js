@@ -26,7 +26,7 @@ export const OnlineContextProvider = (props) => {
       const response = await fetch(file);
 
       const blob = await response.blob();
-      const imageRef = ref(storage, "categories/" + fileName);
+      const imageRef = ref(storage, "meals/" + fileName);
 
       await uploadBytes(imageRef, blob);
       console.log("File uploaded");
@@ -44,7 +44,7 @@ export const OnlineContextProvider = (props) => {
   //function to add Category
   const Addcategory = async (downloadUrl, category) => {
     // Reference to the 'OnlineOrder' collection
-    const onlineOrderRef = collection(db, "Categories");
+    const onlineOrderRef = collection(db, "Meals");
 
     // Query to get the document with the highest Id
     const q = query(onlineOrderRef, orderBy("Id", "desc"), limit(1));
@@ -73,7 +73,7 @@ export const OnlineContextProvider = (props) => {
   //function to get all category
 
   const getAllcategory = async () => {
-    const q = query(collection(db, "Categories"), orderBy("Id", "asc"));
+    const q = query(collection(db, "Meals"), orderBy("Id", "asc"));
 
     const querySnapshots = await getDocs(q);
     const categories = querySnapshots.docs.map((doc) => ({
@@ -86,7 +86,7 @@ export const OnlineContextProvider = (props) => {
   };
 
   const deletedoc = async (id) => {
-    await deleteDoc(doc(db, "Categories", `${id}`));
+    await deleteDoc(doc(db, "Meals", `${id}`));
     console.log(id);
     getAllcategory();
   };
@@ -110,7 +110,7 @@ export const OnlineContextProvider = (props) => {
       await saveBusinessDetail(formData, downloadUrl);
     } catch (error) {
       console.error("Error adding business: ", error);
-      ToastAndroid.show("Failed to add new business.", ToastAndroid.LONG);
+      
     }
   };
 

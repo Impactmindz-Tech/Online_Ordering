@@ -11,7 +11,9 @@ const AddProduct = React.lazy(() => import('./views/restaurant/products/Addprodu
 const Accordion = React.lazy(() => import('./views/restaurant/accordion/Accordion'))
 const Category = React.lazy(() => import('./views/restaurant/category/Category'))
 const Product = React.lazy(() => import('./views/restaurant/products/Product'))
+const Meal = React.lazy(() => import('./views/restaurant/meal/AddMeals'));
 const Order = React.lazy(() => import('./views/restaurant/orders/Order'))
+const Categories = React.lazy(() => import('./views/restaurant/meal/AddCategories'));
 
 
 const Collapses = React.lazy(() => import('./views/restaurant/collapses/Collapses'))
@@ -69,6 +71,8 @@ const routes = [
   { path: '/restaurant/category', name: 'Category', element: Category },
   { path: '/restaurant/allproducts', name: 'All Product', element: Product },
   { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
+  { path: '/restaurant/addmeals', name: 'Add Meals', element: Meal },
+  { path: '/restaurant/addcategories', name: 'Add Categories', element: Categories },
 
   { path: '/restaurant/orders', name: 'Orders', element: Order },
   { path: '/restaurant/collapses', name: 'Collapse', element: Collapses },

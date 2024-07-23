@@ -37,11 +37,28 @@ const _nav = [
     icon: <LunchDiningIcon style={{marginRight:'7px'}} />,
     items: [
       {
-        component: CNavItem,
-        name: ' Category',
-        to: '/restaurant/category',
-        icon:<CategoryIcon style={{marginRight:'7px'}}/>
+        component: CNavGroup,
+        name: 'Meals',
+        to: '/restaurant/meal',
+        icon:<CategoryIcon style={{marginRight:'7px'}}/>,
+        items:[
+          {
+            component: CNavItem,
+            name: 'Add Meals',
+            to: '/restaurant/addmeals',
+            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>
+          },
+          {
+            component: CNavItem,
+            name: 'Add Categories',
+            to: '/restaurant/addcategories',
+            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>,
+          }
+        ]
       },
+
+
+
       {
         component: CNavGroup,
         name: 'Product',
