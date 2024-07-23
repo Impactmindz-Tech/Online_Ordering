@@ -1,0 +1,21 @@
+.image_preview img{
+ 
+
+ text-align: center;
+ display: flex;
+ align-items: center;
+object-fit: cover;
+ justify-content: center;
+border-radius: 100%;   
+}
+.image_preview {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+
+ display: flex;
+ align-items: center;
+ line-height: 200px;
+ justify-content: center;
+border-radius: 100%;    background:rgb(184, 182, 182)
+}

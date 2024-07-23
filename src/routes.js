@@ -67,7 +67,7 @@ const routes = [
   { path: '/restaurant/accordion', name: 'Accordion', element: Accordion },
 
   { path: '/restaurant/category', name: 'Category', element: Category },
-  { path: '/restaurant/allproducts', name: 'Product', element: Product },
+  { path: '/restaurant/allproducts', name: 'All Product', element: Product },
   { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
 
   { path: '/restaurant/orders', name: 'Orders', element: Order },

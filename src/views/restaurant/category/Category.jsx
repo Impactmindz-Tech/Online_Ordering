@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
-import './category.css'
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import "./category.css";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import {
   CForm,
@@ -25,16 +25,26 @@ import {
 export default function Category() {
   const [visible, setVisible] = useState(false);
   const [category, setcategory] = useState("");
-  const[id,setid] = useState("");
+  const [file, setFile] = useState(null);
+  const [previousImage, setPreviousImage] = useState(""); // Add state for previous image URL
+  const [id, setid] = useState("");
   const [edit, setedit] = useState({
-    id: '',
-    category: ''
+    id: "",
+    category: "",
   });
 
-  const { Addcategory, getcategory, getAllcategory, deletedoc, updatedata } = useContext(OnlineContext);
+  const {
+    Addcategory,
+    getcategory,
+    getAllcategory,
+    deletedoc,
+    updatedata,
+    storecateImage,
+    updateImage,
+  } = useContext(OnlineContext);
 
   const handlesubmit = () => {
-    Addcategory(category);
+    storecateImage(file, category);
     getAllcategory();
   };
 
@@ -46,28 +56,34 @@ export default function Category() {
   const handlechange = (e) => {
     const { name, value } = e.target;
     setedit((prev) => {
-      return { ...prev,[name]: value };
+      return { ...prev, [name]: value };
     });
-    console.log(edit)
   };
 
   const handleupdate = () => {
-   console.log(id);
-    
     setVisible(false);
+    const { category } = edit;
+    updateImage(id, category, file);
     getAllcategory();
-    const{category} = edit;
-    console.log(category);
-    updatedata(id, category);
   };
 
   const handleedit = (id) => {
     setVisible(true);
     let findid = getcategory.find((item) => item.id === id);
-    setedit({category: findid.Name});
+    setedit({ category: findid.Name });
+    setPreviousImage(findid.ImageUrl); // Set previous image URL
     setid(id);
- 
   };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    const fileUrl = URL.createObjectURL(selectedFile);
+    setFile(fileUrl);
+  };
+
+  useEffect(() => {
+    getAllcategory();
+  }, []);
 
   return (
     <section>
@@ -81,7 +97,10 @@ export default function Category() {
           <CButton color="primary">Search</CButton>
         </div>
 
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 align-items-center">
+          <CCol xs>
+            <CFormInput type="file" id="formFile" onChange={handleFileChange} />
+          </CCol>
           <CCol xs>
             <CFormInput
               name="category"
@@ -100,18 +119,35 @@ export default function Category() {
           <CTableHead>
             <CTableRow>
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
-              <CTableHeaderCell scope="col">Category Name</CTableHeaderCell>
-              <CTableHeaderCell scope="col">Action</CTableHeaderCell>
+              <CTableHeaderCell scope="col" className="text-center">
+                Category Image
+              </CTableHeaderCell>
+              <CTableHeaderCell scope="col" className="text-center">
+                Category Name
+              </CTableHeaderCell>
+              <CTableHeaderCell scope="col" className="text-center">
+                Action
+              </CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
             {getcategory.map((item) => (
               <CTableRow key={item.id}>
                 <CTableDataCell>{item.Id}</CTableDataCell>
-                <CTableDataCell>{item.Name}</CTableDataCell>
-                <CTableDataCell>
-                  <CButton onClick={() => handleedit(item.id)}> <ModeEditIcon/> </CButton>
-                  <CButton onClick={() => handledelete(item.id)}><DeleteIcon style={{color:'#dd0000'}}/></CButton>
+                <CTableDataCell className="categoryImage text-center">
+                  <img src={item.ImageUrl} alt="" />
+                </CTableDataCell>
+                <CTableDataCell className="text-center">
+                  {item.Name}
+                </CTableDataCell>
+                <CTableDataCell className="text-center">
+                  <CButton onClick={() => handleedit(item.id)}>
+                    {" "}
+                    <ModeEditIcon />{" "}
+                  </CButton>
+                  <CButton onClick={() => handledelete(item.id)}>
+                    <DeleteIcon style={{ color: "#dd0000" }} />
+                  </CButton>
                 </CTableDataCell>
               </CTableRow>
             ))}
@@ -119,8 +155,9 @@ export default function Category() {
         </CTable>
 
         <div className="popup">
-          <CModal className="custom_modal"
-          alignment="center"
+          <CModal
+            className="custom_modal"
+            alignment="center"
             backdrop="static"
             visible={visible}
             onClose={() => setVisible(false)}
@@ -131,9 +168,31 @@ export default function Category() {
                 Edit Category
               </CModalTitle>
             </CModalHeader>
-            <CModalBody >
-              <div className="d-flex gap-2">
+            <CModalBody>
+              <div className=" gap-2">
                 <CCol xs>
+                  <label htmlFor="" className="mb-2">
+                    Image
+                  </label>
+                  <CFormInput
+                    type="file"
+                    id="formFile"
+                    onChange={handleFileChange}
+                  />
+                  {previousImage && (
+                    <img
+                      src={previousImage}
+                      alt="Previous"
+                      className="mt-2"
+                      style={{ width: "100px" }}
+                    />
+                  )}
+                </CCol>
+                <CCol xs className="mt-3">
+                  <label htmlFor="" className="mb-2">
+                    {" "}
+                    Category
+                  </label>
                   <CFormInput
                     name="category"
                     placeholder="Enter Category Name"
@@ -142,9 +201,15 @@ export default function Category() {
                     onChange={handlechange}
                   />
                 </CCol>
-                <CButton color="primary" onClick={handleupdate}>
-                  Update
-                </CButton>
+                <div className="text-center">
+                  <CButton
+                    color="primary"
+                    className="mt-3"
+                    onClick={handleupdate}
+                  >
+                    Update
+                  </CButton>
+                </div>
               </div>
             </CModalBody>
           </CModal>
