@@ -59,8 +59,13 @@ export default function Category() {
   } = useContext(OnlineContext);
 
   const handlesubmit = () => {
+    if(!file || !category){
+      console.log("please fill the meal name and select the image");
+    }
+  else{
     storecateImage(file, category);
     getAllcategory();
+  }
   };
 
   const handledelete = (id) => {
@@ -125,7 +130,7 @@ export default function Category() {
           <CCol xs>
             <CFormInput
               name="category"
-              placeholder="Enter Category Name"
+              placeholder="Enter Meal Name"
               aria-label="Category Name"
               onChange={(e) => setcategory(e.target.value)}
             />
@@ -156,7 +161,7 @@ export default function Category() {
               <CTableRow key={item.id}>
                 <CTableDataCell>{item.Id}</CTableDataCell>
                 <CTableDataCell className="categoryImage text-center">
-                  <img src={item.ImageUrl} alt="category image" />
+                  <img src={item.ImageUrl} alt="meal image" />
                 </CTableDataCell>
                 <CTableDataCell className="text-center">
                   {item.Name}
@@ -185,7 +190,7 @@ export default function Category() {
           >
             <CModalHeader>
               <CModalTitle id="StaticBackdropExampleLabel">
-                Edit Category
+                Edit Meal
               </CModalTitle>
             </CModalHeader>
             <CModalBody>
@@ -211,11 +216,11 @@ export default function Category() {
                 <CCol xs className="mt-3">
                   <label htmlFor="" className="mb-2">
                     {" "}
-                    Category
+                    Meal
                   </label>
                   <CFormInput
                     name="category"
-                    placeholder="Enter Category Name"
+                    placeholder="Enter Meal Name"
                     aria-label="Category Name"
                     value={edit.category}
                     onChange={handlechange}

@@ -63,7 +63,7 @@ export const OnlineContextProvider = (props) => {
     // Update the document with new data
     await setDoc(newDocRef, {
       Name: category,
-      Id: currentId + 1,
+
       ImageUrl: downloadUrl,
     });
 
@@ -122,6 +122,7 @@ export const OnlineContextProvider = (props) => {
       ImageUrl: downloadUrl,
       DietaryInfo: formData?.dietaryInfo,
       Description: formData?.description,
+      Price:formData?.price
     });
   };
 
