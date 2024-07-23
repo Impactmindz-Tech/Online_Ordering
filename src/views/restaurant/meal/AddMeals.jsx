@@ -59,13 +59,12 @@ export default function Category() {
   } = useContext(OnlineContext);
 
   const handlesubmit = () => {
-    if(!file || !category){
+    if (!file || !category) {
       console.log("please fill the meal name and select the image");
+    } else {
+      storecateImage(file, category);
+      getAllcategory();
     }
-  else{
-    storecateImage(file, category);
-    getAllcategory();
-  }
   };
 
   const handledelete = (id) => {
