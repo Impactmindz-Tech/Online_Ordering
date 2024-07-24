@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "./Product.css";
 import {
@@ -12,8 +12,10 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getcategory, storeImage } = useContext(OnlineContext);
+  const { getmeal, saveproduct,getcategory,allcategories } = useContext(OnlineContext);
   const [file, setFile] = useState(null);
+  const [mealid, setMealid] = useState();
+
 
   const [formData, setFormData] = useState({
     dishName: "",
@@ -22,13 +24,12 @@ export default function Addproduct() {
     isAvailable: "",
     dietaryInfo: "",
     description: "",
+    meal: ""
   });
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-
     const fileUrl = URL.createObjectURL(selectedFile);
-
     setFile(fileUrl);
   };
 
@@ -38,11 +39,19 @@ export default function Addproduct() {
       ...prevState,
       [name]: value,
     }));
+
+    if (name === "meal") {
+      setMealid(value);
+      getcategory(value);
+    }
   };
 
   const handleSubmit = async () => {
-    storeImage(file, formData);
+     saveproduct(file, formData);
+    console.log(mealid);
   };
+
+
 
   return (
     <>
@@ -91,25 +100,48 @@ export default function Addproduct() {
             </CCol>
           </CRow>
           <CRow className="mt-3">
-            <CCol xs>
-              <label className="mb-2" htmlFor="category">
-                Choose Category
-              </label>
-              <CFormSelect
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-              >
-                <option value="">Choose one Category</option>
-                {getcategory.map((item) => {
-                  return (
-                    <option key={item.id} value={item.Name}>
-                      {item.Name}
-                    </option>
-                  );
-                })}
-              </CFormSelect>
-            </CCol>
+            <div className="col-lg-6">
+              <div className="row">
+                <div className="col-lg-6">
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="meal">
+                      Choose Meal
+                    </label>
+                    <CFormSelect
+                      name="meal"
+                      value={formData.meal}
+                      onChange={handleChange}
+                    >
+                      <option value="">Choose Meal</option>
+                      {getmeal.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.Name}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </CCol>
+                </div>
+                <div className="col-lg-6">
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="category">
+                      Choose Category
+                    </label>
+                    <CFormSelect
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                    >
+                      <option value="">Choose Category</option>
+                      {allcategories.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.Name}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </CCol>
+                </div>
+              </div>
+            </div>
             <CCol xs>
               <label className="mb-2" htmlFor="isAvailable">
                 Is Available

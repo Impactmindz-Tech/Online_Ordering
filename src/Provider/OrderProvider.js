@@ -13,11 +13,13 @@ import {
   getFirestore,
   deleteDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
-  const [getcategory, setcategory] = useState([]);
+  const [getmeal, setmeal] = useState([]);
+  const[allcategories,setcategories] = useState([]);
   const db = getFirestore(app);
 
   const storecateImage = async (file, category) => {
@@ -73,7 +75,7 @@ export const OnlineContextProvider = (props) => {
   //function to get all category
 
   const getAllcategory = async () => {
-    const q = query(collection(db, "Meals"), orderBy("Id", "asc"));
+    const q = query(collection(db, "Meals"));
 
     const querySnapshots = await getDocs(q);
     const categories = querySnapshots.docs.map((doc) => ({
@@ -81,8 +83,8 @@ export const OnlineContextProvider = (props) => {
       ...doc.data(),
     }));
 
-    setcategory(categories);
-    console.log(categories);
+    setmeal(categories);
+    console.log(categories,'categories');
   };
 
   const deletedoc = async (id) => {
@@ -93,7 +95,7 @@ export const OnlineContextProvider = (props) => {
 
   // store image into firestore
 
-  const storeImage = async (file, formData) => {
+  const saveproduct = async (file, formData) => {
     try {
       const fileName = Date.now().toString() + ".jpg";
       const response = await fetch(file);
@@ -107,18 +109,31 @@ export const OnlineContextProvider = (props) => {
       const downloadUrl = await getDownloadURL(imageRef);
       console.log(downloadUrl);
 
-      await saveBusinessDetail(formData, downloadUrl);
+      await saveproductDetail(formData, downloadUrl);
     } catch (error) {
       console.error("Error adding business: ", error);
       
     }
   };
 
-  const saveBusinessDetail = async (formData, downloadUrl) => {
-    await setDoc(doc(db, "Products", Date.now().toString()), {
+  const saveproductDetail = async (formData, downloadUrl) => {
+    const mealid = formData?.meal;
+    const cateid = formData?.category;
+    const q = query(collection(db, `Meals/${mealid}/Categories`),where('id', '==',cateid));
+
+    const querySnapshots = await getDocs(q);
+    const categories = querySnapshots.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+  console.log(categories);
+
+  
+    await setDoc(doc(db, `Meal/${mealid}/Categories/${cateid}/Products`, Date.now().toString()), {
       Name: formData?.dishName,
       Category: formData?.category,
-      is_available: formData?.isAvailable,
+      isAvailable: formData?.isAvailable,
       ImageUrl: downloadUrl,
       DietaryInfo: formData?.dietaryInfo,
       Description: formData?.description,
@@ -156,19 +171,75 @@ export const OnlineContextProvider = (props) => {
     getAllcategory();
   };
 
+
+
+  //store all the categories
+  const savecategories = async(file,formData) =>{
+    try {
+      const fileName = Date.now().toString() + ".jpg";
+      const response = await fetch(file);
+      console.log(formData, "data");
+      const blob = await response.blob();
+      const imageRef = ref(storage, "categories/" + fileName);
+
+      await uploadBytes(imageRef, blob);
+
+
+      const downloadUrl = await getDownloadURL(imageRef);
+      console.log(downloadUrl);
+
+      await savedetails(formData, downloadUrl);
+    } catch (error) {
+      console.error("Error adding business: ", error);
+      
+    }
+  }
+
+  const savedetails = async(formData,downloadUrl,)=>{
+    const id = formData?.meal;
+    await setDoc(doc(db, `Meals/${id}/Categories`, Date.now().toString()), {
+      Name: formData?.categoryname,
+      
+      Thumbnail: downloadUrl,
+     
+    });
+  }
+
+
+
+  //get the category corresponding the meal
+  const getcategory = async(mealid)=>{
+    const q = query(collection(db, `Meals/${mealid}/Categories`));
+
+    const querySnapshots = await getDocs(q);
+    const categories = querySnapshots.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setcategories(categories);
+   
+    console.log(categories,'mealcategories');
+
+  };
+
   useEffect(() => {
     getAllcategory();
+    getcategory();
   }, []);
 
   const contextValue = {
     Addcategory,
-    getcategory,
+    getmeal,
     getAllcategory,
     deletedoc,
     updatedata,
-    storeImage,
+    saveproduct,
     storecateImage,
     updateImage,
+    savecategories,
+    getcategory,
+    allcategories
+    
   };
 
   return (

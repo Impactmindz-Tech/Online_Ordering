@@ -50,7 +50,7 @@ export default function Category() {
 
   const {
     Addcategory,
-    getcategory,
+    getmeal,
     getAllcategory,
     deletedoc,
     updatedata,
@@ -156,7 +156,7 @@ export default function Category() {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {getcategory.map((item) => (
+            {getmeal.map((item) => (
               <CTableRow key={item.id}>
                 <CTableDataCell>{item.Id}</CTableDataCell>
                 <CTableDataCell className="categoryImage text-center">
