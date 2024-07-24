@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { app, storage } from "../config/Firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
 import {
   getDocs,
   collection,
@@ -14,13 +15,17 @@ import {
   deleteDoc,
   updateDoc,
   where,
+  onSnapshot,
 } from "firebase/firestore";
-
+const db = getFirestore(app);
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
   const [getmeal, setmeal] = useState([]);
-  const[allcategories,setcategories] = useState([]);
-  const db = getFirestore(app);
+  const [allcategorie, setcategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const[foodprod,setfoodProducts] = useState([]);
+
+  const [cat, setCat] = useState([]);
 
   const storecateImage = async (file, category) => {
     try {
@@ -37,6 +42,7 @@ export const OnlineContextProvider = (props) => {
       console.log(downloadUrl);
 
       await Addcategory(downloadUrl, category);
+      getAllcategory();
     } catch (error) {
       console.error("Error adding business: ", error);
       ToastAndroid.show("Failed to add new business.", ToastAndroid.LONG);
@@ -84,7 +90,7 @@ export const OnlineContextProvider = (props) => {
     }));
 
     setmeal(categories);
-    console.log(categories,'categories');
+   
   };
 
   const deletedoc = async (id) => {
@@ -112,33 +118,30 @@ export const OnlineContextProvider = (props) => {
       await saveproductDetail(formData, downloadUrl);
     } catch (error) {
       console.error("Error adding business: ", error);
-      
     }
   };
 
   const saveproductDetail = async (formData, downloadUrl) => {
     const mealid = formData?.meal;
-    const cateid = formData?.category;
-    const q = query(collection(db, `Meals/${mealid}/Categories`),where('id', '==',cateid));
+    const cateid = formData?.categoryId;
+    console.log(formData?.category, "category");
 
-    const querySnapshots = await getDocs(q);
-    const categories = querySnapshots.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-  console.log(categories);
-
-  
-    await setDoc(doc(db, `Meal/${mealid}/Categories/${cateid}/Products`, Date.now().toString()), {
-      Name: formData?.dishName,
-      Category: formData?.category,
-      isAvailable: formData?.isAvailable,
-      ImageUrl: downloadUrl,
-      DietaryInfo: formData?.dietaryInfo,
-      Description: formData?.description,
-      Price:formData?.price
-    });
+    await setDoc(
+      doc(
+        db,
+        `Meals/${mealid}/Categories/${cateid}/Products`,
+        Date.now().toString()
+      ),
+      {
+        Name: formData?.dishName,
+        Category: formData?.category,
+        isAvailable: formData?.isAvailable,
+        ImageUrl: downloadUrl,
+        DietaryInfo: formData?.dietaryInfo,
+        Description: formData?.description,
+        Price: formData?.price,
+      }
+    );
   };
 
   const updateImage = async (id, data, file) => {
@@ -171,10 +174,8 @@ export const OnlineContextProvider = (props) => {
     getAllcategory();
   };
 
-
-
   //store all the categories
-  const savecategories = async(file,formData) =>{
+  const savecategories = async (file, formData) => {
     try {
       const fileName = Date.now().toString() + ".jpg";
       const response = await fetch(file);
@@ -184,31 +185,26 @@ export const OnlineContextProvider = (props) => {
 
       await uploadBytes(imageRef, blob);
 
-
       const downloadUrl = await getDownloadURL(imageRef);
       console.log(downloadUrl);
 
       await savedetails(formData, downloadUrl);
     } catch (error) {
       console.error("Error adding business: ", error);
-      
     }
-  }
+  };
 
-  const savedetails = async(formData,downloadUrl,)=>{
+  const savedetails = async (formData, downloadUrl) => {
     const id = formData?.meal;
     await setDoc(doc(db, `Meals/${id}/Categories`, Date.now().toString()), {
       Name: formData?.categoryname,
-      
+
       Thumbnail: downloadUrl,
-     
     });
-  }
-
-
+  };
 
   //get the category corresponding the meal
-  const getcategory = async(mealid)=>{
+  const getcategory = async (mealid) => {
     const q = query(collection(db, `Meals/${mealid}/Categories`));
 
     const querySnapshots = await getDocs(q);
@@ -217,14 +213,88 @@ export const OnlineContextProvider = (props) => {
       ...doc.data(),
     }));
     setcategories(categories);
-   
-    console.log(categories,'mealcategories');
 
+    console.log(categories, "mealcategories");
   };
 
+  // const getall category
+  const getAllSubcategories = async () => {
+    try {
+      let allSubcategories = [];
+
+      // Get all documents in the 'Meals' collection
+      const mealsCollection = collection(db, "Meals");
+      const mealsSnapshot = await getDocs(mealsCollection);
+
+      // Iterate over each document in the 'Meals' collection
+      for (const mealDoc of mealsSnapshot.docs) {
+        const categoriesCollection = collection(
+          db,
+          `Meals/${mealDoc.id}/Categories`
+        );
+        const categoriesSnapshot = await getDocs(categoriesCollection);
+
+        // Collect all categories
+        categoriesSnapshot.forEach((doc) => {
+          allSubcategories.push({ mealId: mealDoc.id, ...doc.data() });
+        });
+      }
+      console.log(allSubcategories);
+      // Update state with all subcategories
+      setSubcategories(allSubcategories);
+    } catch (error) {
+      setError(error.message);
+      console.error("Error getting subcategories: ", error);
+    }
+  };
+
+
+
+//getall products
+const getAllproducts = async () => {
+  try {
+    let allSubcategories = [];
+    let allProducts = [];
+
+    // Get all documents in the 'Meals' collection
+    const mealsCollection = collection(db, "Meals");
+    const mealsSnapshot = await getDocs(mealsCollection);
+
+    // Iterate over each document in the 'Meals' collection
+    for (const mealDoc of mealsSnapshot.docs) {
+      const categoriesCollection = collection(db, `Meals/${mealDoc.id}/Categories`);
+      const categoriesSnapshot = await getDocs(categoriesCollection);
+
+      // Collect all categories and their products
+      for (const categoryDoc of categoriesSnapshot.docs) {
+        const categoryData = { mealId: mealDoc.id, categoryId: categoryDoc.id, ...categoryDoc.data() };
+        allSubcategories.push(categoryData);
+
+        const productsCollection = collection(db, `Meals/${mealDoc.id}/Categories/${categoryDoc.id}/Products`);
+        const productsSnapshot = await getDocs(productsCollection);
+
+        productsSnapshot.forEach((productDoc) => {
+          allProducts.push({ mealId: mealDoc.id, categoryId: categoryDoc.id, productId: productDoc.id, ...productDoc.data() });
+        });
+      }
+    }
+
+
+    setfoodProducts(allProducts);
+  } catch (error) {
+    setError(error.message);
+    console.error("Error getting products: ", error);
+  }
+};
+
+
+
+
+
   useEffect(() => {
-    getAllcategory();
+    getAllSubcategories();
     getcategory();
+    getAllproducts();
   }, []);
 
   const contextValue = {
@@ -238,7 +308,10 @@ export const OnlineContextProvider = (props) => {
     updateImage,
     savecategories,
     getcategory,
-    allcategories
+    allcategorie,
+    subcategories,
+    getAllSubcategories,
+    foodprod
     
   };
 

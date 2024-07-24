@@ -12,15 +12,16 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, saveproduct,getcategory,allcategories } = useContext(OnlineContext);
+  const { getmeal, foodprod,saveproduct, getcategory, allcategorie ,getAllcategory} = useContext(OnlineContext);
   const [file, setFile] = useState(null);
   const [mealid, setMealid] = useState();
-
+  const [cateid, setCateid] = useState('');
 
   const [formData, setFormData] = useState({
     dishName: "",
     price: "",
     category: "",
+    categoryId: "",
     isAvailable: "",
     dietaryInfo: "",
     description: "",
@@ -46,15 +47,33 @@ export default function Addproduct() {
     }
   };
 
-  const handleSubmit = async () => {
-     saveproduct(file, formData);
-    console.log(mealid);
+  const handleCategoryChange = (e) => {
+    const { value, selectedIndex } = e.target;
+    const selectedCategoryId = e.target.options[selectedIndex].getAttribute('data-id');
+
+    setFormData((prevState) => ({
+      ...prevState,
+      category: value,
+      categoryId: selectedCategoryId,
+    }));
+    setCateid(selectedCategoryId);
   };
 
-
+  const handleSubmit = async () => {
+    // Save product details with both category name and ID
+    await saveproduct(file, formData);
+  
+  };
+  useEffect(()=>{
+    getAllcategory();
+    getcategory();
+  },[])
 
   return (
     <>
+    {foodprod.map((item)=>{
+      console.log(item.Name);
+    })}
       <div className="row justify-content-center">
         <div className="col-lg-2">
           <div className="image_preview">
@@ -113,11 +132,15 @@ export default function Addproduct() {
                       onChange={handleChange}
                     >
                       <option value="">Choose Meal</option>
-                      {getmeal.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.Name}
-                        </option>
-                      ))}
+                      {getmeal.map((item) => 
+                    
+                        (
+                          <option key={item.id} value={item.id}>
+                            {item.Name}
+                          </option>
+                        )
+                       
+                      )}
                     </CFormSelect>
                   </CCol>
                 </div>
@@ -129,14 +152,18 @@ export default function Addproduct() {
                     <CFormSelect
                       name="category"
                       value={formData.category}
-                      onChange={handleChange}
+                      onChange={handleCategoryChange}
                     >
                       <option value="">Choose Category</option>
-                      {allcategories.map((item) => (
-                        <option key={item.id} value={item.id}>
+                      {allcategorie.map((item) =>
+                       (
+                          <option key={item.id} value={item.Name} data-id={item.id}>
                           {item.Name}
                         </option>
-                      ))}
+                        )
+                      
+                        
+                      )}
                     </CFormSelect>
                   </CCol>
                 </div>

@@ -9,8 +9,8 @@ object-fit: cover;
 border-radius: 100%;   
 }
 .image_preview {
-    height: 200px;
-    width: 200px;
+    height: 147px;
+    width: 147px;
     overflow: hidden;
 
  display: flex;

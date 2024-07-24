@@ -38,19 +38,19 @@ const _nav = [
     items: [
       {
         component: CNavGroup,
-        name: 'Meals',
+        name: 'Categories',
         to: '/restaurant/meal',
         icon:<CategoryIcon style={{marginRight:'7px'}}/>,
         items:[
           {
             component: CNavItem,
-            name: 'Add Meals',
+            name: 'Categories',
             to: '/restaurant/addmeals',
             icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>
           },
           {
             component: CNavItem,
-            name: 'Add Categories',
+            name: 'Add Subcategories',
             to: '/restaurant/addcategories',
             icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>,
           }

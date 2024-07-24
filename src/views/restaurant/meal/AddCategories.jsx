@@ -1,6 +1,7 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "../products/Product.css";
+import './category.css'
 import {
   CForm,
   CFormInput,
@@ -22,7 +23,7 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, storeImage,savecategories } = useContext(OnlineContext);
+  const { getmeal,  getAllcategory,storeImage,savecategories,subcategories ,getAllSubcategories} = useContext(OnlineContext);
   const [file, setFile] = useState(null);
   const [category, setcategory] = useState("");
 
@@ -51,9 +52,12 @@ export default function Addproduct() {
 
   const handleSubmit = async () => {
     savecategories(file, formData);
+    getAllSubcategories();
     console.log(file,formData);
   };
-
+useEffect(()=>{
+  getAllcategory();
+},[])
   return (
     <>
       <div className="row ">
@@ -71,7 +75,7 @@ export default function Addproduct() {
           <div className="row">
             <div className="col-lg-6">
             <label className="mb-2" htmlFor="mealName">
-              Select The Meal
+              Select The Category
               </label>
             <div>
     <CFormSelect
@@ -79,7 +83,7 @@ export default function Addproduct() {
                 value={formData.meal}
                 onChange={handleChange}
               >
-                <option value="">Choose Meal</option>
+                <option value="">Choose Category</option>
                 {getmeal.map((item) => {
                   return (
                     <option key={item.id} value={item.id}>
@@ -93,10 +97,10 @@ export default function Addproduct() {
             <div className="col-lg-6">
             <CCol xs>
               <label className="mb-2" htmlFor="dishName">
-                Category Name
+                SubcategoryName
               </label>
               <CFormInput
-                placeholder="Category Name"
+                placeholder="subCategory Name"
                 name="categoryname"
                 value={formData.categoryname}
                 onChange={handleChange}
@@ -106,38 +110,34 @@ export default function Addproduct() {
           </div>
           <div className="text-center">
           <CButton className="w-50 mt-4" color="primary" onClick={handleSubmit}>
-            Add Product
+            Add Category
           </CButton>
         </div>
         </div>
         <div className="col-lg-8">
+          <h3 className="text-center mt-3 mb-3">All Categories</h3>
           <CTable>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Class</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
+              
+                <CTableHeaderCell scope="col">Thumbnails</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Category</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              <CTableRow>
-                <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                <CTableDataCell>Mark</CTableDataCell>
-                <CTableDataCell>Otto</CTableDataCell>
-                <CTableDataCell>@mdo</CTableDataCell>
-              </CTableRow>
-              <CTableRow>
-                <CTableHeaderCell scope="row">2</CTableHeaderCell>
-                <CTableDataCell>Jacob</CTableDataCell>
-                <CTableDataCell>Thornton</CTableDataCell>
-                <CTableDataCell>@fat</CTableDataCell>
-              </CTableRow>
-              <CTableRow>
-                <CTableHeaderCell scope="row">3</CTableHeaderCell>
-                <CTableDataCell colSpan={2}>Larry the Bird</CTableDataCell>
-                <CTableDataCell>@twitter</CTableDataCell>
-              </CTableRow>
+              {subcategories.map((item)=>{
+               return(
+
+                 <CTableRow key = {item.id}>
+                   
+                   <CTableDataCell className="categoryImage"><img  src={item.Thumbnail} alt="thumbnail" /></CTableDataCell>
+                   <CTableDataCell>{item.Name}</CTableDataCell>
+                   <CTableDataCell>@mdo</CTableDataCell>
+                 </CTableRow>
+          
+               )
+              })}
             </CTableBody>
           </CTable>
         </div>

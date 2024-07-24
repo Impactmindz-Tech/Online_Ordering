@@ -63,8 +63,9 @@ export default function Category() {
       console.log("please fill the meal name and select the image");
     } else {
       storecateImage(file, category);
-      getAllcategory();
+
     }
+    getAllcategory();
   };
 
   const handledelete = (id) => {
@@ -129,13 +130,13 @@ export default function Category() {
           <CCol xs>
             <CFormInput
               name="category"
-              placeholder="Enter Meal Name"
+              placeholder="Enter Category Name"
               aria-label="Category Name"
               onChange={(e) => setcategory(e.target.value)}
             />
           </CCol>
           <CButton color="primary" onClick={handlesubmit}>
-            Add Meal
+            Add category
           </CButton>
         </div>
       </CForm>
@@ -215,7 +216,7 @@ export default function Category() {
                 <CCol xs className="mt-3">
                   <label htmlFor="" className="mb-2">
                     {" "}
-                    Meal
+                    Category
                   </label>
                   <CFormInput
                     name="category"
