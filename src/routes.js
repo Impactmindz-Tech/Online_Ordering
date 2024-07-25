@@ -8,7 +8,7 @@ const AddProduct = React.lazy(() => import('./views/restaurant/products/Addprodu
 //restaurantt
 
 // restaurant
-const Accordion = React.lazy(() => import('./views/restaurant/accordion/Accordion'))
+
 const Category = React.lazy(() => import('./views/restaurant/category/Category'))
 const Product = React.lazy(() => import('./views/restaurant/products/Product'))
 const Meal = React.lazy(() => import('./views/restaurant/meal/AddMeals'));
