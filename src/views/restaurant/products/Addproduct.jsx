@@ -25,7 +25,9 @@ export default function Addproduct() {
     isAvailable: "",
     dietaryInfo: "",
     description: "",
-    meal: ""
+    meal: "",
+    mealName: "" 
+
   });
 
   const handleFileChange = (e) => {
@@ -36,21 +38,35 @@ export default function Addproduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-
-    if (name === "meal") {
-      setMealid(value);
-      getcategory(value);
-    }
+    setFormData((prevState) => {
+      if (name === "meal") {
+        // Find the selected meal name
+        setMealid(value);
+        getcategory(value);
+        const selectedMeal = getmeal.find((item) => item.id === value);
+        return {
+          ...prevState,
+          [name]: value,
+          mealName: selectedMeal ? selectedMeal.Name : "", // Update mealName
+          category: "", // Reset category when meal changes
+          categoryId: "" // Reset categoryId when meal changes
+        };
+      } else {
+        return {
+          ...prevState,
+          [name]: value,
+        };
+      }
+    });
   };
+
+
+   
 
   const handleCategoryChange = (e) => {
     const { value, selectedIndex } = e.target;
     const selectedCategoryId = e.target.options[selectedIndex].getAttribute('data-id');
-
+  
     setFormData((prevState) => ({
       ...prevState,
       category: value,
@@ -71,9 +87,7 @@ export default function Addproduct() {
 
   return (
     <>
-    {foodprod.map((item)=>{
-      console.log(item.Name);
-    })}
+  
       <div className="row justify-content-center">
         <div className="col-lg-2">
           <div className="image_preview">
@@ -135,7 +149,7 @@ export default function Addproduct() {
                       {getmeal.map((item) => 
                     
                         (
-                          <option key={item.id} value={item.id}>
+                          <option key={item.id} value={item.id} >
                             {item.Name}
                           </option>
                         )

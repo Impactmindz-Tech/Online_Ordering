@@ -94,7 +94,7 @@ export default function Category() {
 
   const handleedit = (id) => {
     setVisible(true);
-    let findid = getcategory.find((item) => item.id === id);
+    let findid = getmeal.find((item) => item.id === id);
     setedit({ category: findid.Name });
     setPreviousImage(findid.ImageUrl); // Set previous image URL
     setid(id);

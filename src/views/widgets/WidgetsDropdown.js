@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef,useContext } from 'react'
 import PropTypes from 'prop-types'
-
+import { OnlineContext } from '../../Provider/OrderProvider'
 import {
   CRow,
   CCol,
@@ -16,6 +16,10 @@ import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 
 const WidgetsDropdown = (props) => {
+  const{getmeal,getAllcategory,getAllproducts,foodprod } = useContext(OnlineContext);
+  const totalmeal = getmeal.length;
+  const  totalpro = foodprod.length;
+  console.log(totalmeal);
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
 
@@ -35,6 +39,8 @@ const WidgetsDropdown = (props) => {
         })
       }
     })
+    getAllcategory();
+    getAllproducts();
   }, [widgetChartRef1, widgetChartRef2])
 
   return (
@@ -44,24 +50,19 @@ const WidgetsDropdown = (props) => {
           color="primary"
           value={
             <>
-              26K{' '}
+              {totalmeal}
               <span className="fs-6 fw-normal">
-                (-12.4% <CIcon icon={cilArrowBottom} />)
+              
               </span>
             </>
           }
-          title="Orders"
+          title="Category"
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
-                <CIcon icon={cilOptions} />
+           
               </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
+             
             </CDropdown>
           }
           chart={
@@ -134,10 +135,8 @@ const WidgetsDropdown = (props) => {
           color="info"
           value={
             <>
-              $6.200{' '}
-              <span className="fs-6 fw-normal">
-                (40.9% <CIcon icon={cilArrowTop} />)
-              </span>
+             {totalpro }
+            
             </>
           }
           title="Products"
