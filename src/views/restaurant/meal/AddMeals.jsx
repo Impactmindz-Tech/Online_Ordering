@@ -50,11 +50,11 @@ export default function Category() {
   });
 
   const {
-    Addcategory,
+  
     getmeal,
     getAllcategory,
     deletedoc,
-    updatedata,
+
     storecateImage,
     updateImage,
   } = useContext(OnlineContext);

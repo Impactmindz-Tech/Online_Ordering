@@ -27,10 +27,10 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, updatesubcateImage, getAllSubcategories, getAllcategory, storeImage, savecategories, deletesubdoc, subcategories} = useContext(OnlineContext);
-  const [file, setFile] = useState(null);
+  const { getmeal, updatesubcatdata,getAllSubcategories, getAllcategory, savecategories, deletesubdoc, subcategories} = useContext(OnlineContext);
+
   const [visible, setVisible] = useState(false);
-  const [previousImage, setPreviousImage] = useState(""); // Add state for previous image URL
+ 
   const [id, setid] = useState("");
   const [edit, setedit] = useState({
     id: "",
@@ -49,11 +49,6 @@ export default function Addproduct() {
     meal: "",
   });
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    const fileUrl = URL.createObjectURL(selectedFile);
-    setFile(fileUrl);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,28 +63,24 @@ export default function Addproduct() {
   };
 
   const handleSubmit = async () => {
-    await savecategories(file, formData);
+    await savecategories( formData);
     await getAllSubcategories();
   };
 
   const handleupdate = async () => {
     setVisible(false);
 
-    if (file) {
-      await updatesubcateImage(id, edit, file);
-    } else {
-      await updatesubcateImage(id, edit, previousImage); // Use previous image if no new file is selected
-    }
+  
+      await updatesubcatdata(id, edit);
+ 
     await getAllSubcategories();
   };
 
   const handledelete = async (id) => {
 
-    let findid = subcategories.find((item) => item.id === id);
-  console.log(findid);
-   let imagepath = findid.Thumbnail;
+   
 
-   deletesubdoc(id,imagepath);
+   deletesubdoc(id);
 
  
     await getAllSubcategories();
@@ -105,7 +96,7 @@ export default function Addproduct() {
       meals: findid.Category
     });
 
-    setPreviousImage(findid.Thumbnail); // Set previous image URL
+ // Set previous image URL
     setid(id);
   };
 
