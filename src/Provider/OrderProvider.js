@@ -49,32 +49,33 @@ export const OnlineContextProvider = (props) => {
       if (!querySnapshot.empty) {
         // Category already exists
         console.log('A category with this name already exists');
-    
         return;
       }
   
-      // Proceed with image upload if category does not exist
-      const fileName = Date.now().toString() + ".jpg";
-      const response = await fetch(file);
-      const blob = await response.blob();
-      const imageRef = ref(storage, "meals/" + fileName);
-      
-      await uploadBytes(imageRef, blob);
-      console.log("File uploaded");
+      let downloadUrl = null;
   
-      const downloadUrl = await getDownloadURL(imageRef);
-      console.log(downloadUrl);
+      // Proceed with image upload if file is provided
+      if (file) {
+        const fileName = Date.now().toString() + ".jpg";
+        const response = await fetch(file);
+        const blob = await response.blob();
+        const imageRef = ref(storage, "meals/" + fileName);
+        
+        await uploadBytes(imageRef, blob);
+        console.log("File uploaded");
+  
+        downloadUrl = await getDownloadURL(imageRef);
+        console.log(downloadUrl);
+      }
   
       await Addcategory(downloadUrl, category);
       getAllcategory();
     } catch (error) {
       console.error("Error adding category: ", error);
-    
     }
   };
   
-
-  //save the Meal details
+  // Save the Meal details
   const Addcategory = async (downloadUrl, category) => {
     // Reference to the 'Meals' collection
     const onlineOrderRef = collection(db, "Meals");
@@ -94,11 +95,16 @@ export const OnlineContextProvider = (props) => {
     const newDocRef = doc(onlineOrderRef);
   
     // Update the document with new data
-    await setDoc(newDocRef, {
+    const newCategoryData = {
       Name: category,
-      ImageUrl: downloadUrl,
       Id: currentId + 1  // Increment the highest Id
-    });
+    };
+  
+    if (downloadUrl) {
+      newCategoryData.ImageUrl = downloadUrl;
+    }
+  
+    await setDoc(newDocRef, newCategoryData);
   
     console.log("Category added successfully");
   };
