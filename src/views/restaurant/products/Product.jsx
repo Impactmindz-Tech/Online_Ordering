@@ -35,9 +35,9 @@ const Product = () => {
 
   const [formData, setFormData] = useState({
     dishName: "",
-    price: "",
+    
     category: "",
-    categoryId: "",
+    
     isAvailable: "",
     dietaryInfo: "",
     description: "",
@@ -58,23 +58,10 @@ const Product = () => {
       [name]: value,
     }));
 
-    if (name === "meal") {
-      setMealid(value);
-      getcategory(value);
-    }
+   
   };
 
-  const handleCategoryChange = (e) => {
-    const { value, selectedIndex } = e.target;
-    const selectedCategoryId = e.target.options[selectedIndex].getAttribute('data-id');
 
-    setFormData((prevState) => ({
-      ...prevState,
-      category: value,
-      categoryId: selectedCategoryId,
-    }));
-    setCateid(selectedCategoryId);
-  };
 
   const handleSubmit = async () => {
     // Save product details with both category name and ID
@@ -93,37 +80,46 @@ const Product = () => {
     // find the corresponding image path
    let imagepath = findid.ImageUrl;
 
-   deletesubdoc(id,imagepath);
+
 
     await deleteProduct(productId,imagepath);
     await refreshProducts(); // Re-fetch the updated product list after deleting
   };
+
+  const handleEdit = (product) => {
+    // Set the form data and image for the current product
+    setFormData({
+      dishName: product.Name,
+    
+      category: product.Category,
+    
+      isAvailable: product.isAvailable,
+      dietaryInfo: product.DietaryInfo,
+      description: product.Description,
+      meal: product.mealId,
+
+    });
+    console.log(formData,'formdata');
+
+    setFile(product.ImageUrl); // Set the current image
+
+    setVisible(true); // Open the modal
+
+    setproductId(product.id);
+  };
+
+  const filterecate = allcategorie.filter((item)=>{
+    return item.Category===formData.meal;
+  });
+
+  
 
   useEffect(() => {
     getAllcategory();
     getAllproducts();
   }, []);
 
-  const handleEdit = (product) => {
-    // Set the form data and image for the current product
-    setFormData({
-      dishName: product.Name,
-      price: product.Price,
-      category: product.Category,
-      categoryId: product.categoryId,
-      isAvailable: product.isAvailable,
-      dietaryInfo: product.DietaryInfo,
-      description: product.Description,
-      meal: product.mealId,
-    });
 
-    setFile(product.ImageUrl); // Set the current image
-    setCurrentProduct(product);
-    setVisible(true); // Open the modal
-    setumealId(product.mealId);
-    setcateId(product.categoryId);
-    setproductId(product.id);
-  };
 
   return (
     <>
@@ -148,7 +144,7 @@ const Product = () => {
                   <img src={item.ImageUrl} alt="productImage" />
                 </CTableDataCell>
                 <CTableDataCell>{item.Name}</CTableDataCell>
-                <CTableDataCell>{item.Category}</CTableDataCell>
+                <CTableDataCell>{item.category}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
              
@@ -225,7 +221,7 @@ const Product = () => {
                           >
                             <option value="">Choose Meal</option>
                             {getmeal.map((item) => (
-                              <option key={item.id} value={item.id}>
+                              <option key={item.id} value={item.Name}>
                                 {item.Name}
                               </option>
                             ))}
@@ -240,11 +236,11 @@ const Product = () => {
                           <CFormSelect
                             name="category"
                             value={formData.category}
-                            onChange={handleCategoryChange}
+                            onChange={handleChange}
                           >
                             <option value="">Choose Category</option>
-                            {allcategorie.map((item) => (
-                              <option key={item.id} value={item.Name} data-id={item.id}>
+                            {filterecate.map((item) => (
+                              <option key={item.id} value={item.Name} >
                                 {item.Name}
                               </option>
                             ))}

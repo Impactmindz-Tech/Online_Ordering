@@ -12,7 +12,7 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, foodprod,saveproduct, getcategory, allcategorie ,getAllcategory} = useContext(OnlineContext);
+  const { getmeal,saveproduct, getcategory, allcategorie ,getAllcategory} = useContext(OnlineContext);
   const [file, setFile] = useState(null);
 
 
@@ -48,12 +48,10 @@ const filterecate = allcategorie.filter((item)=>{
   return item.Category===formData.meal;
 });
 
-console.log(filterecate,'filrea')
-  
 
   const handleSubmit = async () => {
  
-    // await saveproduct(file, formData);
+    await saveproduct(file, formData);
     console.log(formData);
   
   };

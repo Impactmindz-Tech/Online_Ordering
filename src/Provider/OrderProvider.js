@@ -186,29 +186,35 @@ const deletedoc = async (id, imagePath) => {
 const saveproduct = async (file, formData) => {
   try {
     const productName = formData?.dishName;
+    const productMeal = formData?.meal;
+    const productCategory = formData?.category;
     
-    // Check if the product already exists
+    // Check if the product already exists with the same name, meal, and category
     const productsRef = collection(db, 'Products');
-    const q = query(productsRef, where('Name', '==', productName));
+    const q = query(productsRef, where('Name', '==', productName), where('category', '==', productCategory), where('meal', '==', productMeal));
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
-      // Product already exists
-      console.log('A product with this name already exists');
+      // Product already exists with the same name, category, and meal
+      console.log('A product with this name, category, and meal already exists');
       return;
     }
 
-    // If the product does not exist, proceed with uploading the image
-    const fileName = Date.now().toString() + ".jpg";
-    const response = await fetch(file);
-    const blob = await response.blob();
-    const imageRef = ref(storage, "Products/" + fileName);
-    
-    await uploadBytes(imageRef, blob);
-    console.log("File uploaded");
+    let downloadUrl = null;
 
-    const downloadUrl = await getDownloadURL(imageRef);
-    console.log(downloadUrl);
+    // If a file is provided, proceed with uploading the image
+    if (file) {
+      const fileName = Date.now().toString() + ".jpg";
+      const response = await fetch(file);
+      const blob = await response.blob();
+      const imageRef = ref(storage, "Products/" + fileName);
+      
+      await uploadBytes(imageRef, blob);
+      console.log("File uploaded");
+
+      downloadUrl = await getDownloadURL(imageRef);
+      console.log(downloadUrl);
+    }
 
     // Save product details
     await saveproductDetail(formData, downloadUrl);
@@ -218,17 +224,18 @@ const saveproduct = async (file, formData) => {
 };
 
 const saveproductDetail = async (formData, downloadUrl) => {
+  console.log(formData,'ckjsdh');
   await setDoc(
     doc(db, 'Products', Date.now().toString()),
     {
       Name: formData?.dishName,
-      Category: formData?.mealName,
+      category: formData?.category,
+      meal: formData?.meal,
       isAvailable: formData?.isAvailable,
-      ImageUrl: downloadUrl,
+      ImageUrl: downloadUrl,  // This can be null if no image is uploaded
       DietaryInfo: formData?.dietaryInfo,
       Description: formData?.description,
-      
-      Subcategory: formData?.category
+    // Assuming Subcategory is part of formData
     }
   );
 };
@@ -267,7 +274,7 @@ const updateProductsDetails = async(formData,downloadUrl,uproductId)=>{
   try {
     const productRef = doc(db, `Products/${uproductId}`);
     await updateDoc(productRef, {
-      Category:formData?.category,
+      category:formData?.category,
       Description:formData?.description,
       DietaryInfo:formData.dietaryInfo,
     
@@ -287,9 +294,10 @@ const updateProductsDetails = async(formData,downloadUrl,uproductId)=>{
 
 
 const deleteProduct = async(id,imagePath)=>{
+
   try {
     // Delete the document from Firestore
-    await deleteDoc(doc(db, "Product", `${id}`));
+    await deleteDoc(doc(db, "Products", `${id}`));
     console.log(`Document with id ${id} deleted`);
 
     // Reference to the image file in Firebase Storage
@@ -303,7 +311,7 @@ const deleteProduct = async(id,imagePath)=>{
     // Call the function to refresh the categories
     getAllcategory();
   } catch (error) {
-    console.error("Error deleting document or image file:", error);
+    // console.error("Error deleting document or image file:", error);
   }
 }
 
