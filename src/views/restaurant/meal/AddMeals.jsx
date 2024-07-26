@@ -22,6 +22,7 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
+import { connectStorageEmulator } from "firebase/storage";
 Modal.setAppElement("#root");
 export default function Category() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -69,7 +70,12 @@ export default function Category() {
   };
 
   const handledelete = (id) => {
-    deletedoc(id);
+    let findid = getmeal.find((item) => item.id === id);
+     // find the corresponding image path
+    let imagepath = findid.ImageUrl;
+
+  deletedoc(id,imagepath)
+ 
     getAllcategory();
   };
 
@@ -113,45 +119,50 @@ export default function Category() {
 
   return (
     <section>
-      <CForm className="d-flex justify-content-between">
-        <div className="d-flex">
-          <CFormInput
-            type="search"
-            className="me-2 w-100"
-            placeholder="Search"
-          />
-          <CButton color="primary">Search</CButton>
-        </div>
+       <div className="row justify-content-center ">
+        <div className="col-lg-8">
 
-        <div className="d-flex gap-2 align-items-center">
-          <CCol xs>
+          <div className="row ">
+            <div className="col-lg-4">
+            <CCol xs>
             <CFormInput type="file" id="formFile" onChange={handleFileChange} />
           </CCol>
-          <CCol xs>
+            </div>
+            <div className="col-lg-4">
+            <CCol xs>
             <CFormInput
               name="category"
-              placeholder="Enter Category Name"
-              aria-label="Category Name"
+              placeholder="Enter Meal Name"
+              aria-label="Meal Name"
               onChange={(e) => setcategory(e.target.value)}
             />
           </CCol>
-          <CButton color="primary" onClick={handlesubmit}>
-            Add category
+            </div>
+            <div className="col-lg-4">
+            <CButton className="w-100" color="primary" onClick={handlesubmit}>
+            Add Meal
           </CButton>
+            </div>
+          </div>
         </div>
-      </CForm>
-      <div className="category_list mt-lg-5">
+
+
+
+
+       </div>
+   <div className="row justify-content-center">
+   <div className="category_list mt-lg-5 col-lg-8">
         <CTable>
           <CTableHead>
             <CTableRow>
-              <CTableHeaderCell scope="col">#</CTableHeaderCell>
-              <CTableHeaderCell scope="col" className="text-center">
+          
+              <CTableHeaderCell scope="col" className="ps-4">
                 Image
               </CTableHeaderCell>
               <CTableHeaderCell scope="col" className="text-center">
                 Name
               </CTableHeaderCell>
-              <CTableHeaderCell scope="col" className="text-center">
+              <CTableHeaderCell scope="col" className="text-end pe-5">
                 Action
               </CTableHeaderCell>
             </CTableRow>
@@ -159,14 +170,14 @@ export default function Category() {
           <CTableBody>
             {getmeal.map((item) => (
               <CTableRow key={item.id}>
-                <CTableDataCell>{item.Id}</CTableDataCell>
-                <CTableDataCell className="categoryImage text-center">
+
+                <CTableDataCell className="categoryImage ps-4 ">
                   <img src={item.ImageUrl} alt="meal image" />
                 </CTableDataCell>
                 <CTableDataCell className="text-center">
                   {item.Name}
                 </CTableDataCell>
-                <CTableDataCell className="text-center">
+                <CTableDataCell className="text-end pe-4">
                   <CButton onClick={() => handleedit(item.id)}>
                     <ModeEditIcon />
                   </CButton>
@@ -240,6 +251,7 @@ export default function Category() {
           </CModal>
         </div>
       </div>
+   </div>
     </section>
   );
 }

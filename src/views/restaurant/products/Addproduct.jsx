@@ -14,19 +14,18 @@ import camera from "../../../assets/images/camera.png";
 export default function Addproduct() {
   const { getmeal, foodprod,saveproduct, getcategory, allcategorie ,getAllcategory} = useContext(OnlineContext);
   const [file, setFile] = useState(null);
-  const [mealid, setMealid] = useState();
-  const [cateid, setCateid] = useState('');
+
 
   const [formData, setFormData] = useState({
     dishName: "",
-    price: "",
+    
     category: "",
-    categoryId: "",
+
     isAvailable: "",
     dietaryInfo: "",
     description: "",
     meal: "",
-    mealName: "" 
+
 
   });
 
@@ -38,52 +37,34 @@ export default function Addproduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => {
-      if (name === "meal") {
-        // Find the selected meal name
-        setMealid(value);
-        getcategory(value);
-        const selectedMeal = getmeal.find((item) => item.id === value);
-        return {
-          ...prevState,
-          [name]: value,
-          mealName: selectedMeal ? selectedMeal.Name : "", // Update mealName
-          category: "", // Reset category when meal changes
-          categoryId: "" // Reset categoryId when meal changes
-        };
-      } else {
-        return {
-          ...prevState,
-          [name]: value,
-        };
-      }
-    });
+    setFormData((prev)=>{
+      return{...prev,[name]:value}
+    })
   };
 
 
    
+const filterecate = allcategorie.filter((item)=>{
+  return item.Category===formData.meal;
+});
 
-  const handleCategoryChange = (e) => {
-    const { value, selectedIndex } = e.target;
-    const selectedCategoryId = e.target.options[selectedIndex].getAttribute('data-id');
+console.log(filterecate,'filrea')
   
-    setFormData((prevState) => ({
-      ...prevState,
-      category: value,
-      categoryId: selectedCategoryId,
-    }));
-    setCateid(selectedCategoryId);
-  };
 
   const handleSubmit = async () => {
-    // Save product details with both category name and ID
-    await saveproduct(file, formData);
+ 
+    // await saveproduct(file, formData);
+    console.log(formData);
   
   };
+
+
+
   useEffect(()=>{
     getAllcategory();
     getcategory();
   },[])
+
 
   return (
     <>
@@ -100,14 +81,14 @@ export default function Addproduct() {
         </div>
       </div>
       <div className="row justify-content-center mt-5">
-        <div className="col-lg-5">
+        <div className="col-lg-3">
           <div className="mb-3">
-            <CFormInput type="file" id="formFile" onChange={handleFileChange} />
+            <CFormInput  type="file" id="formFile" onChange={handleFileChange} />
           </div>
         </div>
       </div>
       <div className="row justify-content-center">
-        <div className="col-lg-10">
+        <div className="col-lg-7">
           <CRow>
             <CCol xs>
               <label className="mb-2" htmlFor="dishName">
@@ -121,22 +102,6 @@ export default function Addproduct() {
               />
             </CCol>
             <CCol xs>
-              <label className="mb-2" htmlFor="price">
-                Price
-              </label>
-              <CFormInput
-                placeholder="Price"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-              />
-            </CCol>
-          </CRow>
-          <CRow className="mt-3">
-            <div className="col-lg-6">
-              <div className="row">
-                <div className="col-lg-6">
-                  <CCol xs>
                     <label className="mb-2" htmlFor="meal">
                       Choose Meal
                     </label>
@@ -149,7 +114,7 @@ export default function Addproduct() {
                       {getmeal.map((item) => 
                     
                         (
-                          <option key={item.id} value={item.id} >
+                          <option key={item.id} value={item.Name} >
                             {item.Name}
                           </option>
                         )
@@ -157,8 +122,12 @@ export default function Addproduct() {
                       )}
                     </CFormSelect>
                   </CCol>
-                </div>
-                <div className="col-lg-6">
+          </CRow>
+          <CRow className="mt-3">
+            <div className="col-lg-6">
+              <div className="row">
+           
+                <div className="">
                   <CCol xs>
                     <label className="mb-2" htmlFor="category">
                       Choose Category
@@ -166,12 +135,12 @@ export default function Addproduct() {
                     <CFormSelect
                       name="category"
                       value={formData.category}
-                      onChange={handleCategoryChange}
+                      onChange={handleChange}
                     >
                       <option value="">Choose Category</option>
-                      {allcategorie.map((item) =>
+                      {filterecate.map((item) =>
                        (
-                          <option key={item.id} value={item.Name} data-id={item.id}>
+                          <option key={item.id} value={item.Name} >
                           {item.Name}
                         </option>
                         )
@@ -225,7 +194,7 @@ export default function Addproduct() {
           </CRow>
         </div>
         <div className="text-center">
-          <CButton className="w-50 mt-4" color="primary" onClick={handleSubmit}>
+          <CButton className="ps-4 pe-4 mt-4" color="primary" onClick={handleSubmit}>
             Add Product
           </CButton>
         </div>

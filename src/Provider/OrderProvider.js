@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { app, storage } from "../config/Firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes ,deleteObject} from "firebase/storage";
 
 import {
   getDocs,
@@ -15,7 +15,7 @@ import {
   deleteDoc,
   updateDoc,
   where,
-  onSnapshot,
+  onSnapshot,startAfter
 } from "firebase/firestore";
 import { Category } from "@mui/icons-material";
 const db = getFirestore(app);
@@ -26,7 +26,7 @@ export const OnlineContextProvider = (props) => {
   const [subcategories, setSubcategories] = useState([]);
   const[foodprod,setfoodProducts] = useState([]);
 
-
+  const [lastDoc, setLastDoc] = useState(null);
   const [cat, setCat] = useState([]);
   const[totalCategory,setlengthCate] = useState([]);
 
@@ -102,7 +102,7 @@ export const OnlineContextProvider = (props) => {
  //function to get all category
 
   const getAllcategory = async () => {
-    const q = query(collection(db, "Meals"));
+    const q = query(collection(db, "Meals"),orderBy("Id"));
 
     const querySnapshots = await getDocs(q);
   
@@ -118,23 +118,69 @@ export const OnlineContextProvider = (props) => {
 
 
 //delete main category
-  const deletedoc = async (id) => {
+const deletedoc = async (id, imagePath) => {
+  try {
+    // Delete the document from Firestore
     await deleteDoc(doc(db, "Meals", `${id}`));
-    console.log(id);
-    getAllcategory();
-  };
+    console.log(`Document with id ${id} deleted`);
 
+    // Reference to the image file in Firebase Storage
+    const imageRef = ref(storage, imagePath);
+    console.log(imageRef);
+
+    // Delete the image file from Firebase Storage
+    await deleteObject(imageRef);
+    console.log(`Image file at ${imagePath} deleted`);
+
+    // Call the function to refresh the categories
+    getAllcategory();
+  } catch (error) {
+    console.error("Error deleting document or image file:", error);
+  }
+};
   // delete subcategories
-  const deletesubdoc = async (id) => {
-    await deleteDoc(doc(db, "Subcategory", `${id}`));
-    console.log(id);
+  const deletesubdoc = async (id,imagePath) => {
+    try {
+      // Delete the document from Firestore
+      await deleteDoc(doc(db, "Category", `${id}`));
+      console.log(`Document with id ${id} deleted`);
+  
+      // Reference to the image file in Firebase Storage
+      const imageRef = ref(storage, imagePath);
+      console.log(imageRef);
+  
+      // Delete the image file from Firebase Storage
+      await deleteObject(imageRef);
+      console.log(`Image file at ${imagePath} deleted`);
+  
+      // Call the function to refresh the categories
+      getAllcategory();
+    } catch (error) {
+      console.error("Error deleting document or image file:", error);
+    }
    
   };
 
 //delete products
-  const deleteProduct = async(id)=>{
-    await deleteDoc(doc(db, "Products", `${id}`));
-    console.log(id);
+  const deleteProduct = async(id,imagePath)=>{
+    try {
+      // Delete the document from Firestore
+      await deleteDoc(doc(db, "Product", `${id}`));
+      console.log(`Document with id ${id} deleted`);
+  
+      // Reference to the image file in Firebase Storage
+      const imageRef = ref(storage, imagePath);
+      console.log(imageRef);
+  
+      // Delete the image file from Firebase Storage
+      await deleteObject(imageRef);
+      console.log(`Image file at ${imagePath} deleted`);
+  
+      // Call the function to refresh the categories
+      getAllcategory();
+    } catch (error) {
+      console.error("Error deleting document or image file:", error);
+    }
   }
 
   // store image into firestore
@@ -285,7 +331,7 @@ const updateImage = async (id, data, file) => {
         const fileName = Date.now().toString() + ".jpg";
         const response = await fetch(file);
         const blob = await response.blob();
-        const imageRef = ref(storage, "subcategories/" + fileName);
+        const imageRef = ref(storage, "categories/" + fileName);
         await uploadBytes(imageRef, blob);
         downloadUrl = await getDownloadURL(imageRef);
       }
@@ -298,7 +344,7 @@ const updateImage = async (id, data, file) => {
   };
 
   const updatesubcatdata = async (id, data, downloadUrl) => {
-    const docref = doc(db, "Subcategory", id);
+    const docref = doc(db, "Category", id);
     await updateDoc(docref, {
       Name: data.category,
       Category:data.meals,
@@ -346,20 +392,21 @@ const updateImage = async (id, data, file) => {
   const savecategories = async (file, formData) => {
     try {
       const name = formData?.categoryname;
+      const category = formData?.meal; // Assuming 'meal' is the category
       const fileName = Date.now().toString() + ".jpg";
       
-      // Check if the name already exists
-      const subcategoryRef = collection(db, 'Subcategory');
-      const q = query(subcategoryRef, where('Name', '==', name));
+      // Check if the name already exists within the same category
+      const subcategoryRef = collection(db, 'Category');
+      const q = query(subcategoryRef, where('Name', '==', name), where('Category', '==', category));
       const querySnapshot = await getDocs(q);
       
       if (!querySnapshot.empty) {
-        // Name already exists, so do not proceed with upload and saving
-        console.log('An entry with this Name already exists');
+        // Name already exists within the same category, so do not proceed with upload and saving
+        console.log('An entry with this Name already exists in the same Category');
         return;
       }
       
-      // Name does not exist, proceed with upload
+      // Name does not exist within the same category, proceed with upload
       const response = await fetch(file);
       const blob = await response.blob();
       const imageRef = ref(storage, "categories/" + fileName);
@@ -376,27 +423,27 @@ const updateImage = async (id, data, file) => {
   };
   
   const savedetails = async (formData, downloadUrl) => {
-    const id = formData?.meal;
+    const category = formData?.meal; // Assuming 'meal' is the category
     const name = formData?.categoryname;
     
     // Reference to the collection
-    const subcategoryRef = collection(db, 'Subcategory');
+    const subcategoryRef = collection(db, 'Category');
     
-    // Query to check if the name already exists
-    const q = query(subcategoryRef, where('Name', '==', name));
+    // Query to check if the name already exists within the same category
+    const q = query(subcategoryRef, where('Name', '==', name), where('Category', '==', category));
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
-      // Name already exists
-      console.log('An entry with this Name already exists.');
+      // Name already exists within the same category
+      console.log('An entry with this Name already exists in the same Category.');
       // Handle the situation accordingly, e.g., show a notification to the user
       return;
     }
     
-    // If name doesn't exist, proceed to save the new entry
-    await setDoc(doc(db, 'Subcategory', Date.now().toString()), {
+    // If name doesn't exist within the same category, proceed to save the new entry
+    await setDoc(doc(db, 'Category', Date.now().toString()), {
       Name: name,
-      Category: id,
+      Category: category,
       Thumbnail: downloadUrl,
     });
   };
@@ -418,7 +465,7 @@ const updateImage = async (id, data, file) => {
 
   //get the category corresponding the meal
   const getcategory = async (mealid) => {
-    const q = query(collection(db, `Meals/${mealid}/Categories`));
+    const q = query(collection(db, 'Category'));
 
     const querySnapshots = await getDocs(q);
     const categories = querySnapshots.docs.map((doc) => ({
@@ -463,7 +510,7 @@ const updateImage = async (id, data, file) => {
 
 
   const getAllSubcategories = async () => {
-    const q = query(collection(db, "Subcategory"));
+    const q = query(collection(db, "Category"));
 
     const querySnapshots = await getDocs(q);
     const lensubcategories = querySnapshots.size;
@@ -476,6 +523,16 @@ const updateImage = async (id, data, file) => {
     setSubcategories(subcategories);
    
   };
+
+
+
+  //pagination
+
+
+
+
+
+
 
 
 

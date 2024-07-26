@@ -20,12 +20,14 @@ import {
   CModalBody,
   CRow,
   CCol,
-  CFormSelect
+  CFormSelect,
+  CPagination,
+  CPaginationItem
 } from "@coreui/react";
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, updatesubcateImage, getAllSubcategories, getAllcategory, storeImage, savecategories, subcategories, deletesubdoc } = useContext(OnlineContext);
+  const { getmeal, updatesubcateImage, getAllSubcategories, getAllcategory, storeImage, savecategories, deletesubdoc, subcategories} = useContext(OnlineContext);
   const [file, setFile] = useState(null);
   const [visible, setVisible] = useState(false);
   const [previousImage, setPreviousImage] = useState(""); // Add state for previous image URL
@@ -35,6 +37,12 @@ export default function Addproduct() {
     category: "",
     meals: ""
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(subcategories.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = subcategories.slice(indexOfFirstItem, indexOfLastItem);
 
   const [formData, setFormData] = useState({
     categoryname: "",
@@ -76,7 +84,14 @@ export default function Addproduct() {
   };
 
   const handledelete = async (id) => {
-    await deletesubdoc(id);
+
+    let findid = subcategories.find((item) => item.id === id);
+  console.log(findid);
+   let imagepath = findid.Thumbnail;
+
+   deletesubdoc(id,imagepath);
+
+ 
     await getAllSubcategories();
   };
 
@@ -94,6 +109,14 @@ export default function Addproduct() {
     setid(id);
   };
 
+  // Pagination
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) {
+      return;
+    }
+    setCurrentPage(pageNumber);
+  };
+
   useEffect(() => {
     getAllcategory();
     getAllSubcategories();
@@ -101,22 +124,10 @@ export default function Addproduct() {
 
   return (
     <>
-      <div className="row">
-        <div className="col-lg-4">
-          <div className="image_preview me-auto ms-auto">
-            {file ? (
-              <img src={file} alt="Image Preview" />
-            ) : (
-              <img src={camera} alt="Image Preview" className="" />
-            )}
-          </div>
-          <div className="mb-3 mt-5">
-            <CFormInput type="file" id="formFile" onChange={handleFileChange} />
-          </div>
-          <div className="row">
-            <div className="col-lg-6">
+      <div className="row justify-content-center align-items-end">
+      <div className="col-lg-3">
               <label className="mb-2" htmlFor="mealName">
-                Select The Category
+                Select The Meal
               </label>
               <div>
                 <CFormSelect
@@ -124,7 +135,7 @@ export default function Addproduct() {
                   value={formData.meal}
                   onChange={handleChange}
                 >
-                  <option value="">Choose Category</option>
+                  <option value="">Choose Meal</option>
                   {getmeal.map((item) => {
                     return (
                       <option key={item.id} value={item.Name}>
@@ -135,43 +146,55 @@ export default function Addproduct() {
                 </CFormSelect>
               </div>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-3">
               <CCol xs>
                 <label className="mb-2" htmlFor="dishName">
-                  SubcategoryName
+                 CategoryName
                 </label>
                 <CFormInput
-                  placeholder="subCategory Name"
+                  placeholder="Category Name"
                   name="categoryname"
                   value={formData.categoryname}
                   onChange={handleChange}
                 />
               </CCol>
             </div>
-          </div>
-          <div className="text-center">
-            <CButton className="w-50 mt-4" color="primary" onClick={handleSubmit}>
+           <div className="col-lg-2">
+           <div className="text-end">
+            <CButton className=" w-100" color="primary" onClick={handleSubmit}>
               Add Category
             </CButton>
           </div>
-        </div>
-        <div className="col-lg-8">
+    
+           </div>
+     
+      </div>
+
+      <div className="row max_height justify-content-center ">
+  
+      
+       
+    
+        
+        <div className="col-lg-8 allcategories">
           <h3 className="text-center mt-3 mb-3">All Categories</h3>
           <CTable>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col">Thumbnails</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Category</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
+                {/* <CTableHeaderCell scope="col">Thumbnails</CTableHeaderCell> */}
+                <CTableHeaderCell scope="col " className="ps-4">Meal</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-center" >Category</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-end pe-4 ">Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {subcategories.map((item) => {
+              {currentItems.map((item) => {
                 return (
                   <CTableRow key={item.id}>
-                    <CTableDataCell className="categoryImage"><img src={item.Thumbnail} alt="thumbnail" /></CTableDataCell>
-                    <CTableDataCell>{item.Name}</CTableDataCell>
-                    <CTableDataCell>
+                    {/* <CTableDataCell className="categoryImage"><img src={item.Thumbnail}/></CTableDataCell> */}
+                    <CTableDataCell className="ps-4">{item.Category}</CTableDataCell>
+                    <CTableDataCell className="text-center" >{item.Name}</CTableDataCell>
+                    <CTableDataCell className="text-end ">
                       <CButton onClick={() => handleedit(item.id)}>
                         <ModeEditIcon />
                       </CButton>
@@ -186,6 +209,7 @@ export default function Addproduct() {
           </CTable>
         </div>
       </div>
+
       <div className="popup">
         <CModal
           className="custom_modal"
@@ -197,29 +221,16 @@ export default function Addproduct() {
         >
           <CModalHeader>
             <CModalTitle id="StaticBackdropExampleLabel">
-              Edit Meal
+              Edit Category
             </CModalTitle>
           </CModalHeader>
           <CModalBody>
             <div className="gap-2">
-              <CCol xs>
-                <label htmlFor="" className="mb-2">
-                  Image
-                </label>
-                <CFormInput
-                  type="file"
-                  id="formFile"
-                  onChange={handleFileChange}
-                />
-                {file ? (
-                  <img src={file} alt="Selected" style={{ width: '40%', marginTop: '10px' }} />
-                ) : (
-                  previousImage && <img src={previousImage} alt="Selected" style={{ width: '40%', marginTop: '10px' }} />
-                )}
-              </CCol>
-              <div className="col-lg-6">
+         
+     <div className="row">
+     <div className="col-lg-6">
                 <label className="mb-2" htmlFor="mealName">
-                  Select The Category
+                  Select The Meal
                 </label>
                 <div>
                   <CFormSelect
@@ -227,7 +238,7 @@ export default function Addproduct() {
                     value={edit.meals}
                     onChange={handleChange}
                   >
-                    <option value="">Choose Category</option>
+                    <option value="">Choose Meal</option>
                     {getmeal.map((item) => {
                       return (
                         <option key={item.id} value={item.Name}>
@@ -239,7 +250,7 @@ export default function Addproduct() {
                 </div>
               </div>
               <div className="col-lg-6">
-                <CCol xs className="mt-3">
+                <CCol xs className="">
                   <label htmlFor="" className="mb-2">
                     Category
                   </label>
@@ -252,6 +263,7 @@ export default function Addproduct() {
                   />
                 </CCol>
               </div>
+     </div>
               <div className="text-center">
                 <CButton
                   color="primary"
@@ -264,6 +276,34 @@ export default function Addproduct() {
             </div>
           </CModalBody>
         </CModal>
+      </div>
+
+      <div className="fixed_pagination">
+        <CPagination aria-label="Page navigation example" align="end">
+          <CPaginationItem
+            aria-label="Previous"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            <span aria-hidden="true">&laquo;</span>
+          </CPaginationItem>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <CPaginationItem
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              active={currentPage === index + 1}
+            >
+              {index + 1}
+            </CPaginationItem>
+          ))}
+          <CPaginationItem
+            aria-label="Next"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            <span aria-hidden="true">&raquo;</span>
+          </CPaginationItem>
+        </CPagination>
       </div>
     </>
   );

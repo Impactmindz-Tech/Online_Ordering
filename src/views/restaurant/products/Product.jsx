@@ -88,7 +88,14 @@ const Product = () => {
   };
 
   const handleDelete = async (productId) => {
-    await deleteProduct(productId);
+    
+    let findid = foodprod.find((item) => item.id === productId);
+    // find the corresponding image path
+   let imagepath = findid.ImageUrl;
+
+   deletesubdoc(id,imagepath);
+
+    await deleteProduct(productId,imagepath);
     await refreshProducts(); // Re-fetch the updated product list after deleting
   };
 
@@ -120,7 +127,7 @@ const Product = () => {
 
   return (
     <>
-      <div className="category_list mt-lg-5">
+      <div className=" mt-lg-5">
         <CTable>
           <CTableHead>
             <CTableRow>
@@ -129,7 +136,7 @@ const Product = () => {
               <CTableHeaderCell scope="col">Category</CTableHeaderCell>
               <CTableHeaderCell scope="col">Description</CTableHeaderCell>
               <CTableHeaderCell scope="col">Dietary Info</CTableHeaderCell>
-              <CTableHeaderCell scope="col">Price</CTableHeaderCell>
+           
               <CTableHeaderCell scope="col">is_available</CTableHeaderCell>
               <CTableHeaderCell scope="col">Action</CTableHeaderCell>
             </CTableRow>
@@ -144,7 +151,7 @@ const Product = () => {
                 <CTableDataCell>{item.Category}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
-                <CTableDataCell>{item.Price}</CTableDataCell>
+             
                 <CTableDataCell>{item.isAvailable}</CTableDataCell>
                 <CTableDataCell>
                   <CButton onClick={() => handleEdit(item)}>
@@ -201,17 +208,7 @@ const Product = () => {
                       onChange={handleChange}
                     />
                   </CCol>
-                  <CCol xs>
-                    <label className="mb-2" htmlFor="price">
-                      Price
-                    </label>
-                    <CFormInput
-                      placeholder="Price"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleChange}
-                    />
-                  </CCol>
+      
                 </CRow>
                 <CRow className="mt-3">
                   <div className="col-lg-6">
