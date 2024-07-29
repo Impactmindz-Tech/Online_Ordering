@@ -159,6 +159,7 @@ const filterecate = allcategorie.filter((item)=>{
                 value={formData.isAvailable}
                 onChange={handleChange}
               >
+                <option value="">Choose One</option>
                 <option value="true">True</option>
                 <option value="false">False</option>
               </CFormSelect>
