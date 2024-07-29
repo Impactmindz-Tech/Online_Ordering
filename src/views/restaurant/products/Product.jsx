@@ -91,12 +91,12 @@ const Product = () => {
     setFormData({
       dishName: product.Name,
     
-      category: product.Category,
+      category: product.category,
     
       isAvailable: product.isAvailable,
       dietaryInfo: product.DietaryInfo,
       description: product.Description,
-      meal: product.mealId,
+      meal: product.meal,
 
     });
     console.log(formData,'formdata');
@@ -257,7 +257,7 @@ const Product = () => {
                       name="isAvailable"
                       value={formData.isAvailable}
                       onChange={handleChange}
-                    >
+                    > <option value="">Choose One</option>
                       <option value="true">True</option>
                       <option value="false">False</option>
                     </CFormSelect>

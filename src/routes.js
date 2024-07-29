@@ -9,7 +9,7 @@ const AddProduct = React.lazy(() => import('./views/restaurant/products/Addprodu
 
 // restaurant
 
-const Category = React.lazy(() => import('./views/restaurant/category/Category'))
+
 const Product = React.lazy(() => import('./views/restaurant/products/Product'))
 const Meal = React.lazy(() => import('./views/restaurant/meal/AddMeals'));
 const Order = React.lazy(() => import('./views/restaurant/orders/Order'))
@@ -25,7 +25,7 @@ const routes = [
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
 
 
-  { path: '/restaurant/category', name: 'Category', element: Category },
+
   { path: '/restaurant/allproducts', name: 'All Product', element: Product },
   { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
   { path: '/restaurant/addmeals', name: 'Add Meals', element: Meal },

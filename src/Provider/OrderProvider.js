@@ -277,13 +277,14 @@ const updateProducts = async (file, formData, uproductId) => {
 
 
 const updateProductsDetails = async(formData,downloadUrl,uproductId)=>{
+  console.log(formData);
   try {
     const productRef = doc(db, `Products/${uproductId}`);
     await updateDoc(productRef, {
       category:formData?.category,
       Description:formData?.description,
       DietaryInfo:formData.dietaryInfo,
-    
+      meal: formData?.meal,
       Name:formData.dishName,
       isAvailable:formData.isAvailable,
       ImageUrl:downloadUrl
