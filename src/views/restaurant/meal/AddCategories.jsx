@@ -193,8 +193,8 @@ export default function Addproduct() {
                   <CTableDataCell className="text-center">
                     {/* {item.Name[selectedLanguage]} */}
                     
-                    
-                          {item.Name.en} / {item.Name.he} / {item.Name.ru}
+               {item.Name}
+                          {/* {item.Name.en} / {item.Name.he} / {item.Name.ru} */}
                     </CTableDataCell>
                   <CTableDataCell className="text-end">
                     <CButton onClick={() => handleedit(item.id)}>
