@@ -12,21 +12,17 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal,saveproduct, getcategory, allcategorie ,getAllcategory} = useContext(OnlineContext);
+  const { getmeal, saveproduct, getcategory, allcategorie, getAllcategory } = useContext(OnlineContext);
   const [file, setFile] = useState(null);
-
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
 
   const [formData, setFormData] = useState({
-    dishName: "",
-    
+    dishName: { en: "", ru: "", he: "" },
     category: "",
-
     isAvailable: "",
     dietaryInfo: "",
     description: "",
     meal: "",
-
-
   });
 
   const handleFileChange = (e) => {
@@ -37,36 +33,35 @@ export default function Addproduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev)=>{
-      return{...prev,[name]:value}
-    })
+
+    if (name.startsWith('dishName_')) {
+      const lang = name.split('_')[1];
+      setFormData((prevState) => ({
+        ...prevState,
+        dishName: { ...prevState.dishName, [lang]: value },
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
-
-   
-const filterecate = allcategorie.filter((item)=>{
-  return item.Category===formData.meal;
-});
-
+  const filteredCategories = allcategorie.filter((item) => item.Category === formData.meal);
 
   const handleSubmit = async () => {
- 
     await saveproduct(file, formData);
     console.log(formData);
-  
   };
 
-
-
-  useEffect(()=>{
+  useEffect(() => {
     getAllcategory();
     getcategory();
-  },[])
-
+  }, []);
 
   return (
     <>
-  
       <div className="row justify-content-center">
         <div className="col-lg-2">
           <div className="image_preview">
@@ -81,7 +76,7 @@ const filterecate = allcategorie.filter((item)=>{
       <div className="row justify-content-center mt-5">
         <div className="col-lg-3">
           <div className="mb-3">
-            <CFormInput  type="file" id="formFile" onChange={handleFileChange} />
+            <CFormInput type="file" id="formFile" onChange={handleFileChange} />
           </div>
         </div>
       </div>
@@ -89,67 +84,66 @@ const filterecate = allcategorie.filter((item)=>{
         <div className="col-lg-7">
           <CRow>
             <CCol xs>
-              <label className="mb-2" htmlFor="dishName">
-                Dish Name
+              <label className="mb-2" htmlFor="languageSelect">
+                Select Language
+              </label>
+              <CFormSelect
+                id="languageSelect"
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+              >
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+                <option value="he">Hebrew</option>
+              </CFormSelect>
+            </CCol>
+            <CCol xs>
+              <label className="mb-2" htmlFor={`dishName_${selectedLanguage}`}>
+                Dish Name ({selectedLanguage.toUpperCase()})
               </label>
               <CFormInput
-                placeholder="Dish Name"
-                name="dishName"
-                value={formData.dishName}
+                placeholder={`Dish Name (${selectedLanguage.toUpperCase()})`}
+                name={`dishName_${selectedLanguage}`}
+                value={formData.dishName[selectedLanguage]}
                 onChange={handleChange}
               />
             </CCol>
-            <CCol xs>
-                    <label className="mb-2" htmlFor="meal">
-                      Choose Meal
-                    </label>
-                    <CFormSelect
-                      name="meal"
-                      value={formData.meal}
-                      onChange={handleChange}
-                    >
-                      <option value="">Choose Meal</option>
-                      {getmeal.map((item) => 
-                    
-                        (
-                          <option key={item.id} value={item.Name} >
-                            {item.Name}
-                          </option>
-                        )
-                       
-                      )}
-                    </CFormSelect>
-                  </CCol>
           </CRow>
           <CRow className="mt-3">
-            <div className="col-lg-6">
-              <div className="row">
-           
-                <div className="">
-                  <CCol xs>
-                    <label className="mb-2" htmlFor="category">
-                      Choose Category
-                    </label>
-                    <CFormSelect
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                    >
-                      <option value="">Choose Category</option>
-                      {filterecate.map((item) =>
-                       (
-                          <option key={item.id} value={item.Name} >
-                          {item.Name}
-                        </option>
-                        )
-                      
-                        
-                      )}
-                    </CFormSelect>
-                  </CCol>
-                </div>
-              </div>
-            </div>
+            <CCol xs>
+              <label className="mb-2" htmlFor="meal">
+                Choose Meal
+              </label>
+              <CFormSelect
+                name="meal"
+                value={formData.meal}
+                onChange={handleChange}
+              >
+                <option value="">Choose Meal</option>
+                {getmeal.map((item) => (
+                  <option key={item.id} value={item.Name}>
+                    {item.Name}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+            <CCol xs>
+              <label className="mb-2" htmlFor="category">
+                Choose Category
+              </label>
+              <CFormSelect
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                <option value="">Choose Category</option>
+                {filteredCategories.map((item) => (
+                  <option key={item.id} value={item.Name}>
+                    {item.Name}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
             <CCol xs>
               <label className="mb-2" htmlFor="isAvailable">
                 Is Available

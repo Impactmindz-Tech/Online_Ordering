@@ -31,6 +31,7 @@ export default function Addproduct() {
   const [visible, setVisible] = useState(false);
   const [id, setid] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState('en'); // Default to English
+  const [editLanguage, setEditLanguage] = useState('en'); // Language for editing
 
   const [edit, setedit] = useState({
     id: "",
@@ -98,9 +99,10 @@ export default function Addproduct() {
     setedit({
       id: id,
       Name: findid.Name,
-      meals: findid.meals
+      meals: findid.Category
     });
-    setid(id);
+    console.log(findid);
+        setid(id);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -191,11 +193,8 @@ export default function Addproduct() {
                 <CTableRow key={item.id}>
                   <CTableDataCell className="ps-4">{item.Category}</CTableDataCell>
                   <CTableDataCell className="text-center">
-                    {/* {item.Name[selectedLanguage]} */}
-                    
-               {item.Name}
-                          {/* {item.Name.en} / {item.Name.he} / {item.Name.ru} */}
-                    </CTableDataCell>
+                    {item.Name}
+                  </CTableDataCell>
                   <CTableDataCell className="text-end">
                     <CButton onClick={() => handleedit(item.id)}>
                       <ModeEditIcon />
@@ -249,13 +248,29 @@ export default function Addproduct() {
                 </div>
                 <div className="col-lg-6">
                   <CCol xs>
+                    <label className="mb-2" htmlFor="editLanguageSelect">
+                      Select Language
+                    </label>
+                    <CFormSelect
+                      id="editLanguageSelect"
+                      value={editLanguage}
+                      onChange={(e) => setEditLanguage(e.target.value)}
+                    >
+                      <option value="en">English</option>
+                      <option value="ru">Russian</option>
+                      <option value="he">Hebrew</option>
+                    </CFormSelect>
+                  </CCol>
+                  <CCol xs>
                     <label htmlFor="categoryName" className="mb-2">
                       Category
                     </label>
                     <CFormInput
-                      name={`categoryname_${selectedLanguage}`}
-                      placeholder={`Enter Category Name (${selectedLanguage})`}
-                      value={edit.Name[selectedLanguage]}
+                    name="Name"
+                      // name={`${editLanguage}`}
+                      placeholder={`Enter Category Name (${editLanguage})`}
+                      // value={edit.Name[editLanguage]}
+                      value={edit.Name}
                       onChange={handleChange}
                     />
                   </CCol>

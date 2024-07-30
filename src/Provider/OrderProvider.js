@@ -476,8 +476,7 @@ const savecategories = async (formData) => {
     const q = query(collection(db, "Products"));
 
     const querySnapshots = await getDocs(q);
-    const lenproducts = querySnapshots.size;
-    setlenpro(lenproducts);
+  
     const products = querySnapshots.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -487,8 +486,28 @@ const savecategories = async (formData) => {
    
   };
 
-
-
+  const getAllOrder = async () => {
+    const q = query(collection(db, "Orders"));
+    const querySnapshot = await getDocs(q);
+    const orders = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  
+    const orderDetails = orders.map((item) => {
+      const { location, sechudle, summery } = item.body;
+      return {
+        location,
+        sechudle,
+        summary: summery,
+      };
+    });
+  
+    console.log(orderDetails);
+  
+    return orderDetails;
+  };
+  
 
 
 
@@ -500,6 +519,7 @@ const savecategories = async (formData) => {
     getAllSubcategories();
     getcategory();
     getAllproducts();
+    getAllOrder();
   }, []);
 
   const contextValue = {
@@ -518,7 +538,7 @@ const savecategories = async (formData) => {
     getAllSubcategories,
     foodprod,
     getAllproducts,
-    updateProducts,deletesubdoc ,totalCategory,totalpro,totalsub,updatesubcatdata,alert,setAlert
+    updateProducts,deletesubdoc ,totalCategory,totalpro,totalsub,updatesubcatdata,alert,setAlert,getAllOrder
     
   };
 
