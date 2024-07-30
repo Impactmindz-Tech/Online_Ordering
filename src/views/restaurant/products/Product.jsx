@@ -129,6 +129,7 @@ const Product = () => {
             <CTableRow>
               <CTableHeaderCell scope="col">Image</CTableHeaderCell>
               <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+              <CTableHeaderCell scope="col">meal</CTableHeaderCell>
               <CTableHeaderCell scope="col">Category</CTableHeaderCell>
               <CTableHeaderCell scope="col">Description</CTableHeaderCell>
               <CTableHeaderCell scope="col">Dietary Info</CTableHeaderCell>
@@ -144,6 +145,7 @@ const Product = () => {
                   <img src={item.ImageUrl} alt="productImage" />
                 </CTableDataCell>
                 <CTableDataCell>{item.Name}</CTableDataCell>
+                <CTableDataCell>{item.meal}</CTableDataCell>
                 <CTableDataCell>{item.category}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
