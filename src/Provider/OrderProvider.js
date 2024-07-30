@@ -37,6 +37,7 @@ export const OnlineContextProvider = (props) => {
   const[totalsub,setsub]  = useState();
 
   const[totalpro,setlenpro] = useState();
+  const[orderDetail,SetOrder] = useState([]);
 
 
 
@@ -494,18 +495,13 @@ const savecategories = async (formData) => {
       ...doc.data(),
     }));
   
-    const orderDetails = orders.map((item) => {
-      const { location, sechudle, summery } = item.body;
-      return {
-        location,
-        sechudle,
-        summary: summery,
-      };
-    });
+const{}
   
-    console.log(orderDetails);
+ const ordersdetails = orders.map((item)=>{
+  console.log(item.summery);
+ })
   
-    return orderDetails;
+    
   };
   
 
