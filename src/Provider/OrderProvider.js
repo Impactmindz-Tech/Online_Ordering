@@ -143,18 +143,26 @@ export const OnlineContextProvider = (props) => {
     }
   };
   
-  
- const updatedata = async (id, data, downloadUrl) => {
-      const docref = doc(db, "Meals", id);
+  const updatedata = async (id, data, downloadUrl) => {
+    const docref = doc(db, "Meals", id);
+     console.log(downloadUrl);
+    try {
       await updateDoc(docref, {
-        Name: data,
+        Name: {
+          en: data.en,
+          he: data.he,
+          ru: data.ru,
+        },
         ImageUrl: downloadUrl,
       });
-      setAlert({ show: true, message: 'Update  successfully', type: 'success', visible: true });
-      getAllcategory();
-    };
+      setAlert({ show: true, message: 'Update successfully', type: 'success', visible: true });
+    } catch (error) {
+      setAlert({ show: true, message: 'Update failed', type: 'danger', visible: true });
+    }
+    
+    getAllcategory();
+  };
   
-
  //function to get all Meals
 
   const getAllcategory = async () => {
@@ -166,9 +174,9 @@ export const OnlineContextProvider = (props) => {
       id: doc.id,
       ...doc.data(),
     }));
-
+   console.log(categories,'categorie')
     setmeal(categories);
-   
+ 
   };
 
 //delete MEal category
@@ -354,8 +362,17 @@ const deleteProduct = async(id,imagePath)=>{
 
 const savecategories = async (formData) => {
   const category = formData?.meal; // Assuming 'meal' is the category
-  const name = formData?.categoryname;
-  
+  const name = formData?.Name; // Ensure this matches the name field in formData
+
+  console.log(formData);
+
+  // Check if category or name is undefined
+  if (!category || !name) {
+    console.error('Category or Name is undefined.');
+    setAlert({ show: true, message: 'Category or Name is required.', type: 'danger', visible: true });
+    return;
+  }
+
   // Reference to the collection
   const subcategoryRef = collection(db, 'Category');
   
@@ -367,8 +384,6 @@ const savecategories = async (formData) => {
     // Name already exists within the same category
     console.log('An entry with this Name already exists in the same Category.');
     setAlert({ show: true, message: 'An entry with this Name already exists in the same Category', type: 'danger', visible: true });
-    
-    // Handle the situation accordingly, e.g., show a notification to the user
     return;
   }
   
@@ -376,7 +391,6 @@ const savecategories = async (formData) => {
   await setDoc(doc(db, 'Category', Date.now().toString()), {
     Name: name,
     Category: category
-  
   });
 
   setAlert({ show: true, message: 'New Category Added successfully', type: 'success', visible: true });

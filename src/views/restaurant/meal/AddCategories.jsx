@@ -18,7 +18,6 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CRow,
   CCol,
   CFormSelect,
   CPagination,
@@ -27,16 +26,18 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, updatesubcatdata,getAllSubcategories, getAllcategory, savecategories, deletesubdoc, subcategories} = useContext(OnlineContext);
+  const { getmeal, updatesubcatdata, getAllSubcategories, getAllcategory, savecategories, deletesubdoc, subcategories } = useContext(OnlineContext);
 
   const [visible, setVisible] = useState(false);
- 
   const [id, setid] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState('en'); // Default to English
+
   const [edit, setedit] = useState({
     id: "",
-    category: "",
+    Name: { en: "", ru: "", he: "" },
     meals: ""
   });
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(subcategories.length / itemsPerPage);
@@ -45,44 +46,48 @@ export default function Addproduct() {
   const currentItems = subcategories.slice(indexOfFirstItem, indexOfLastItem);
 
   const [formData, setFormData] = useState({
-    categoryname: "",
+    Name: { en: "", ru: "", he: "" },
     meal: "",
   });
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    setedit((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+
+    if (name.startsWith('categoryname_')) {
+      const lang = name.split('_')[1];
+      setFormData((prevState) => ({
+        ...prevState,
+        Name: { ...prevState.Name, [lang]: value },
+      }));
+      setedit((prevState) => ({
+        ...prevState,
+        Name: { ...prevState.Name, [lang]: value },
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+      setedit((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async () => {
-    await savecategories( formData);
+    await savecategories(formData);
     await getAllSubcategories();
   };
 
   const handleupdate = async () => {
     setVisible(false);
-
-  
-      await updatesubcatdata(id, edit);
- 
+    await updatesubcatdata(id, edit);
     await getAllSubcategories();
   };
 
   const handledelete = async (id) => {
-
-   
-
-   deletesubdoc(id);
-
- 
+    await deletesubdoc(id);
     await getAllSubcategories();
   };
 
@@ -92,15 +97,12 @@ export default function Addproduct() {
     console.log(findid);
     setedit({
       id: id,
-      category: findid.Name,
-      meals: findid.Category
+      Name: findid.Name,
+      meals: findid.meals
     });
-
- // Set previous image URL
     setid(id);
   };
 
-  // Pagination
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) {
       return;
@@ -116,86 +118,94 @@ export default function Addproduct() {
   return (
     <>
       <div className="row justify-content-center align-items-end">
-      <div className="col-lg-3">
-              <label className="mb-2" htmlFor="mealName">
-                Select The Meal
-              </label>
-              <div>
-                <CFormSelect
-                  name="meal"
-                  value={formData.meal}
-                  onChange={handleChange}
-                >
-                  <option value="">Choose Meal</option>
-                  {getmeal.map((item) => {
-                    return (
-                      <option key={item.id} value={item.Name}>
-                        {item.Name}
-                      </option>
-                    );
-                  })}
-                </CFormSelect>
-              </div>
-            </div>
-            <div className="col-lg-3">
-              <CCol xs>
-                <label className="mb-2" htmlFor="dishName">
-                 CategoryName
-                </label>
-                <CFormInput
-                  placeholder="Category Name"
-                  name="categoryname"
-                  value={formData.categoryname}
-                  onChange={handleChange}
-                />
-              </CCol>
-            </div>
-           <div className="col-lg-2">
-           <div className="text-end">
-            <CButton className=" w-100" color="primary" onClick={handleSubmit}>
+        <div className="col-lg-3">
+          <label className="mb-2" htmlFor="mealName">
+            Select The Meal
+          </label>
+          <div>
+            <CFormSelect
+              name="meal"
+              value={formData.meal}
+              onChange={handleChange}
+            >
+              <option value="">Choose Meal</option>
+              {getmeal.map((item) => (
+                <option key={item.id} value={item.Name}>
+                  {item.Name}
+                </option>
+              ))}
+            </CFormSelect>
+          </div>
+        </div>
+        <div className="col-lg-3">
+          <CCol xs>
+            <label className="mb-2" htmlFor="languageSelect">
+              Select Language
+            </label>
+            <CFormSelect
+              id="languageSelect"
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="ru">Russian</option>
+              <option value="he">Hebrew</option>
+            </CFormSelect>
+          </CCol>
+        </div>
+        <div className="col-lg-3">
+          <CCol xs>
+            <label className="mb-2" htmlFor="categoryName">
+              Category Name
+            </label>
+            <CFormInput
+              placeholder={`Category Name (${selectedLanguage})`}
+              name={`categoryname_${selectedLanguage}`}
+              value={formData.Name[selectedLanguage]}
+              onChange={handleChange}
+            />
+          </CCol>
+        </div>
+        <div className="col-lg-2">
+          <div className="text-end">
+            <CButton className="w-100" color="primary" onClick={handleSubmit}>
               Add Category
             </CButton>
           </div>
-    
-           </div>
-     
+        </div>
       </div>
 
-      <div className="row max_height justify-content-center ">
-  
-      
-       
-    
-        
+      <div className="row max_height justify-content-center">
         <div className="col-lg-8 allcategories">
           <h3 className="text-center mt-3 mb-3">All Categories</h3>
           <CTable>
             <CTableHead>
               <CTableRow>
-                {/* <CTableHeaderCell scope="col">Thumbnails</CTableHeaderCell> */}
                 <CTableHeaderCell scope="col " className="ps-4">Meal</CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-center" >Category</CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-end pe-4 ">Action</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-center">Category</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-end pe-4">Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {currentItems.map((item) => {
-                return (
-                  <CTableRow key={item.id}>
-                    {/* <CTableDataCell className="categoryImage"><img src={item.Thumbnail}/></CTableDataCell> */}
-                    <CTableDataCell className="ps-4">{item.Category}</CTableDataCell>
-                    <CTableDataCell className="text-center" >{item.Name}</CTableDataCell>
-                    <CTableDataCell className="text-end ">
-                      <CButton onClick={() => handleedit(item.id)}>
-                        <ModeEditIcon />
-                      </CButton>
-                      <CButton onClick={() => handledelete(item.id)}>
-                        <DeleteIcon style={{ color: "#dd0000" }} />
-                      </CButton>
+              {currentItems.map((item) => (
+                <CTableRow key={item.id}>
+                  <CTableDataCell className="ps-4">{item.meals}</CTableDataCell>
+                  <CTableDataCell className="text-center">
+                    {/* {item.Name[selectedLanguage]} */}
+                    
+                    
+                          {item.Name.en} / {item.Name.he} / {item.Name.ru}
                     </CTableDataCell>
-                  </CTableRow>
-                )
-              })}
+                  <CTableDataCell className="text-end">
+                    <CButton onClick={() => handleedit(item.id)}>
+                      <ModeEditIcon />
+                    </CButton>
+                    <CButton onClick={() => handledelete(item.id)}>
+                      <DeleteIcon style={{ color: "#dd0000" }} />
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+              ))}
             </CTableBody>
           </CTable>
         </div>
@@ -217,44 +227,40 @@ export default function Addproduct() {
           </CModalHeader>
           <CModalBody>
             <div className="gap-2">
-         
-     <div className="row">
-     <div className="col-lg-6">
-                <label className="mb-2" htmlFor="mealName">
-                  Select The Meal
-                </label>
-                <div>
-                  <CFormSelect
-                    name="meals"
-                    value={edit.meals}
-                    onChange={handleChange}
-                  >
-                    <option value="">Choose Meal</option>
-                    {getmeal.map((item) => {
-                      return (
+              <div className="row">
+                <div className="col-lg-6">
+                  <label className="mb-2" htmlFor="mealName">
+                    Select The Meal
+                  </label>
+                  <div>
+                    <CFormSelect
+                      name="meals"
+                      value={edit.meals}
+                      onChange={handleChange}
+                    >
+                      <option value="">Choose Meal</option>
+                      {getmeal.map((item) => (
                         <option key={item.id} value={item.Name}>
                           {item.Name}
                         </option>
-                      );
-                    })}
-                  </CFormSelect>
+                      ))}
+                    </CFormSelect>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <CCol xs>
+                    <label htmlFor="categoryName" className="mb-2">
+                      Category
+                    </label>
+                    <CFormInput
+                      name={`categoryname_${selectedLanguage}`}
+                      placeholder={`Enter Category Name (${selectedLanguage})`}
+                      value={edit.Name[selectedLanguage]}
+                      onChange={handleChange}
+                    />
+                  </CCol>
                 </div>
               </div>
-              <div className="col-lg-6">
-                <CCol xs className="">
-                  <label htmlFor="" className="mb-2">
-                    Category
-                  </label>
-                  <CFormInput
-                    name="category"
-                    placeholder="Enter Category Name"
-                    aria-label="Category Name"
-                    value={edit.category}
-                    onChange={handleChange}
-                  />
-                </CCol>
-              </div>
-     </div>
               <div className="text-center">
                 <CButton
                   color="primary"

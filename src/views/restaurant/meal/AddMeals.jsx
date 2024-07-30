@@ -21,18 +21,34 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CRow,
   CCol,
-  CCloseButton
+  CCloseButton,
+  CFormSelect
 } from "@coreui/react";
-import { connectStorageEmulator } from "firebase/storage";
 Modal.setAppElement("#root");
+
 export default function Category() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [category, setCategory] = useState({ en: "", he: "", ru: "" });
+  const [file, setFile] = useState(null);
+  const [previousImage, setPreviousImage] = useState("");
+  const [id, setId] = useState("");
+  const [edit, setEdit] = useState({ id: "", category: { en: "", he: "", ru: "" } });
+  const [language, setLanguage] = useState("en");
+
+  const {
+    getmeal,
+    getAllcategory,
+    deletedoc,
+    storecateImage,
+    updateImage,
+    alert,
+    setAlert
+  } = useContext(OnlineContext);
 
   const openModal = (imageUrl) => {
-    console.log("hello");
     setCurrentImage(imageUrl);
     setModalIsOpen(true);
   };
@@ -41,79 +57,56 @@ export default function Category() {
     setModalIsOpen(false);
     setCurrentImage("");
   };
-  const [visible, setVisible] = useState(false);
-  const [category, setcategory] = useState("");
-  const [file, setFile] = useState(null);
 
-  const [previousImage, setPreviousImage] = useState(""); // Add state for previous image URL
-  const [id, setid] = useState("");
-  const [edit, setedit] = useState({
-    id: "",
-    category: "",
-  });
-
-  const {
-  
-    getmeal,
-    getAllcategory,
-    deletedoc,
-
-    storecateImage,
-    updateImage,alert,setAlert
-  } = useContext(OnlineContext);
-
-  const handlesubmit = () => {
-    if (!file || !category) {
-      console.log("please fill the meal name and select the image");
+  const handleSubmit = () => {
+    if (!file || !category.en) {
+      console.log("Please fill the meal name and select the image");
     } else {
       storecateImage(file, category);
-
     }
     getAllcategory();
   };
 
-  const handledelete = (id) => {
+  const handleDelete = (id) => {
     let findid = getmeal.find((item) => item.id === id);
-     // find the corresponding image path
     let imagepath = findid.ImageUrl;
-
-  deletedoc(id,imagepath)
- 
+    deletedoc(id, imagepath);
     getAllcategory();
   };
 
-  const handlechange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setedit((prev) => {
-      return { ...prev, [name]: value };
+    setEdit((prev) => {
+      return { ...prev, category: { ...prev.category, [name]: value } };
     });
   };
 
-  const handleupdate = () => {
+  const handleUpdate = () => {
     setVisible(false);
-    const { category } = edit;
-
     if (file) {
-      updateImage(id, category, file);
+      updateImage(id, edit.category, file);
     } else {
-      updateImage(id, category, previousImage); // Use previous image if no new file is selected
+      updateImage(id, edit.category, previousImage);
     }
     getAllcategory();
   };
 
-  const handleedit = (id) => {
+  const handleEdit = (id) => {
     setVisible(true);
     let findid = getmeal.find((item) => item.id === id);
-    setedit({ category: findid.Name });
-    setPreviousImage(findid.ImageUrl); // Set previous image URL
-    setid(id);
+    setEdit({ category: { en: findid.Name.en, he: findid.Name.he, ru: findid.Name.ru } });
+    setPreviousImage(findid.ImageUrl);
+    setId(id);
   };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-
     const fileUrl = URL.createObjectURL(selectedFile);
     setFile(fileUrl);
+  };
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
   };
 
   useEffect(() => {
@@ -122,151 +115,148 @@ export default function Category() {
 
   return (
     <section>
-   <div className="row justify-content-center">
-      <div className="col-lg-3">
-        {/* Alert component */}
-        {alert.show && alert.visible && (
-          <CAlert color={alert.type} className="d-flex align-items-center" >
-            <CIcon icon={alert.type === 'success' ? cilCheckCircle : cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
-            <div>{alert.message}</div>   <CCloseButton className  ="ms-1" onClick={()=>setAlert({ ...alert, visible: false })} />
-          </CAlert>
-        )}
+      <div className="row justify-content-center">
+        <div className="col-lg-3">
+          {alert.show && alert.visible && (
+            <CAlert color={alert.type} className="d-flex align-items-center">
+              <CIcon icon={alert.type === 'success' ? cilCheckCircle : cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
+              <div>{alert.message}</div>
+              <CCloseButton className="ms-1" onClick={() => setAlert({ ...alert, visible: false })} />
+            </CAlert>
+          )}
+        </div>
       </div>
-    </div>
-       <div className="row justify-content-center ">
+      <div className="row justify-content-center">
+        <div className="col-lg-3 d-flex align-items-center gap-3">
+          <label htmlFor="">Select language : </label>
+        <CFormSelect value={language} onChange={handleLanguageChange} className="widthselectbox">
+                  <option value="en">English</option>
+                  <option value="he">Hebrew</option>
+                  <option value="ru">Russian</option>
+                </CFormSelect>
+        </div>
         <div className="col-lg-8">
-
-          <div className="row ">
+          <div className="row">
             <div className="col-lg-4">
-            <CCol xs>
-            <CFormInput type="file" id="formFile" onChange={handleFileChange} />
-          </CCol>
+              <CCol xs>
+                <CFormInput type="file" id="formFile" onChange={handleFileChange} />
+              </CCol>
             </div>
             <div className="col-lg-4">
-            <CCol xs>
-            <CFormInput
-              name="category"
-              placeholder="Enter Meal Name"
-              aria-label="Meal Name"
-              onChange={(e) => setcategory(e.target.value)}
-            />
-          </CCol>
+              <CCol xs>
+          
+                <CFormInput
+                  name={language}
+                  placeholder={`Enter Meal Name (${language})`}
+                  aria-label="Meal Name"
+                  value={category[language]}
+                  onChange={(e) => setCategory({ ...category, [language]: e.target.value })}
+                />
+              </CCol>
             </div>
             <div className="col-lg-4">
-            <CButton className="w-100" color="primary" onClick={handlesubmit}>
-            Add Meal
-          </CButton>
+              <CButton className="w-100" color="primary" onClick={handleSubmit}>
+                Add Meal
+              </CButton>
             </div>
           </div>
         </div>
-
-
-
-
-       </div>
-   <div className="row justify-content-center">
-   <div className="category_list mt-lg-5 col-lg-8">
-        <CTable>
-          <CTableHead>
-            <CTableRow>
-          
-              <CTableHeaderCell scope="col" className="ps-4">
-                Image
-              </CTableHeaderCell>
-              <CTableHeaderCell scope="col" className="text-center">
-                Name
-              </CTableHeaderCell>
-              <CTableHeaderCell scope="col" className="text-end pe-5">
-                Action
-              </CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {getmeal.map((item) => (
-              <CTableRow key={item.id}>
-
-                <CTableDataCell className="categoryImage ps-4 ">
-                  <img src={item.ImageUrl} alt="meal image" />
-                </CTableDataCell>
-                <CTableDataCell className="text-center">
-                  {item.Name}
-                </CTableDataCell>
-                <CTableDataCell className="text-end pe-4">
-                  <CButton onClick={() => handleedit(item.id)}>
-                    <ModeEditIcon />
-                  </CButton>
-                  <CButton onClick={() => handledelete(item.id)}>
-                    <DeleteIcon style={{ color: "#dd0000" }} />
-                  </CButton>
-                </CTableDataCell>
+      </div>
+      <div className="row justify-content-center">
+        <div className="category_list mt-lg-5 col-lg-8">
+          <CTable>
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell scope="col" className="ps-4">Image</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-center">Name</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-end pe-5">Action</CTableHeaderCell>
               </CTableRow>
-            ))}
-          </CTableBody>
-        </CTable>
-
-        <div className="popup">
-          <CModal
-            className="custom_modal"
-            alignment="center"
-            backdrop="static"
-            visible={visible}
-            onClose={() => setVisible(false)}
-            aria-labelledby="StaticBackdropExampleLabel"
-          >
-            <CModalHeader>
-              <CModalTitle id="StaticBackdropExampleLabel">
-                Edit Meal
-              </CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-              <div className=" gap-2">
-                <CCol xs>
-                  <label htmlFor="" className="mb-2">
-                    Image
-                  </label>
-                  <CFormInput
-                    type="file"
-                    id="formFile"
-                    onChange={handleFileChange}
-                  />
-                  {previousImage && (
-                    <img
-                      src={previousImage}
-                      alt="Previous"
-                      className="mt-2"
-                      style={{ width: "100px" }}
+            </CTableHead>
+            <CTableBody>
+              {getmeal.map((item) => (
+                <CTableRow key={item.id}>
+                  <CTableDataCell className="categoryImage ps-4 ">
+                    <img src={item.ImageUrl} alt="meal image" />
+                  </CTableDataCell>
+                  <CTableDataCell className="text-center">
+                    {item.Name}
+                    {/* {item.Name.en} / {item.Name.he} / {item.Name.ru} */}
+                  </CTableDataCell>
+                  <CTableDataCell className="text-end pe-4">
+                    <CButton onClick={() => handleEdit(item.id)}>
+                      <ModeEditIcon />
+                    </CButton>
+                    <CButton onClick={() => handleDelete(item.id)}>
+                      <DeleteIcon style={{ color: "#dd0000" }} />
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+              ))}
+            </CTableBody>
+          </CTable>
+          <div className="popup">
+            <CModal
+              className="custom_modal"
+              alignment="center"
+              backdrop="static"
+              visible={visible}
+              onClose={() => setVisible(false)}
+              aria-labelledby="StaticBackdropExampleLabel"
+            >
+              <CModalHeader>
+                <CModalTitle id="StaticBackdropExampleLabel">
+                  Edit Meal
+                </CModalTitle>
+              </CModalHeader>
+              <CModalBody>
+                <div className=" gap-2">
+                  <CCol xs>
+                    <label htmlFor="" className="mb-2">Image</label>
+                    <CFormInput
+                      type="file"
+                      id="formFile"
+                      onChange={handleFileChange}
                     />
-                  )}
-                </CCol>
-                <CCol xs className="mt-3">
-                  <label htmlFor="" className="mb-2">
-                    {" "}
-                    Category
-                  </label>
-                  <CFormInput
-                    name="category"
-                    placeholder="Enter Meal Name"
-                    aria-label="Category Name"
-                    value={edit.category}
-                    onChange={handlechange}
-                  />
-                </CCol>
-                <div className="text-center">
-                  <CButton
-                    color="primary"
-                    className="mt-3"
-                    onClick={handleupdate}
-                  >
-                    Update
-                  </CButton>
+                    {previousImage && (
+                      <img
+                        src={previousImage}
+                        alt="Previous"
+                        className="mt-2"
+                        style={{ width: "100px" }}
+                      />
+                    )}
+                  </CCol>
+                  <CCol xs className="mt-3">
+                   <label htmlFor="">Choose language</label>
+                    <CFormSelect value={language} onChange={handleLanguageChange}>
+                      <option value="en">English</option>
+                      <option value="he">Hebrew</option>
+                      <option value="ru">Russian</option>
+                    </CFormSelect>
+                    <label htmlFor="" className="mb-2 mt-2">Meal Name</label>
+                    <CFormInput
+                      name={language}
+                      placeholder={`Enter Meal Name (${language})`}
+                      aria-label="Category Name"
+                      value={edit.category[language]}
+                      onChange={handleChange}
+                    />
+                  </CCol>
+                  <div className="text-center">
+                    <CButton
+                      color="primary"
+                      className="mt-3"
+                      onClick={handleUpdate}
+                    >
+                      Update
+                    </CButton>
+                  </div>
                 </div>
-              </div>
-            </CModalBody>
-          </CModal>
+              </CModalBody>
+            </CModal>
+          </div>
         </div>
       </div>
-   </div>
-
     </section>
   );
 }
