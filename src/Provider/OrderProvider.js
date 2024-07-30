@@ -1,6 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import { app, storage } from "../config/Firebase";
 import { getDownloadURL, ref, uploadBytes ,deleteObject} from "firebase/storage";
+import { CAlert } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilCheckCircle, cilWarning } from '@coreui/icons';
 
 import {
   getDocs,
@@ -21,6 +24,7 @@ import { Category } from "@mui/icons-material";
 const db = getFirestore(app);
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
+  const [alert, setAlert] = useState({ show: false, message: '', type: '' })
   const [getmeal, setmeal] = useState([]);
   const [allcategorie, setcategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -49,6 +53,7 @@ export const OnlineContextProvider = (props) => {
       if (!querySnapshot.empty) {
         // Category already exists
         console.log('A category with this name already exists');
+        setAlert({ show: true, message: 'A category with this name already exists', type: 'danger', visible: true });
         return;
       }
   
@@ -70,8 +75,11 @@ export const OnlineContextProvider = (props) => {
   
       await Addcategory(downloadUrl, category);
       getAllcategory();
+      setAlert({ show: true, message: 'Category added successfully', type: 'success', visible: true })
+   
     } catch (error) {
       console.error("Error adding category: ", error);
+      setAlert({ show: true, message: 'Error adding category', type: 'danger', visible: true });
     }
   };
   
@@ -128,8 +136,10 @@ export const OnlineContextProvider = (props) => {
   
       // Update data with either the new or existing image URL
       updatedata(id, data, downloadUrl);
+      setAlert({ show: true, message: 'Update Meal successfully', type: 'success', visible: true });
     } catch (error) {
       console.error("Error updating image: ", error);
+      setAlert({ show: true, message: 'Not Updated', type: 'danger', visible: true });
     }
   };
   
@@ -140,6 +150,7 @@ export const OnlineContextProvider = (props) => {
         Name: data,
         ImageUrl: downloadUrl,
       });
+      setAlert({ show: true, message: 'Update  successfully', type: 'success', visible: true });
       getAllcategory();
     };
   
@@ -175,10 +186,11 @@ const deletedoc = async (id, imagePath) => {
     await deleteObject(imageRef);
     console.log(`Image file at ${imagePath} deleted`);
 
-    // Call the function to refresh the categories
+    setAlert({ show: true, message: 'Delete successfully', type: 'success', visible: true });
     getAllcategory();
   } catch (error) {
     console.error("Error deleting document or image file:", error);
+    setAlert({ show: true, message: 'Can not deleted', type: 'danger', visible: true });
   }
 };
 
@@ -203,6 +215,7 @@ const saveproduct = async (file, formData) => {
     if (!querySnapshot.empty) {
       // Product already exists with the same name, category, and meal
       console.log('A product with this name, category, and meal already exists');
+      setAlert({ show: true, message: 'A product with this name, category, and meal already exists', type: 'danger', visible: true });
       return;
     }
 
@@ -217,7 +230,7 @@ const saveproduct = async (file, formData) => {
       
       await uploadBytes(imageRef, blob);
       console.log("File uploaded");
-
+      setAlert({ show: true, message: 'Successfully  Product Added', type: 'success', visible: true });
       downloadUrl = await getDownloadURL(imageRef);
       console.log(downloadUrl);
     }
@@ -226,11 +239,12 @@ const saveproduct = async (file, formData) => {
     await saveproductDetail(formData, downloadUrl);
   } catch (error) {
     console.error("Error adding product: ", error);
+    setAlert({ show: true, message: 'Product Not Added', type: 'danger', visible: true });
   }
 };
 
 const saveproductDetail = async (formData, downloadUrl) => {
-  console.log(formData,'ckjsdh');
+  
   await setDoc(
     doc(db, 'Products', Date.now().toString()),
     {
@@ -265,6 +279,7 @@ const updateProducts = async (file, formData, uproductId) => {
       console.log("File uploaded");
 
       downloadUrl = await getDownloadURL(imageRef);
+      setAlert({ show: true, message: 'Product updated successfully', type: 'success', visible: true });
       console.log(downloadUrl);
     }
 
@@ -272,6 +287,7 @@ const updateProducts = async (file, formData, uproductId) => {
     updateProductsDetails(formData, downloadUrl, uproductId);
   } catch (error) {
     console.error("Error updating product: ", error);
+    setAlert({ show: true, message: 'Product Not Updated', type: 'danger', visible: true });
   }
 };
 
@@ -289,12 +305,14 @@ const updateProductsDetails = async(formData,downloadUrl,uproductId)=>{
       isAvailable:formData.isAvailable,
       ImageUrl:downloadUrl
     });
-    console.log("Product updated successfully");
+    setAlert({ show: true, message: 'Product updated successfully', type: 'success', visible: true });
+
     
  
   } catch (error) {
 
     console.error("Error updating product: ", error);
+    setAlert({ show: true, message: 'Product Not Added', type: 'danger', visible: true });
   }
 }
 
@@ -314,11 +332,12 @@ const deleteProduct = async(id,imagePath)=>{
     // Delete the image file from Firebase Storage
     await deleteObject(imageRef);
     console.log(`Image file at ${imagePath} deleted`);
-
     // Call the function to refresh the categories
+    setAlert({ show: true, message: 'Product deleted successfully', type: 'success', visible: true });
     getAllcategory();
   } catch (error) {
     // console.error("Error deleting document or image file:", error);
+    setAlert({ show: true, message: 'Product is Not Deleted', type: 'danger', visible: true });
   }
 }
 
@@ -347,6 +366,8 @@ const savecategories = async (formData) => {
   if (!querySnapshot.empty) {
     // Name already exists within the same category
     console.log('An entry with this Name already exists in the same Category.');
+    setAlert({ show: true, message: 'An entry with this Name already exists in the same Category', type: 'danger', visible: true });
+    
     // Handle the situation accordingly, e.g., show a notification to the user
     return;
   }
@@ -357,6 +378,8 @@ const savecategories = async (formData) => {
     Category: category
   
   });
+
+  setAlert({ show: true, message: 'New Category Added successfully', type: 'success', visible: true });
 };
 
 
@@ -368,6 +391,7 @@ const savecategories = async (formData) => {
       Category:data.meals
     
     });
+    setAlert({ show: true, message: 'Category Updated successfully', type: 'success', visible: true });
     getAllcategory();
   };
 
@@ -377,11 +401,13 @@ const savecategories = async (formData) => {
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Category", `${id}`));
-      console.log(`Document with id ${id} deleted`);
+      setAlert({ show: true, message: "Category Deleted successfully", type: 'success', visible: true });
+      
   
       getAllcategory();
     } catch (error) {
       console.error("Error deleting document ", error);
+      setAlert({ show: true, message: 'An entry with this Name already exists in the same Category', type: 'danger', visible: true });
     }
    
   };
@@ -478,7 +504,7 @@ const savecategories = async (formData) => {
     getAllSubcategories,
     foodprod,
     getAllproducts,
-    updateProducts,deletesubdoc ,totalCategory,totalpro,totalsub,updatesubcatdata
+    updateProducts,deletesubdoc ,totalCategory,totalpro,totalsub,updatesubcatdata,alert,setAlert
     
   };
 

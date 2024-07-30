@@ -18,6 +18,8 @@ import {
   CCol,
   CFormSelect,
   CFormTextarea,
+  CPagination,
+  CPaginationItem
 } from "@coreui/react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import './Product.css';
@@ -31,6 +33,8 @@ const Product = () => {
  const[umealId,setumealId] = useState('');
  const[ucateId,setcateId] = useState('');
  const[uproductId,setproductId] = useState('');
+
+ const [currentPage, setCurrentPage] = useState(1);
 
 
   const [formData, setFormData] = useState({
@@ -112,7 +116,20 @@ const Product = () => {
     return item.Category===formData.meal;
   });
 
-  
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(foodprod.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = foodprod.slice(indexOfFirstItem, indexOfLastItem);
+
+
+  // Pagination
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) {
+      return;
+    }
+    setCurrentPage(pageNumber);
+  };
 
   useEffect(() => {
     getAllcategory();
@@ -123,7 +140,7 @@ const Product = () => {
 
   return (
     <>
-      <div className=" mt-lg-5">
+      <div className=" mt-lg-5 allcategoriess">
         <CTable>
           <CTableHead>
             <CTableRow>
@@ -139,7 +156,7 @@ const Product = () => {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {foodprod.map((item) => (
+            {currentItems.map((item) => (
               <CTableRow key={item.id}>
                 <CTableDataCell className="productImage">
                   <img src={item.ImageUrl} alt="productImage" />
@@ -163,6 +180,34 @@ const Product = () => {
             ))}
           </CTableBody>
         </CTable>
+      </div>
+      
+      <div className="fixed_pagination">
+        <CPagination aria-label="Page navigation example" align="end">
+          <CPaginationItem
+            aria-label="Previous"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            <span aria-hidden="true">&laquo;</span>
+          </CPaginationItem>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <CPaginationItem
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              active={currentPage === index + 1}
+            >
+              {index + 1}
+            </CPaginationItem>
+          ))}
+          <CPaginationItem
+            aria-label="Next"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            <span aria-hidden="true">&raquo;</span>
+          </CPaginationItem>
+        </CPagination>
       </div>
       <div>
         <CModal

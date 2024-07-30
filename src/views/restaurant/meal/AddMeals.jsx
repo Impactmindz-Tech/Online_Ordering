@@ -4,7 +4,9 @@ import "./category.css";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "react-modal";
-
+import { CAlert } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilCheckCircle, cilWarning } from '@coreui/icons';
 import {
   CForm,
   CFormInput,
@@ -21,6 +23,7 @@ import {
   CModalBody,
   CRow,
   CCol,
+  CCloseButton
 } from "@coreui/react";
 import { connectStorageEmulator } from "firebase/storage";
 Modal.setAppElement("#root");
@@ -56,7 +59,7 @@ export default function Category() {
     deletedoc,
 
     storecateImage,
-    updateImage,
+    updateImage,alert,setAlert
   } = useContext(OnlineContext);
 
   const handlesubmit = () => {
@@ -119,6 +122,17 @@ export default function Category() {
 
   return (
     <section>
+   <div className="row justify-content-center">
+      <div className="col-lg-3">
+        {/* Alert component */}
+        {alert.show && alert.visible && (
+          <CAlert color={alert.type} className="d-flex align-items-center" >
+            <CIcon icon={alert.type === 'success' ? cilCheckCircle : cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
+            <div>{alert.message}</div>   <CCloseButton className  ="ms-1" onClick={()=>setAlert({ ...alert, visible: false })} />
+          </CAlert>
+        )}
+      </div>
+    </div>
        <div className="row justify-content-center ">
         <div className="col-lg-8">
 
@@ -252,6 +266,7 @@ export default function Category() {
         </div>
       </div>
    </div>
+
     </section>
   );
 }
