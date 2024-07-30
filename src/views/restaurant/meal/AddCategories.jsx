@@ -189,7 +189,7 @@ export default function Addproduct() {
             <CTableBody>
               {currentItems.map((item) => (
                 <CTableRow key={item.id}>
-                  <CTableDataCell className="ps-4">{item.meals}</CTableDataCell>
+                  <CTableDataCell className="ps-4">{item.Category}</CTableDataCell>
                   <CTableDataCell className="text-center">
                     {/* {item.Name[selectedLanguage]} */}
                     

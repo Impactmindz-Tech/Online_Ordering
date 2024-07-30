@@ -464,7 +464,7 @@ const savecategories = async (formData) => {
       id: doc.id,
       ...doc.data(),
     }));
-
+      console.log(subcategories);
     setSubcategories(subcategories);
    
   };
