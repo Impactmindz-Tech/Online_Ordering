@@ -32,7 +32,7 @@ export default function Addproduct() {
     getAllcategory,
     savecategories,
     deletesubdoc,
-    allcategorie,
+    allcategorie,alert,setAlert
   } = useContext(OnlineContext);
 
   const [visible, setVisible] = useState(false);
@@ -119,6 +119,25 @@ export default function Addproduct() {
 
   return (
     <>
+          <div className="row justify-content-center">
+        <div className="col-lg-4">
+          {alert.show && alert.visible && (
+            <CAlert color={alert.type} className="d-flex align-items-center ">
+              <CIcon
+                icon={alert.type === "success" ? cilCheckCircle : cilWarning}
+                className="flex-shrink-0 me-2"
+                width={24}
+                height={24}
+              />
+              <div>{alert.message}</div>
+              <CCloseButton
+                className="ms-auto"
+                onClick={() => setAlert({ ...alert, visible: false })}
+              />
+            </CAlert>
+          )}
+        </div>
+      </div>
       <div className="row max_height justify-content-center ">
         <div className="col-lg-4 mt-3">
           <div>

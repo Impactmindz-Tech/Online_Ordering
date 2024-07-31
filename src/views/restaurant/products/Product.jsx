@@ -25,7 +25,7 @@ import { OnlineContext } from "../../../Provider/OrderProvider";
 import './Product.css';
 
 const Product = () => {
-  const { foodprod, getAllproducts, updateProducts, getmeal, allcategorie, getAllcategory, getcategory, deleteProduct } = useContext(OnlineContext);
+  const { foodprod, getAllproducts, updateProducts, getmeal, allcategorie, getAllcategory, getcategory, deleteProduct,alert ,setAlert } = useContext(OnlineContext);
   const [visible, setVisible] = useState(false);
   const [file, setFile] = useState(null);
   const [mealid, setMealid] = useState();
@@ -136,7 +136,25 @@ const Product = () => {
 
 
   return (
-    <>
+    <>      <div className="row justify-content-center">
+    <div className="col-lg-4">
+      {alert.show && alert.visible && (
+        <CAlert color={alert.type} className="d-flex align-items-center ">
+          <CIcon
+            icon={alert.type === "success" ? cilCheckCircle : cilWarning}
+            className="flex-shrink-0 me-2"
+            width={24}
+            height={24}
+          />
+          <div>{alert.message}</div>
+          <CCloseButton
+            className="ms-auto"
+            onClick={() => setAlert({ ...alert, visible: false })}
+          />
+        </CAlert>
+      )}
+    </div>
+  </div>
       <div className=" mt-lg-5 allcategoriess">
         <CTable>
           <CTableHead>
