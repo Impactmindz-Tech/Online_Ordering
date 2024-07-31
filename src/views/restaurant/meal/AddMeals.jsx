@@ -35,7 +35,7 @@ export default function Category() {
   const [file, setFile] = useState(null);
   const [previousImage, setPreviousImage] = useState("");
   const [id, setId] = useState("");
-  const [edit, setEdit] = useState({ id: "", category: { en: "", he: "", ru: "" } });
+  const [edit, setEdit] = useState({ id: "", Name: { en: "", he: "", ru: "" } });
   const [language, setLanguage] = useState("en");
 
   const {
@@ -77,16 +77,16 @@ export default function Category() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEdit((prev) => {
-      return { ...prev, category: { ...prev.category, [name]: value } };
+      return { ...prev, Name: { ...prev.Name, [name]: value } };
     });
   };
 
   const handleUpdate = () => {
     setVisible(false);
     if (file) {
-      updateImage(id, edit.category, file);
+      updateImage(id, edit.Name, file);
     } else {
-      updateImage(id, edit.category, previousImage);
+      updateImage(id, edit.Name, previousImage);
     }
     getAllcategory();
   };
@@ -94,7 +94,7 @@ export default function Category() {
   const handleEdit = (id) => {
     setVisible(true);
     let findid = getmeal.find((item) => item.id === id);
-    setEdit({ category: { en: findid.Name.en, he: findid.Name.he, ru: findid.Name.ru } });
+    setEdit({ id, Name: { en: findid.Name.en, he: findid.Name.he, ru: findid.Name.ru } });
     setPreviousImage(findid.ImageUrl);
     setId(id);
   };
@@ -109,7 +109,9 @@ export default function Category() {
     setLanguage(e.target.value);
   };
 
-
+  useEffect(() => {
+    getAllcategory();
+  }, []);
 
   return (
     <section>
@@ -127,11 +129,11 @@ export default function Category() {
       <div className="row justify-content-center">
         <div className="col-lg-3 d-flex align-items-center gap-3">
           <label htmlFor="">Select language : </label>
-        <CFormSelect value={language} onChange={handleLanguageChange} className="widthselectbox">
-                  <option value="en">English</option>
-                  <option value="he">Hebrew</option>
-                  <option value="ru">Russian</option>
-                </CFormSelect>
+          <CFormSelect value={language} onChange={handleLanguageChange} className="widthselectbox">
+            <option value="en">English</option>
+            <option value="he">Hebrew</option>
+            <option value="ru">Russian</option>
+          </CFormSelect>
         </div>
         <div className="col-lg-8">
           <div className="row">
@@ -142,7 +144,6 @@ export default function Category() {
             </div>
             <div className="col-lg-4">
               <CCol xs>
-          
                 <CFormInput
                   name={language}
                   placeholder={`Enter Meal Name (${language})`}
@@ -173,7 +174,7 @@ export default function Category() {
             <CTableBody>
               {getmeal.map((item) => (
                 <CTableRow key={item.id}>
-                  <CTableDataCell className="categoryImage ps-4 ">
+                  <CTableDataCell className="categoryImage ps-4">
                     <img src={item.ImageUrl} alt="meal image" />
                   </CTableDataCell>
                   <CTableDataCell className="text-center">
@@ -225,7 +226,7 @@ export default function Category() {
                     )}
                   </CCol>
                   <CCol xs className="mt-3">
-                   <label htmlFor="">Choose language</label>
+                    <label htmlFor="">Choose language</label>
                     <CFormSelect value={language} onChange={handleLanguageChange}>
                       <option value="en">English</option>
                       <option value="he">Hebrew</option>
@@ -236,7 +237,7 @@ export default function Category() {
                       name={language}
                       placeholder={`Enter Meal Name (${language})`}
                       aria-label="Category Name"
-                      value={edit.category[language]}
+                      value={edit.Name[language]}
                       onChange={handleChange}
                     />
                   </CCol>

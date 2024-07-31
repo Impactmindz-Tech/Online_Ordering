@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-console.log(import.meta.env,'all environment variables');
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_API_URL,

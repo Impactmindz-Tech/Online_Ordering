@@ -35,7 +35,8 @@ export default function Addproduct() {
 
   const [edit, setedit] = useState({
     id: "",
-    Name: { en: "", ru: "", he: "" },
+    // Name: { en: "", ru: "", he: "" },
+    Name:"",
     meals: ""
   });
 

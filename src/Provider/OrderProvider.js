@@ -459,7 +459,7 @@ const savecategories = async (formData) => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log(categories);
+   
   
       setcategories(categories);
     } catch (error) {
@@ -474,34 +474,33 @@ const savecategories = async (formData) => {
   const getAllproducts = async (setFoodProducts) => {
     // Define the query to get all products from the "Products" collection
     const q = query(collection(db, "Products"));
-
+  
     // Set up a real-time listener for the query
     const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
-        const products = [];
-
-        // Iterate through the document changes
-        snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-                console.log("New product: ", change.doc.data());
-            }
-        });
-
-        // Collect all documents data into the products array
-        snapshot.docs.forEach((doc) => {
-            products.push(doc.data());
-        });
-
-        // Determine the source of the data
-        const source = snapshot.metadata.fromCache ? "local cache" : "server";
-        console.log("Data came from " + source);
-
-        // Update the state with the new products data
-        setfoodProducts(products);
+      const products = [];
+  
+      // Iterate through the document changes
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          // You can add additional handling for added documents if needed
+        }
+      });
+  
+      // Collect all documents data into the products array, including the document ID
+      snapshot.docs.forEach((doc) => {
+        products.push({ id: doc.id, ...doc.data() });
+      });
+  
+      // Determine the source of the data
+      const source = snapshot.metadata.fromCache ? "local cache" : "server";
+  
+      // Update the state with the new products data
+      setfoodProducts(products);
     });
-
+  
     // Return the unsubscribe function to stop listening for updates when needed
     return unsubscribe;
-};
+  };
 
 const getAllOrder = () => {
   const q = query(collection(db, "Orders"), orderBy("timestamp")); // Example with ordering by timestamp
@@ -512,7 +511,7 @@ const getAllOrder = () => {
       ...doc.data(),
     }));
 
-    console.log(orders); // Log orders to the console or update your state
+    // Log orders to the console or update your state
   }, (error) => {
     console.error("Error fetching orders:", error);
     // Handle the error appropriately
