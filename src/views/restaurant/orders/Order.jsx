@@ -32,6 +32,8 @@ export default function Order() {
           <CTable bordered>
             <CTableHead>
               <CTableRow>
+                
+                <CTableHeaderCell scope="col">Orders</CTableHeaderCell>
                 <CTableHeaderCell scope="col">State</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Postcode</CTableHeaderCell>
                 <CTableHeaderCell scope="col">town</CTableHeaderCell>
@@ -39,14 +41,14 @@ export default function Order() {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {orders.map((order, index) => (
+              {/* {orders.map((order, index) => (
                 <CTableRow key={index}>
                   <CTableDataCell> {order.location.state}</CTableDataCell>
                   <CTableDataCell>{order.location.postcode}</CTableDataCell>
                   <CTableDataCell> {order.location.town}</CTableDataCell>
                   <CTableDataCell> {order.location.country}</CTableDataCell>
                 </CTableRow>
-              ))}
+              ))} */}
             </CTableBody>
           </CTable>
         </CCol>
@@ -54,7 +56,7 @@ export default function Order() {
           <CTable bordered>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col">Orders</CTableHeaderCell>
+                
                 <CTableHeaderCell scope="col">Breakfast</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Lunch</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Dinner</CTableHeaderCell>

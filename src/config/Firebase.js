@@ -1,16 +1,35 @@
-import { initializeApp } from 'firebase/app'
+import { initializeApp } from 'firebase/app';
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
-import { getStorage } from "firebase/storage";
+console.log(import.meta.env,'all environment variables');
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyAFlMajT4Y91h_FbpgLS_tIDzwqfM6_0Vk',
-  authDomain: 'onlineordering-3025e.firebaseapp.com',
-  projectId: 'onlineordering-3025e',
-  storageBucket: 'onlineordering-3025e.appspot.com',
-  messagingSenderId: '708945464297',
-  appId: '1:708945464297:web:013ad425143ac741d75978',
-  measurementId: 'G-NG3PNKQLT5',
-  databaseURL:'https://onlineordering-3025e-default-rtdb.firebaseio.com/'
-}
+  apiKey: import.meta.env.VITE_APP_API_URL,
+  authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_APP_PROJECTID,
+  storageBucket: import.meta.env.VITE_APP_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_APP_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_APP_APPID
+};
 
-export const app = initializeApp(firebaseConfig)
-export const storage = getStorage(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const db = getFirestore(app);
+
+// Enable offline persistence
+enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.error('Persistence failed: Multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+      console.error('Persistence is not available');
+    }
+  });
+
+// Initialize Storage
+const storage = getStorage(app);
+
+export { app, db, storage };

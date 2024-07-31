@@ -109,9 +109,7 @@ export default function Category() {
     setLanguage(e.target.value);
   };
 
-  useEffect(() => {
-    getAllcategory();
-  }, []);
+
 
   return (
     <section>

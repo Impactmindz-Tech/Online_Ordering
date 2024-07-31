@@ -55,10 +55,6 @@ export default function Addproduct() {
     console.log(formData);
   };
 
-  useEffect(() => {
-    getAllcategory();
-    getcategory();
-  }, []);
 
   return (
     <>

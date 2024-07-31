@@ -26,7 +26,7 @@ import {
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, updatesubcatdata, getAllSubcategories, getAllcategory, savecategories, deletesubdoc, subcategories } = useContext(OnlineContext);
+  const { getmeal, updatesubcatdata, getAllcategory, savecategories, deletesubdoc,allcategorie } = useContext(OnlineContext);
 
   const [visible, setVisible] = useState(false);
   const [id, setid] = useState("");
@@ -41,10 +41,10 @@ export default function Addproduct() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(subcategories.length / itemsPerPage);
+  const totalPages = Math.ceil(allcategorie.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = subcategories.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = allcategorie.slice(indexOfFirstItem, indexOfLastItem);
 
   const [formData, setFormData] = useState({
     Name: { en: "", ru: "", he: "" },
@@ -78,18 +78,18 @@ export default function Addproduct() {
 
   const handleSubmit = async () => {
     await savecategories(formData);
-    await getAllSubcategories();
+
   };
 
   const handleupdate = async () => {
     setVisible(false);
     await updatesubcatdata(id, edit);
-    await getAllSubcategories();
+  
   };
 
   const handledelete = async (id) => {
     await deletesubdoc(id);
-    await getAllSubcategories();
+   
   };
 
   const handleedit = (id) => {
@@ -112,10 +112,7 @@ export default function Addproduct() {
     setCurrentPage(pageNumber);
   };
 
-  useEffect(() => {
-    getAllcategory();
-    getAllSubcategories();
-  }, []);
+
 
   return (
     <>

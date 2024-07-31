@@ -82,7 +82,8 @@ const Product = () => {
     
     let findid = foodprod.find((item) => item.id === productId);
     // find the corresponding image path
-   let imagepath = findid.ImageUrl;
+   let imagepath = findid.ImageUrl; 
+   console.log(productId,'pro');
 
 
 
@@ -131,10 +132,6 @@ const Product = () => {
     setCurrentPage(pageNumber);
   };
 
-  useEffect(() => {
-    getAllcategory();
-    getAllproducts();
-  }, []);
 
 
 

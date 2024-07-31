@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { app, storage } from "../config/Firebase";
+import { app, storage,db } from "../config/Firebase";
 import { getDownloadURL, ref, uploadBytes ,deleteObject} from "firebase/storage";
 import { CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
@@ -21,7 +21,7 @@ import {
   onSnapshot,startAfter
 } from "firebase/firestore";
 import { Category } from "@mui/icons-material";
-const db = getFirestore(app);
+
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
   const [alert, setAlert] = useState({ show: false, message: '', type: '' })
@@ -166,19 +166,6 @@ export const OnlineContextProvider = (props) => {
   
  //function to get all Meals
 
-  const getAllcategory = async () => {
-    const q = query(collection(db, "Meals"),orderBy("Id"));
-
-    const querySnapshots = await getDocs(q);
-  
-    const categories = querySnapshots.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-   console.log(categories,'categorie')
-    setmeal(categories);
- 
-  };
 
 //delete MEal category
 const deletedoc = async (id, imagePath) => {
@@ -328,7 +315,7 @@ const updateProductsDetails = async(formData,downloadUrl,uproductId)=>{
 
 
 const deleteProduct = async(id,imagePath)=>{
-
+   console.log(id);
   try {
     // Delete the document from Firestore
     await deleteDoc(doc(db, "Products", `${id}`));
@@ -354,6 +341,29 @@ const deleteProduct = async(id,imagePath)=>{
 
 
 
+
+
+const getAllcategory = async () => {
+  try {
+    // Create a query to order documents by "Id"
+    const q = query(collection(db, "Meals"), orderBy("Id"));
+
+    // Fetch documents
+    const querySnapshots = await getDocs(q);
+
+    // Map documents to an array of categories
+    const categories = querySnapshots.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    console.log(categories, 'categorie');
+
+    // Update state with fetched categories
+    setmeal(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
 
 
 
@@ -414,96 +424,103 @@ const savecategories = async (formData) => {
   // delete subcategories
   const deletesubdoc = async (id) => {
     try {
-      // Delete the document from Firestore
-      await deleteDoc(doc(db, "Category", `${id}`));
-      setAlert({ show: true, message: "Category Deleted successfully", type: 'success', visible: true });
+      await deleteDoc(doc(db, "Category", id));
       
+      setAlert({ 
+        show: true, 
+        message: "Category deleted successfully", 
+        type: 'success', 
+        visible: true 
+      });
   
       getAllcategory();
     } catch (error) {
-      console.error("Error deleting document ", error);
-      setAlert({ show: true, message: 'An entry with this Name already exists in the same Category', type: 'danger', visible: true });
+      setAlert({ 
+        show: true, 
+        message: 'Failed to delete the category. Please try again later.', 
+        type: 'danger', 
+        visible: true 
+      });
     }
-   
+  };
+  
+
+
+
+
+
+
+  const getCategories = async () => {
+    try {
+      const q = query(collection(db, "Category"));
+      const querySnapshots = await getDocs(q);
+  
+      const categories = querySnapshots.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(categories);
+  
+      setcategories(categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
 
 
 
 
-
-
-
-
-
-
-
-
-  //get the category corresponding the meal
-  const getcategory = async () => {
-    const q = query(collection(db, 'Category'));
-
-    const querySnapshots = await getDocs(q);
-    const categories = querySnapshots.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setcategories(categories);
-
-    console.log(categories, "mealcategories");
-  };
-
- 
-
-  const getAllSubcategories = async () => {
-    const q = query(collection(db, "Category"));
-
-    const querySnapshots = await getDocs(q);
-    const lensubcategories = querySnapshots.size;
-    setsub(lensubcategories);
-    const subcategories = querySnapshots.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-      console.log(subcategories);
-    setSubcategories(subcategories);
-   
-  };
-
-
-
-
-  const getAllproducts = async () => {
+  const getAllproducts = async (setFoodProducts) => {
+    // Define the query to get all products from the "Products" collection
     const q = query(collection(db, "Products"));
 
-    const querySnapshots = await getDocs(q);
-  
-    const products = querySnapshots.docs.map((doc) => ({
+    // Set up a real-time listener for the query
+    const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+        const products = [];
+
+        // Iterate through the document changes
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+                console.log("New product: ", change.doc.data());
+            }
+        });
+
+        // Collect all documents data into the products array
+        snapshot.docs.forEach((doc) => {
+            products.push(doc.data());
+        });
+
+        // Determine the source of the data
+        const source = snapshot.metadata.fromCache ? "local cache" : "server";
+        console.log("Data came from " + source);
+
+        // Update the state with the new products data
+        setfoodProducts(products);
+    });
+
+    // Return the unsubscribe function to stop listening for updates when needed
+    return unsubscribe;
+};
+
+const getAllOrder = () => {
+  const q = query(collection(db, "Orders"), orderBy("timestamp")); // Example with ordering by timestamp
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const orders = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    setfoodProducts(products);
-   
-  };
+    console.log(orders); // Log orders to the console or update your state
+  }, (error) => {
+    console.error("Error fetching orders:", error);
+    // Handle the error appropriately
+  });
 
-  const getAllOrder = async () => {
-    const q = query(collection(db, "Orders"));
-    const querySnapshot = await getDocs(q);
-    const orders = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  
-const{}
-  
- const ordersdetails = orders.map((item)=>{
-  console.log(item.summery);
- })
-  
-    
-  };
-  
+  // Cleanup listener when no longer needed
+  return () => unsubscribe();
+};
 
 
 
@@ -512,8 +529,8 @@ const{}
 
 
   useEffect(() => {
-    getAllSubcategories();
-    getcategory();
+    getAllcategory();
+    getCategories();
     getAllproducts();
     getAllOrder();
   }, []);
@@ -528,10 +545,9 @@ const{}
     storecateImage,
     updateImage,
     savecategories,
-    getcategory,
+
     allcategorie,
     subcategories,
-    getAllSubcategories,
     foodprod,
     getAllproducts,
     updateProducts,deletesubdoc ,totalCategory,totalpro,totalsub,updatesubcatdata,alert,setAlert,getAllOrder
