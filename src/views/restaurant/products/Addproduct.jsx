@@ -1,13 +1,15 @@
 import { useState, useContext, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "./Product.css";
+import CIcon from "@coreui/icons-react";
+import { cilCheckCircle, cilWarning } from "@coreui/icons";
 import {
   CFormInput,
   CButton,
   CRow,
   CCol,
   CFormSelect,
-  CFormTextarea,
+  CFormTextarea,CAlert
 } from "@coreui/react";
 import camera from "../../../assets/images/camera.png";
 

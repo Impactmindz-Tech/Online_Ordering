@@ -4,6 +4,8 @@ import "../products/Product.css";
 import "./category.css";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CIcon from "@coreui/icons-react";
+import { cilCheckCircle, cilWarning } from "@coreui/icons";
 import {
   CForm,
   CFormInput,
@@ -21,7 +23,7 @@ import {
   CCol,
   CFormSelect,
   CPagination,
-  CPaginationItem,
+  CPaginationItem,CAlert
 } from "@coreui/react";
 import camera from "../../../assets/images/camera.png";
 
