@@ -4,9 +4,9 @@ import "./category.css";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "react-modal";
-import { CAlert } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilCheckCircle, cilWarning } from '@coreui/icons';
+import { CAlert } from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilCheckCircle, cilWarning } from "@coreui/icons";
 import {
   CForm,
   CFormInput,
@@ -23,7 +23,7 @@ import {
   CModalBody,
   CCol,
   CCloseButton,
-  CFormSelect
+  CFormSelect,
 } from "@coreui/react";
 Modal.setAppElement("#root");
 
@@ -35,7 +35,10 @@ export default function Category() {
   const [file, setFile] = useState(null);
   const [previousImage, setPreviousImage] = useState("");
   const [id, setId] = useState("");
-  const [edit, setEdit] = useState({ id: "", Name: { en: "", he: "", ru: "" } });
+  const [edit, setEdit] = useState({
+    id: "",
+    Name: { en: "", he: "", ru: "" },
+  });
   const [language, setLanguage] = useState("en");
 
   const {
@@ -45,7 +48,7 @@ export default function Category() {
     storecateImage,
     updateImage,
     alert,
-    setAlert
+    setAlert,
   } = useContext(OnlineContext);
 
   const openModal = (imageUrl) => {
@@ -94,7 +97,10 @@ export default function Category() {
   const handleEdit = (id) => {
     setVisible(true);
     let findid = getmeal.find((item) => item.id === id);
-    setEdit({ id, Name: { en: findid.Name.en, he: findid.Name.he, ru: findid.Name.ru } });
+    setEdit({
+      id,
+      Name: { en: findid.Name.en, he: findid.Name.he, ru: findid.Name.ru },
+    });
     setPreviousImage(findid.ImageUrl);
     setId(id);
   };
@@ -116,59 +122,98 @@ export default function Category() {
   return (
     <section>
       <div className="row justify-content-center">
-        <div className="col-lg-3">
+        <div className="col-lg-4">
           {alert.show && alert.visible && (
-            <CAlert color={alert.type} className="d-flex align-items-center">
-              <CIcon icon={alert.type === 'success' ? cilCheckCircle : cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
+            <CAlert color={alert.type} className="d-flex align-items-center ">
+              <CIcon
+                icon={alert.type === "success" ? cilCheckCircle : cilWarning}
+                className="flex-shrink-0 me-2"
+                width={24}
+                height={24}
+              />
               <div>{alert.message}</div>
-              <CCloseButton className="ms-1" onClick={() => setAlert({ ...alert, visible: false })} />
+              <CCloseButton
+                className="ms-auto"
+                onClick={() => setAlert({ ...alert, visible: false })}
+              />
             </CAlert>
           )}
         </div>
       </div>
-      <div className="row justify-content-center">
-        <div className="col-lg-3 d-flex align-items-center gap-3">
-          <label htmlFor="">Select language : </label>
-          <CFormSelect value={language} onChange={handleLanguageChange} className="widthselectbox">
-            <option value="en">English</option>
-            <option value="he">Hebrew</option>
-            <option value="ru">Russian</option>
-          </CFormSelect>
-        </div>
-        <div className="col-lg-8">
-          <div className="row">
-            <div className="col-lg-4">
-              <CCol xs>
-                <CFormInput type="file" id="formFile" onChange={handleFileChange} />
-              </CCol>
+
+      <div className="row align-items-center">
+        <div className="col-lg-4">
+          <div className="mb-4">
+            <h3 className="text-center">Add Meal</h3>
+          </div>
+
+          {/* laguage */}
+          <div>
+            <CCol xs>
+              <CFormInput
+                type="file"
+                id="formFile"
+                onChange={handleFileChange}
+              />
+            </CCol>
+          </div>
+
+          <div className="row align-items-center mt-4">
+            <div className="col-lg-6">
+              <div className=" align-items-center gap-3">
+                <label htmlFor="">Select the language:</label>
+                <CFormSelect
+                  value={language}
+                  onChange={handleLanguageChange}
+                  className="widthselectbox mt-3"
+                >
+                  <option value="en">English</option>
+                  <option value="he">Hebrew</option>
+                  <option value="ru">Russian</option>
+                </CFormSelect>
+              </div>
             </div>
-            <div className="col-lg-4">
-              <CCol xs>
-                <CFormInput
-                  name={language}
-                  placeholder={`Enter Meal Name (${language})`}
-                  aria-label="Meal Name"
-                  value={category[language]}
-                  onChange={(e) => setCategory({ ...category, [language]: e.target.value })}
-                />
-              </CCol>
-            </div>
-            <div className="col-lg-4">
-              <CButton className="w-100" color="primary" onClick={handleSubmit}>
-                Add Meal
-              </CButton>
+
+            <div className="col-lg-6 mt-4 pt-3">
+              <div>
+                <CCol xs>
+                  <CFormInput
+                    name={language}
+                    placeholder={`Enter Meal Name (${language})`}
+                    aria-label="Meal Name"
+                    value={category[language]}
+                    onChange={(e) =>
+                      setCategory({ ...category, [language]: e.target.value })
+                    }
+                  />
+                </CCol>
+              </div>
             </div>
           </div>
+
+          <div className="mt-4">
+            <CButton className="w-100" color="primary" onClick={handleSubmit}>
+              Add Meal
+            </CButton>
+          </div>
         </div>
-      </div>
-      <div className="row justify-content-center">
+
         <div className="category_list mt-lg-5 col-lg-8">
+          <div className="text-center mb-3">
+            <h3>All Meals</h3>
+          </div>
           <CTable>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col" className="ps-4">Image</CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-center">Name</CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-end pe-5">Action</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="ps-4">
+                  Image
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-center">
+                  Name
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-end pe-5">
+                  Action
+                </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -210,7 +255,9 @@ export default function Category() {
               <CModalBody>
                 <div className=" gap-2">
                   <CCol xs>
-                    <label htmlFor="" className="mb-2">Image</label>
+                    <label htmlFor="" className="mb-2">
+                      Image
+                    </label>
                     <CFormInput
                       type="file"
                       id="formFile"
@@ -227,12 +274,17 @@ export default function Category() {
                   </CCol>
                   <CCol xs className="mt-3">
                     <label htmlFor="">Choose language</label>
-                    <CFormSelect value={language} onChange={handleLanguageChange}>
+                    <CFormSelect
+                      value={language}
+                      onChange={handleLanguageChange}
+                    >
                       <option value="en">English</option>
                       <option value="he">Hebrew</option>
                       <option value="ru">Russian</option>
                     </CFormSelect>
-                    <label htmlFor="" className="mb-2 mt-2">Meal Name</label>
+                    <label htmlFor="" className="mb-2 mt-2">
+                      Meal Name
+                    </label>
                     <CFormInput
                       name={language}
                       placeholder={`Enter Meal Name (${language})`}
