@@ -35,15 +35,10 @@ export const OnlineContextProvider = (props) => {
   const [allcategorie, setcategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [foodprod, setfoodProducts] = useState([]);
-
-  const [lastDoc, setLastDoc] = useState(null);
-  const [cat, setCat] = useState([]);
-  const [totalCategory, setlengthCate] = useState([]);
-
-  const [totalsub, setsub] = useState();
-
-  const [totalpro, setlenpro] = useState();
-  const [orderDetail, SetOrder] = useState([]);
+  const[location,setlocation]  = useState([]);
+  const[summary,setSummary] = useState([]);
+  const[Schedule, setSchedule] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   //store Meals
   const storecateImage = async (file, category) => {
@@ -588,8 +583,8 @@ export const OnlineContextProvider = (props) => {
   };
 
   const getAllOrder = () => {
-    const q = query(collection(db, "Orders"), orderBy("timestamp")); // Example with ordering by timestamp
-
+    const q = query(collection(db, "Orders")); // Example with ordering by timestamp
+  
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -597,18 +592,75 @@ export const OnlineContextProvider = (props) => {
           id: doc.id,
           ...doc.data(),
         }));
-
-        // Log orders to the console or update your state
+        setOrders(orders);
+      
+        // Process and log order details
+        orders.forEach((order) => {
+          const location = order.location || {};
+          const summary = order.summary || {};
+          const schedule = order.schedule || {};
+  
+          // Extracting location details
+          const city = location.city || '';
+          const state = location.state || '';
+          const postalCode = location.postcode || '';
+          const country = location.country || '';
+          const railway = location.railway || '';
+          const road = location.road || '';
+          const stateDistrict = location.state_district || '';
+          const suburb = location.suburb || '';
+  
+          // Extracting summary details
+          const breakfast = summary.breakfast || [];
+          const lunch = summary.lunch || [];
+          const dinner = summary.dinner || [];
+  
+          // Set the details or use as needed
+          setlocation({
+            city,
+            state,
+            country,
+            postalCode,
+            railway,
+            road,
+            stateDistrict,
+            suburb
+          });
+  
+          setSummary({
+            breakfast,
+            lunch,
+            dinner
+          });
+  
+          setSchedule({
+            staying: schedule.Staying || false,
+            tomorrow: schedule.Tomorrow || false,
+            week: schedule.Week || false
+          });
+  
+          // Log order details for debugging
+          console.log(`Order ID: ${order.id}`);
+          console.log(`Location: ${city}, ${state}, ${country}, ${postalCode}`);
+          console.log(`Schedule: Staying: ${schedule.Staying}, Tomorrow: ${schedule.Tomorrow}, Week: ${schedule.Week}`);
+          console.log('Summary:', {
+            breakfast,
+            lunch,
+            dinner
+          });
+        });
       },
       (error) => {
         console.error("Error fetching orders:", error);
         // Handle the error appropriately
       }
     );
-
+  
     // Cleanup listener when no longer needed
     return () => unsubscribe();
   };
+  
+  
 
   useEffect(() => {
     getAllcategory();
@@ -635,13 +687,16 @@ export const OnlineContextProvider = (props) => {
     getAllproducts,
     updateProducts,
     deletesubdoc,
-    totalCategory,
-    totalpro,
-    totalsub,
+
     updatesubcatdata,
     alert,
     setAlert,
     getAllOrder,
+    location,
+    summary,
+    Schedule,
+    orders
+  
   };
 
   return (
