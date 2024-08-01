@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "../products/Product.css";
 import "./category.css";
@@ -23,29 +23,30 @@ import {
   CCol,
   CFormSelect,
   CPagination,
-  CPaginationItem,CAlert
+  CPaginationItem,
+  CAlert,
+  CCloseButton
 } from "@coreui/react";
-import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
   const {
     getmeal,
     updatesubcatdata,
-    getAllcategory,
     savecategories,
     deletesubdoc,
-    allcategorie,alert,setAlert
+    allcategorie,
+    alert,
+    setAlert
   } = useContext(OnlineContext);
 
   const [visible, setVisible] = useState(false);
-  const [id, setid] = useState("");
+  const [id, setId] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("en"); // Default to English
   const [editLanguage, setEditLanguage] = useState("en"); // Language for editing
 
-  const [edit, setedit] = useState({
+  const [edit, setEdit] = useState({
     id: "",
-    // Name: { en: "", ru: "", he: "" },
-    Name: "",
+    Name: { en: "", ru: "", he: "" },
     meals: "",
   });
 
@@ -66,20 +67,28 @@ export default function Addproduct() {
 
     if (name.startsWith("categoryname_")) {
       const lang = name.split("_")[1];
-      setFormData((prevState) => ({
-        ...prevState,
-        Name: { ...prevState.Name, [lang]: value },
-      }));
-      setedit((prevState) => ({
+      setFormData(prevState => ({
         ...prevState,
         Name: { ...prevState.Name, [lang]: value },
       }));
     } else {
-      setFormData((prevState) => ({
+      setFormData(prevState => ({
         ...prevState,
         [name]: value,
       }));
-      setedit((prevState) => ({
+    }
+  };
+
+  const handleModalChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "Name") {
+      setEdit(prevState => ({
+        ...prevState,
+        Name: { ...prevState.Name, [editLanguage]: value },
+      }));
+    } else {
+      setEdit(prevState => ({
         ...prevState,
         [name]: value,
       }));
@@ -90,26 +99,24 @@ export default function Addproduct() {
     await savecategories(formData);
   };
 
-  const handleupdate = async () => {
+  const handleUpdate = async () => {
     setVisible(false);
     await updatesubcatdata(id, edit);
   };
 
-  const handledelete = async (id) => {
+  const handleDelete = async (id) => {
     await deletesubdoc(id);
   };
 
-  const handleedit = (id) => {
+  const handleEdit = (id) => {
     setVisible(true);
-    let findid = subcategories.find((item) => item.id === id);
-    console.log(findid);
-    setedit({
+    let findid = allcategorie.find((item) => item.id === id);
+    setEdit({
       id: id,
       Name: findid.Name,
       meals: findid.Category,
     });
-    console.log(findid);
-    setid(id);
+    setId(id);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -121,7 +128,7 @@ export default function Addproduct() {
 
   return (
     <>
-          <div className="row justify-content-center">
+      <div className="row justify-content-center">
         <div className="col-lg-4">
           {alert.show && alert.visible && (
             <CAlert color={alert.type} className="d-flex align-items-center ">
@@ -140,74 +147,62 @@ export default function Addproduct() {
           )}
         </div>
       </div>
-      <div className="row max_height justify-content-center ">
+      <div className="row max_height justify-content-center">
         <div className="col-lg-4 mt-3">
           <div>
             <h3 className="text-center mb-2">Add Category</h3>
           </div>
 
-          <div className="">
-            <CCol xs>
-              <label className="mb-2" htmlFor="languageSelect">
-                Select Language
-              </label>
-              <CFormSelect
-                id="languageSelect"
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-              >
-                <option value="en">English</option>
-                <option value="ru">Russian</option>
-                <option value="he">Hebrew</option>
-              </CFormSelect>
-            </CCol>
-          </div>
+          <CCol xs>
+            <label className="mb-2" htmlFor="languageSelect">
+              Select Language
+            </label>
+            <CFormSelect
+              id="languageSelect"
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="ru">Russian</option>
+              <option value="he">Hebrew</option>
+            </CFormSelect>
+          </CCol>
 
           <div className="row mt-3">
             <div className="col-lg-6">
-              <div>
-                <label className="mb-2" htmlFor="mealName">
-                  Select The Meal
-                </label>
-                <div>
-                  <CFormSelect
-                    name="meal"
-                    value={formData.meal}
-                    onChange={handleChange}
-                  >
-                    <option value="">Choose Meal</option>
-                    {getmeal.map((item) => (
-                      <option key={item.id} value={item.Name}>
-                        {item.Name}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                </div>
-              </div>
+              <label className="mb-2" htmlFor="mealName">
+                Select The Meal
+              </label>
+              <CFormSelect
+                name="meal"
+                value={formData.meal}
+                onChange={handleChange}
+              >
+                <option value="">Choose Meal</option>
+                {getmeal.map((item) => (
+                  <option key={item.id} value={item.Name}>
+                    {item.Name}
+                  </option>
+                ))}
+              </CFormSelect>
             </div>
             <div className="col-lg-6">
-              <div className="">
-                <CCol xs>
-                  <label className="mb-2" htmlFor="categoryName">
-                    Category Name
-                  </label>
-                  <CFormInput
-                    placeholder={`Category Name (${selectedLanguage})`}
-                    name={`categoryname_${selectedLanguage}`}
-                    value={formData.Name[selectedLanguage]}
-                    onChange={handleChange}
-                  />
-                </CCol>
-              </div>
+              <label className="mb-2" htmlFor="categoryName">
+                Category Name
+              </label>
+              <CFormInput
+                placeholder={`Category Name (${selectedLanguage})`}
+                name={`categoryname_${selectedLanguage}`}
+                value={formData.Name[selectedLanguage]}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
-          <div className="mt-4">
-            <div className="text-end">
-              <CButton className="w-100" color="primary" onClick={handleSubmit}>
-                Add Category
-              </CButton>
-            </div>
+          <div className="mt-4 text-end">
+            <CButton className="w-100" color="primary" onClick={handleSubmit}>
+              Add Category
+            </CButton>
           </div>
         </div>
 
@@ -237,10 +232,10 @@ export default function Addproduct() {
                     {item.Name}
                   </CTableDataCell>
                   <CTableDataCell className="text-end">
-                    <CButton onClick={() => handleedit(item.id)}>
+                    <CButton onClick={() => handleEdit(item.id)}>
                       <ModeEditIcon />
                     </CButton>
-                    <CButton onClick={() => handledelete(item.id)}>
+                    <CButton onClick={() => handleDelete(item.id)}>
                       <DeleteIcon style={{ color: "#dd0000" }} />
                     </CButton>
                   </CTableDataCell>
@@ -251,85 +246,75 @@ export default function Addproduct() {
         </div>
       </div>
 
-      <div className="popup">
-        <CModal
-          className="custom_modal"
-          alignment="center"
-          backdrop="static"
-          visible={visible}
-          onClose={() => setVisible(false)}
-          aria-labelledby="StaticBackdropExampleLabel"
-        >
-          <CModalHeader>
-            <CModalTitle id="StaticBackdropExampleLabel">
-              Edit Category
-            </CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <div className="gap-2">
-              <div className="row">
-                <div className="col-lg-6">
-                  <label className="mb-2" htmlFor="mealName">
-                    Select The Meal
-                  </label>
-                  <div>
-                    <CFormSelect
-                      name="meals"
-                      value={edit.meals}
-                      onChange={handleChange}
-                    >
-                      <option value="">Choose Meal</option>
-                      {getmeal.map((item) => (
-                        <option key={item.id} value={item.Name}>
-                          {item.Name}
-                        </option>
-                      ))}
-                    </CFormSelect>
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <CCol xs>
-                    <label className="mb-2" htmlFor="editLanguageSelect">
-                      Select Language
-                    </label>
-                    <CFormSelect
-                      id="editLanguageSelect"
-                      value={editLanguage}
-                      onChange={(e) => setEditLanguage(e.target.value)}
-                    >
-                      <option value="en">English</option>
-                      <option value="ru">Russian</option>
-                      <option value="he">Hebrew</option>
-                    </CFormSelect>
-                  </CCol>
-                  <CCol xs>
-                    <label htmlFor="categoryName" className="mb-2">
-                      Category
-                    </label>
-                    <CFormInput
-                      name="Name"
-                      // name={`${editLanguage}`}
-                      placeholder={`Enter Category Name (${editLanguage})`}
-                      // value={edit.Name[editLanguage]}
-                      value={edit.Name}
-                      onChange={handleChange}
-                    />
-                  </CCol>
-                </div>
-              </div>
-              <div className="text-center">
-                <CButton
-                  color="primary"
-                  className="mt-3"
-                  onClick={handleupdate}
+      <CModal
+        className="custom_modal"
+        alignment="center"
+        backdrop="static"
+        visible={visible}
+        onClose={() => setVisible(false)}
+        aria-labelledby="StaticBackdropExampleLabel"
+      >
+        <CModalHeader>
+          <CModalTitle id="StaticBackdropExampleLabel">
+            Edit Category
+          </CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <div className="gap-2">
+            <div className="row">
+              <div className="col-lg-6">
+                <label className="mb-2" htmlFor="mealName">
+                  Select The Meal
+                </label>
+                <CFormSelect
+                  name="meals"
+                  value={edit.meals}
+                  onChange={handleModalChange}
                 >
-                  Update
-                </CButton>
+                  <option value="">Choose Meal</option>
+                  {getmeal.map((item) => (
+                    <option key={item.id} value={item.Name}>
+                      {item.Name}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </div>
+              <div className="col-lg-6">
+                <CCol xs>
+                  <label className="mb-2" htmlFor="editLanguageSelect">
+                    Select Language
+                  </label>
+                  <CFormSelect
+                    id="editLanguageSelect"
+                    value={editLanguage}
+                    onChange={(e) => setEditLanguage(e.target.value)}
+                  >
+                    <option value="en">English</option>
+                    <option value="ru">Russian</option>
+                    <option value="he">Hebrew</option>
+                  </CFormSelect>
+                </CCol>
+                <CCol xs>
+                  <label htmlFor="categoryName" className="mb-2">
+                    Category
+                  </label>
+                  <CFormInput
+                    name="Name"
+                    placeholder={`Enter Category Name (${editLanguage})`}
+                    value={edit.Name[editLanguage] || ""}
+                    onChange={handleModalChange}
+                  />
+                </CCol>
               </div>
             </div>
-          </CModalBody>
-        </CModal>
-      </div>
+            <div className="text-center">
+              <CButton color="primary" className="mt-3" onClick={handleUpdate}>
+                Update
+              </CButton>
+            </div>
+          </div>
+        </CModalBody>
+      </CModal>
 
       <div className="fixed_pagination">
         <CPagination aria-label="Page navigation example" align="end">

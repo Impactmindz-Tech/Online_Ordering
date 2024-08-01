@@ -19,3 +19,41 @@ table {
     height: auto;
   }
   
+
+  .table_layout {
+    height: 85vh;
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+  }
+  
+  .table_container {
+
+    width: 130%; /* Adjust height as needed */
+
+  }
+  
+  table {
+    width: 100%; /* Ensure the table takes the full width of the container */
+    border-collapse: collapse; /* Optional: to remove gaps between cells */
+  }
+  
+  th, td {
+    padding: 8px; /* Optional: for better spacing */
+    border: 1px solid #ddd; /* Optional: for better visibility of borders */
+  }
+ 
+ ::-webkit-scrollbar {
+    background: #a9a9a9;
+    width: 4px;
+    outline: none;
+  }
+  
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #a9a9a9;
+  }
+  
+
+  ::-webkit-scrollbar-thumb {
+    background: #2a2f3e;
+  }
