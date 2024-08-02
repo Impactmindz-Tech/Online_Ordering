@@ -180,8 +180,8 @@ export default function Addproduct() {
               >
                 <option value="">Choose Meal</option>
                 {getmeal.map((item) => (
-                  <option key={item.id} value={item.Name}>
-                    {item.Name}
+                  <option key={item.id} value={item.Name["en"]}>
+                    {item.Name["en"]}
                   </option>
                 ))}
               </CFormSelect>
@@ -222,14 +222,14 @@ export default function Addproduct() {
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
-            <CTableBody>
+            {/* <CTableBody>
               {currentItems.map((item) => (
                 <CTableRow key={item.id}>
                   <CTableDataCell className="ps-4">
                     {item.Category}
                   </CTableDataCell>
                   <CTableDataCell className="text-center">
-                    {item.Name}
+                    {item.Name.en}
                   </CTableDataCell>
                   <CTableDataCell className="text-end">
                     <CButton onClick={() => handleEdit(item.id)}>
@@ -241,7 +241,7 @@ export default function Addproduct() {
                   </CTableDataCell>
                 </CTableRow>
               ))}
-            </CTableBody>
+            </CTableBody> */}
           </CTable>
         </div>
       </div>
@@ -273,8 +273,8 @@ export default function Addproduct() {
                 >
                   <option value="">Choose Meal</option>
                   {getmeal.map((item) => (
-                    <option key={item.id} value={item.Name}>
-                      {item.Name}
+                    <option key={item.id} value={item.Name.en}>
+                      {item.Name.en}
                     </option>
                   ))}
                 </CFormSelect>
@@ -294,55 +294,31 @@ export default function Addproduct() {
                     <option value="he">Hebrew</option>
                   </CFormSelect>
                 </CCol>
-                <CCol xs>
-                  <label htmlFor="categoryName" className="mb-2">
-                    Category
-                  </label>
-                  <CFormInput
-                    name="Name"
-                    placeholder={`Enter Category Name (${editLanguage})`}
-                    value={edit.Name[editLanguage] || ""}
-                    onChange={handleModalChange}
-                  />
-                </CCol>
+
+                <label className="mb-2 mt-3" htmlFor="categoryName">
+                  Category Name
+                </label>
+                <CFormInput
+                  name="Name"
+                  placeholder={`Category Name (${editLanguage})`}
+                  value={edit.Name[editLanguage]}
+                  onChange={handleModalChange}
+                />
               </div>
             </div>
-            <div className="text-center">
-              <CButton color="primary" className="mt-3" onClick={handleUpdate}>
+
+            <div className="mt-4 text-end">
+              <CButton
+                className="w-100"
+                color="primary"
+                onClick={() => handleUpdate(edit.id)}
+              >
                 Update
               </CButton>
             </div>
           </div>
         </CModalBody>
       </CModal>
-
-      <div className="fixed_pagination">
-        <CPagination aria-label="Page navigation example" align="end">
-          <CPaginationItem
-            aria-label="Previous"
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-          >
-            <span aria-hidden="true">&laquo;</span>
-          </CPaginationItem>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <CPaginationItem
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              active={currentPage === index + 1}
-            >
-              {index + 1}
-            </CPaginationItem>
-          ))}
-          <CPaginationItem
-            aria-label="Next"
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          >
-            <span aria-hidden="true">&raquo;</span>
-          </CPaginationItem>
-        </CPagination>
-      </div>
     </>
   );
 }

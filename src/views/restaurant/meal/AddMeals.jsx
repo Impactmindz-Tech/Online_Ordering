@@ -223,7 +223,7 @@ export default function Category() {
                     <img src={item.ImageUrl} alt="meal image" />
                   </CTableDataCell>
                   <CTableDataCell className="text-center">
-                    {item.Name}
+                    {item.Name.en}
                     {/* {item.Name.en} / {item.Name.he} / {item.Name.ru} */}
                   </CTableDataCell>
                   <CTableDataCell className="text-end pe-4">

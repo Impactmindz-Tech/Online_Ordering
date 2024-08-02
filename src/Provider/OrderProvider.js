@@ -297,16 +297,43 @@ export const OnlineContextProvider = (props) => {
   };
 
   const saveproductDetail = async (formData, downloadUrl) => {
-    await setDoc(doc(db, "Products", Date.now().toString()), {
-      Name: formData?.dishName,
-      category: formData?.category,
-      meal: formData?.meal,
-      isAvailable: formData?.isAvailable,
-      ImageUrl: downloadUrl, // This can be null if no image is uploaded
-      DietaryInfo: formData?.dietaryInfo,
-      Description: formData?.description,
-      // Assuming Subcategory is part of formData
-    });
+    try {
+      const q = query(collection(db, "Category"), where("Name.en", "==", formData.category));
+      const querySnapshot = await getDocs(q);
+  
+      let categoryData = null;
+      querySnapshot.forEach((doc) => {
+        categoryData = doc.data(); // Assuming you want the first match
+      });
+  
+      if (!categoryData) {
+        console.log("No matching category found");
+        return;
+      }
+  
+      // Extract only ar, he, and en values from category
+      const filteredCategoryData = {
+        ru: categoryData.Name.ru,
+        he: categoryData.Name.he,
+        en: categoryData.Name.en,
+      };
+  
+      console.log(filteredCategoryData);
+  
+      await setDoc(doc(db, "Products", Date.now().toString()), {
+        Name: formData?.dishName,
+        category: filteredCategoryData, // Saving only ar, he, and en values
+        meal: formData?.meal,
+        isAvailable: formData?.isAvailable,
+        ImageUrl: downloadUrl, // This can be null if no image is uploaded
+        DietaryInfo: formData?.dietaryInfo,
+        Description: formData?.description,
+        // Assuming Subcategory is part of formData
+      });
+  
+    } catch (error) {
+      console.error("Error saving product details:", error);
+    }
   };
 
   const updateProducts = async (file, formData, uproductId) => {
@@ -316,16 +343,14 @@ export const OnlineContextProvider = (props) => {
       // Check if the file is a new image file or an existing URL
       if (!file.startsWith("http")) {
         const fileName = Date.now().toString() + ".jpg";
-        console.log(fileName, "djkfhk");
+       
         const response = await fetch(file);
-        console.log(response, "response");
+     
         const blob = await response.blob();
         const imageRef = ref(storage, "Products/" + fileName);
-        console.log(imageRef, "img");
-
+    
         await uploadBytes(imageRef, blob);
-        console.log("File uploaded");
-
+ 
         downloadUrl = await getDownloadURL(imageRef);
         setAlert({
           show: true,
@@ -333,13 +358,13 @@ export const OnlineContextProvider = (props) => {
           type: "success",
           visible: true,
         });
-        console.log(downloadUrl);
+   
       }
 
       // Update product details with either the new or existing image URL
       updateProductsDetails(formData, downloadUrl, uproductId);
     } catch (error) {
-      console.error("Error updating product: ", error);
+  
       setAlert({
         show: true,
         message: "Product Not Updated",
@@ -384,15 +409,15 @@ export const OnlineContextProvider = (props) => {
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Products", `${id}`));
-      console.log(`Document with id ${id} deleted`);
+
 
       // Reference to the image file in Firebase Storage
       const imageRef = ref(storage, imagePath);
-      console.log(imageRef);
+  
 
       // Delete the image file from Firebase Storage
       await deleteObject(imageRef);
-      console.log(`Image file at ${imagePath} deleted`);
+   
       // Call the function to refresh the categories
       setAlert({
         show: true,
@@ -437,10 +462,31 @@ export const OnlineContextProvider = (props) => {
   //category
 
   const savecategories = async (formData) => {
+
     const category = formData?.meal; // Assuming 'meal' is the category
     const name = formData?.Name; // Ensure this matches the name field in formData
 
-    console.log(formData);
+    const qs = query(collection(db, "Meals"), where("Name.en", "==", category));
+      const querySnapshots = await getDocs(qs);
+  
+      let categoryData = null;
+      querySnapshots.forEach((doc) => {
+        categoryData = doc.data(); // Assuming you want the first match
+      });
+  
+      if (!categoryData) {
+        console.log("No matching category found");
+        return;
+      }
+  
+      // Extract only ar, he, and en values from category
+      const filteredCategoryData = {
+        ru: categoryData.Name.ru,
+        he: categoryData.Name.he,
+        en: categoryData.Name.en,
+      };
+  
+      console.log(filteredCategoryData,'jksdjk');
 
     // Check if category or name is undefined
     if (!category || !name) {
@@ -482,7 +528,7 @@ export const OnlineContextProvider = (props) => {
     // If name doesn't exist within the same category, proceed to save the new entry
     await setDoc(doc(db, "Category", Date.now().toString()), {
       Name: name,
-      Category: category,
+      Category: filteredCategoryData,
     });
 
     setAlert({

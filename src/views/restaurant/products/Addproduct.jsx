@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "./Product.css";
 import CIcon from "@coreui/icons-react";
@@ -9,15 +9,18 @@ import {
   CRow,
   CCol,
   CFormSelect,
-  CFormTextarea,CAlert
+  CFormTextarea,
+  CAlert,
+  CCloseButton,
 } from "@coreui/react";
 import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
-  const { getmeal, saveproduct, getcategory, allcategorie, getAllcategory ,alert ,setAlert} = useContext(OnlineContext);
+  const { getmeal, saveproduct, allcategorie, alert, setAlert } = useContext(OnlineContext);
   const [file, setFile] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
 
+  console.log(allcategorie,'sdhjc')
   const [formData, setFormData] = useState({
     dishName: { en: "", ru: "", he: "" },
     category: "",
@@ -50,20 +53,21 @@ export default function Addproduct() {
     }
   };
 
-  const filteredCategories = allcategorie.filter((item) => item.Category === formData.meal);
+  const filteredCategories = allcategorie.filter((item) => item.Category.en === formData.meal);
 
+
+console.log(filteredCategories,'dsfasdkj');
   const handleSubmit = async () => {
     await saveproduct(file, formData);
     console.log(formData);
   };
 
-
   return (
     <>
-          <div className="row justify-content-center">
+      <div className="row justify-content-center">
         <div className="col-lg-4">
           {alert.show && alert.visible && (
-            <CAlert color={alert.type} className="d-flex align-items-center ">
+            <CAlert color={alert.type} className="d-flex align-items-center">
               <CIcon
                 icon={alert.type === "success" ? cilCheckCircle : cilWarning}
                 className="flex-shrink-0 me-2"
@@ -138,8 +142,8 @@ export default function Addproduct() {
               >
                 <option value="">Choose Meal</option>
                 {getmeal.map((item) => (
-                  <option key={item.id} value={item.Name}>
-                    {item.Name}
+                  <option key={item.id} value={item.Name.en}>
+                    {item.Name.en}
                   </option>
                 ))}
               </CFormSelect>
@@ -155,8 +159,8 @@ export default function Addproduct() {
               >
                 <option value="">Choose Category</option>
                 {filteredCategories.map((item) => (
-                  <option key={item.id} value={item.Name}>
-                    {item.Name}
+                  <option key={item.id} value={item.Name.en}>
+                    {item.Name.en}
                   </option>
                 ))}
               </CFormSelect>
