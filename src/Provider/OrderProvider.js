@@ -44,7 +44,7 @@ export const OnlineContextProvider = (props) => {
   const storecateImage = async (file, category) => {
     try {
       // Check if the category already exists
-      const categoryRef = collection(db, "Meals");
+      const categoryRef = collection(db, "Mealsdemo");
       const q = query(categoryRef, where("Name", "==", category));
       const querySnapshot = await getDocs(q);
 
@@ -67,7 +67,7 @@ export const OnlineContextProvider = (props) => {
         const fileName = Date.now().toString() + ".jpg";
         const response = await fetch(file);
         const blob = await response.blob();
-        const imageRef = ref(storage, "meals/" + fileName);
+        const imageRef = ref(storage, "mealsdemo/" + fileName);
 
         await uploadBytes(imageRef, blob);
         console.log("File uploaded");
@@ -98,7 +98,7 @@ export const OnlineContextProvider = (props) => {
   // Save the Meal details
   const Addcategory = async (downloadUrl, category) => {
     // Reference to the 'Meals' collection
-    const onlineOrderRef = collection(db, "Meals");
+    const onlineOrderRef = collection(db, "Mealsdemo");
 
     // Query to get the document with the highest Id
     const q = query(onlineOrderRef, orderBy("Id", "desc"), limit(1));
@@ -140,7 +140,7 @@ export const OnlineContextProvider = (props) => {
         const fileName = Date.now().toString() + ".jpg";
         const response = await fetch(file);
         const blob = await response.blob();
-        const imageRef = ref(storage, "Meals/" + fileName);
+        const imageRef = ref(storage, "Mealsdemo/" + fileName);
         await uploadBytes(imageRef, blob);
         downloadUrl = await getDownloadURL(imageRef);
       }
@@ -165,7 +165,7 @@ export const OnlineContextProvider = (props) => {
   };
 
   const updatedata = async (id, data, downloadUrl) => {
-    const docref = doc(db, "Meals", id);
+    const docref = doc(db, "Mealsdemo", id);
     console.log(downloadUrl);
     try {
       await updateDoc(docref, {
@@ -200,7 +200,7 @@ export const OnlineContextProvider = (props) => {
   const deletedoc = async (id, imagePath) => {
     try {
       // Delete the document from Firestore
-      await deleteDoc(doc(db, "Meals", `${id}`));
+      await deleteDoc(doc(db, "Mealsdemo", `${id}`));
       console.log(`Document with id ${id} deleted`);
 
       // Reference to the image file in Firebase Storage
@@ -238,7 +238,7 @@ export const OnlineContextProvider = (props) => {
       const productCategory = formData?.category;
 
       // Check if the product already exists with the same name, meal, and category
-      const productsRef = collection(db, "Products");
+      const productsRef = collection(db, "Productsdemo");
       const q = query(
         productsRef,
         where("Name", "==", productName),
@@ -269,7 +269,7 @@ export const OnlineContextProvider = (props) => {
         const fileName = Date.now().toString() + ".jpg";
         const response = await fetch(file);
         const blob = await response.blob();
-        const imageRef = ref(storage, "Products/" + fileName);
+        const imageRef = ref(storage, "Productsdemo/" + fileName);
 
         await uploadBytes(imageRef, blob);
         console.log("File uploaded");
@@ -298,7 +298,7 @@ export const OnlineContextProvider = (props) => {
 
   const saveproductDetail = async (formData, downloadUrl) => {
     try {
-      const q = query(collection(db, "Category"), where("Name.en", "==", formData.category));
+      const q = query(collection(db, "Categorydemo"), where("Name.en", "==", formData.category));
       const querySnapshot = await getDocs(q);
   
       let categoryData = null;
@@ -320,7 +320,7 @@ export const OnlineContextProvider = (props) => {
   
       console.log(filteredCategoryData);
   
-      await setDoc(doc(db, "Products", Date.now().toString()), {
+      await setDoc(doc(db, "Productsdemo", Date.now().toString()), {
         Name: formData?.dishName,
         category: filteredCategoryData, // Saving only ar, he, and en values
         meal: formData?.meal,
@@ -347,7 +347,7 @@ export const OnlineContextProvider = (props) => {
         const response = await fetch(file);
      
         const blob = await response.blob();
-        const imageRef = ref(storage, "Products/" + fileName);
+        const imageRef = ref(storage, "Productsdemo/" + fileName);
     
         await uploadBytes(imageRef, blob);
  
@@ -377,7 +377,7 @@ export const OnlineContextProvider = (props) => {
   const updateProductsDetails = async (formData, downloadUrl, uproductId) => {
     console.log(formData);
     try {
-      const productRef = doc(db, `Products/${uproductId}`);
+      const productRef = doc(db, `Productsdemo/${uproductId}`);
       await updateDoc(productRef, {
         category: formData?.category,
         Description: formData?.description,
@@ -408,7 +408,7 @@ export const OnlineContextProvider = (props) => {
     console.log(id);
     try {
       // Delete the document from Firestore
-      await deleteDoc(doc(db, "Products", `${id}`));
+      await deleteDoc(doc(db, "Productsdemo", `${id}`));
 
 
       // Reference to the image file in Firebase Storage
@@ -440,7 +440,7 @@ export const OnlineContextProvider = (props) => {
   const getAllcategory = async () => {
     try {
       // Create a query to order documents by "Id"
-      const q = query(collection(db, "Meals"), orderBy("Id"));
+      const q = query(collection(db, "Mealsdemo"), orderBy("Id"));
 
       // Fetch documents
       const querySnapshots = await getDocs(q);
@@ -466,7 +466,7 @@ export const OnlineContextProvider = (props) => {
     const category = formData?.meal; // Assuming 'meal' is the category
     const name = formData?.Name; // Ensure this matches the name field in formData
 
-    const qs = query(collection(db, "Meals"), where("Name.en", "==", category));
+    const qs = query(collection(db, "Mealsdemo"), where("Name.en", "==", category));
       const querySnapshots = await getDocs(qs);
   
       let categoryData = null;
@@ -501,7 +501,7 @@ export const OnlineContextProvider = (props) => {
     }
 
     // Reference to the collection
-    const subcategoryRef = collection(db, "Category");
+    const subcategoryRef = collection(db, "Categorydemo");
 
     // Query to check if the name already exists within the same category
     const q = query(
@@ -526,7 +526,7 @@ export const OnlineContextProvider = (props) => {
     }
 
     // If name doesn't exist within the same category, proceed to save the new entry
-    await setDoc(doc(db, "Category", Date.now().toString()), {
+    await setDoc(doc(db, "Categorydemo", Date.now().toString()), {
       Name: name,
       Category: filteredCategoryData,
     });
@@ -557,7 +557,7 @@ export const OnlineContextProvider = (props) => {
   // delete subcategories
   const deletesubdoc = async (id) => {
     try {
-      await deleteDoc(doc(db, "Category", id));
+      await deleteDoc(doc(db, "Categorydemo", id));
 
       setAlert({
         show: true,
@@ -579,7 +579,7 @@ export const OnlineContextProvider = (props) => {
 
   const getCategories = async () => {
     try {
-      const q = query(collection(db, "Category"));
+      const q = query(collection(db, "Categorydemo"));
       const querySnapshots = await getDocs(q);
 
       const categories = querySnapshots.docs.map((doc) => ({
@@ -595,7 +595,7 @@ export const OnlineContextProvider = (props) => {
 
   const getAllproducts = async (setFoodProducts) => {
     // Define the query to get all products from the "Products" collection
-    const q = query(collection(db, "Products"));
+    const q = query(collection(db, "Productsdemo"));
 
     // Set up a real-time listener for the query
     const unsubscribe = onSnapshot(

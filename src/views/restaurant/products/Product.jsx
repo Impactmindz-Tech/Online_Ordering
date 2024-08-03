@@ -21,7 +21,7 @@ import {
   CFormSelect,
   CFormTextarea,
   CPagination,
-  CPaginationItem,CAlert
+  CPaginationItem,CAlert,CCloseButton
 } from "@coreui/react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import './Product.css';
@@ -135,7 +135,7 @@ const Product = () => {
   };
 
 
-
+console.log(foodprod,'food')
 
   return (
     <>      <div className="row justify-content-center">
@@ -178,9 +178,9 @@ const Product = () => {
                 <CTableDataCell className="productImage">
                   <img src={item.ImageUrl} alt="productImage" />
                 </CTableDataCell>
-                <CTableDataCell>{item.Name}</CTableDataCell>
+                <CTableDataCell>{item.Name.en}</CTableDataCell>
                 <CTableDataCell>{item.meal}</CTableDataCell>
-                <CTableDataCell>{item.category}</CTableDataCell>
+                <CTableDataCell>{item.category.en}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
              

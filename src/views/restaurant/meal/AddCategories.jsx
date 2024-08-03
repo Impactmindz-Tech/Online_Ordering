@@ -61,6 +61,7 @@ export default function Addproduct() {
     Name: { en: "", ru: "", he: "" },
     meal: "",
   });
+  console.log(allcategorie,'jsdk');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -222,11 +223,11 @@ export default function Addproduct() {
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
-            {/* <CTableBody>
+            <CTableBody>
               {currentItems.map((item) => (
                 <CTableRow key={item.id}>
                   <CTableDataCell className="ps-4">
-                    {item.Category}
+                    {item.Category.en}
                   </CTableDataCell>
                   <CTableDataCell className="text-center">
                     {item.Name.en}
@@ -241,7 +242,7 @@ export default function Addproduct() {
                   </CTableDataCell>
                 </CTableRow>
               ))}
-            </CTableBody> */}
+            </CTableBody>
           </CTable>
         </div>
       </div>
