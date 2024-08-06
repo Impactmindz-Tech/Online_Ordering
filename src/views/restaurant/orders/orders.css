@@ -57,3 +57,22 @@ table {
   ::-webkit-scrollbar-thumb {
     background: #2a2f3e;
   }
+
+
+::-webkit-scrollbar:horizontal {
+    background: #a9a9a9;
+    height: 4px;
+    outline: none;
+  }
+  
+  ::-webkit-scrollbar-track:horizontal {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 1px;
+  }
+  
+
+::-webkit-scrollbar-thumb:horizontal {
+    background: #2a2f3e;
+    border-radius: 10px;
+    height: 4px;
+  }

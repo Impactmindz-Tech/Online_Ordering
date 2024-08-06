@@ -236,7 +236,7 @@ export const OnlineContextProvider = (props) => {
       const productName = formData?.dishName;
       const productMeal = formData?.meal;
       const productCategory = formData?.category;
-
+  
       // Check if the product already exists with the same name, meal, and category
       const productsRef = collection(db, "Productsdemo");
       const q = query(
@@ -246,58 +246,69 @@ export const OnlineContextProvider = (props) => {
         where("meal", "==", productMeal)
       );
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         // Product already exists with the same name, category, and meal
-        console.log(
-          "A product with this name, category, and meal already exists"
-        );
+        console.log("A product with this name, category, and meal already exists");
         setAlert({
           show: true,
-          message:
-            "A product with this name, category, and meal already exists",
+          message: "A product with this name, category, and meal already exists",
           type: "danger",
           visible: true,
         });
         return;
       }
-
+  
       let downloadUrl = null;
-
+  
       // If a file is provided, proceed with uploading the image
       if (file) {
-        const fileName = Date.now().toString() + ".jpg";
-        const response = await fetch(file);
-        const blob = await response.blob();
-        const imageRef = ref(storage, "Productsdemo/" + fileName);
-
-        await uploadBytes(imageRef, blob);
-        console.log("File uploaded");
-        setAlert({
-          show: true,
-          message: "Successfully  Product Added",
-          type: "success",
-          visible: true,
-        });
-        downloadUrl = await getDownloadURL(imageRef);
-        console.log(downloadUrl);
+        try {
+          const fileName = Date.now().toString() + ".jpg";
+          const response = await fetch(file);
+          if (!response.ok) throw new Error("File fetch failed");
+          const blob = await response.blob();
+          const imageRef = ref(storage, "Productsdemo/" + fileName);
+  
+          await uploadBytes(imageRef, blob);
+          console.log("File uploaded");
+          downloadUrl = await getDownloadURL(imageRef);
+          console.log("Download URL:", downloadUrl);
+        } catch (uploadError) {
+          console.error("Error uploading file:", uploadError);
+          setAlert({
+            show: true,
+            message: "Failed to upload file. Please try again.",
+            type: "danger",
+            visible: true,
+          });
+          return;
+        }
       }
-
+  
       // Save product details
       await saveproductDetail(formData, downloadUrl);
-    } catch (error) {
-      console.error("Error adding product: ", error);
       setAlert({
         show: true,
-        message: "Product Not Added",
+        message: "Product successfully added",
+        type: "success",
+        visible: true,
+      });
+  
+    } catch (error) {
+      console.error("Error adding product:", error);
+      setAlert({
+        show: true,
+        message: "Error adding product. Please try again.",
         type: "danger",
         visible: true,
       });
     }
   };
-
+  
   const saveproductDetail = async (formData, downloadUrl) => {
     try {
+      // Fetch category data
       const q = query(collection(db, "Categorydemo"), where("Name.en", "==", formData.category));
       const querySnapshot = await getDocs(q);
   
@@ -308,6 +319,12 @@ export const OnlineContextProvider = (props) => {
   
       if (!categoryData) {
         console.log("No matching category found");
+        setAlert({
+          show: true,
+          message: "No matching category found.",
+          type: "danger",
+          visible: true,
+        });
         return;
       }
   
@@ -318,12 +335,42 @@ export const OnlineContextProvider = (props) => {
         en: categoryData.Name.en,
       };
   
-      console.log(filteredCategoryData);
+      // Fetch meal data
+      const m = query(collection(db, "Mealsdemo"), where("Name.en", "==", formData.meal));
+      const mSnapshot = await getDocs(m);
   
+      let mealData = null;
+      mSnapshot.forEach((doc) => {
+        mealData = {
+          ...doc.data(), // Spread the document data
+          id: doc.id,   // Add the document id
+        };
+      });
+  
+      if (!mealData) {
+        console.log("No matching meal found");
+        setAlert({
+          show: true,
+          message: "No matching meal found.",
+          type: "danger",
+          visible: true,
+        });
+        return;
+      }
+  
+      // Extract Name and id from meal data
+      const filteredMealData = {
+        Name: mealData.Name.en,
+        id: mealData.id,
+      };
+  
+      console.log(filteredMealData, 'mealdata');
+  
+      // Save product details
       await setDoc(doc(db, "Productsdemo", Date.now().toString()), {
         Name: formData?.dishName,
         category: filteredCategoryData, // Saving only ar, he, and en values
-        meal: formData?.meal,
+        meal: filteredMealData, // Saving both Name and id
         isAvailable: formData?.isAvailable,
         ImageUrl: downloadUrl, // This can be null if no image is uploaded
         DietaryInfo: formData?.dietaryInfo,
@@ -333,8 +380,15 @@ export const OnlineContextProvider = (props) => {
   
     } catch (error) {
       console.error("Error saving product details:", error);
+      setAlert({
+        show: true,
+        message: "Error saving product details. Please try again.",
+        type: "danger",
+        visible: true,
+      });
     }
   };
+  
 
   const updateProducts = async (file, formData, uproductId) => {
     try {
@@ -593,7 +647,7 @@ export const OnlineContextProvider = (props) => {
     }
   };
 
-  const getAllproducts = async (setFoodProducts) => {
+  const getAllproducts = async () => {
     // Define the query to get all products from the "Products" collection
     const q = query(collection(db, "Productsdemo"));
 
@@ -621,6 +675,7 @@ export const OnlineContextProvider = (props) => {
 
         // Update the state with the new products data
         setfoodProducts(products);
+        
       }
     );
 

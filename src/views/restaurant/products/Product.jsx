@@ -85,7 +85,7 @@ const Product = () => {
     let findid = foodprod.find((item) => item.id === productId);
     // find the corresponding image path
    let imagepath = findid.ImageUrl; 
-   console.log(productId,'pro');
+
 
 
 
@@ -179,7 +179,7 @@ console.log(foodprod,'food')
                   <img src={item.ImageUrl} alt="productImage" />
                 </CTableDataCell>
                 <CTableDataCell>{item.Name.en}</CTableDataCell>
-                <CTableDataCell>{item.meal}</CTableDataCell>
+                <CTableDataCell>{item.meal.Name}</CTableDataCell>
                 <CTableDataCell>{item.category.en}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
