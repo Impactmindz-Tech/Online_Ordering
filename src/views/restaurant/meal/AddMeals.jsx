@@ -5,29 +5,17 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "react-modal";
 import { CAlert } from "@coreui/react";
+import { useTranslation } from "react-i18next";
+import "../../../i18n.js";
+import { setInLocalStorage } from "../.../../../../utils/LocalStorageUtills.js";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
-import {
-  CForm,
-  CFormInput,
-  CButton,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CCol,
-  CCloseButton,
-  CFormSelect,
-} from "@coreui/react";
+import { CForm, CFormInput, CButton, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CModal, CModalHeader, CModalTitle, CModalBody, CCol, CCloseButton, CFormSelect } from "@coreui/react";
 Modal.setAppElement("#root");
 
 export default function Category() {
+  const [hebrewState, setHebrewState] = useState(false);
+  const { t, i18n } = useTranslation();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [visible, setVisible] = useState(false);
@@ -39,17 +27,9 @@ export default function Category() {
     id: "",
     Name: { en: "", he: "", ru: "" },
   });
-  const [language, setLanguage] = useState("en");
-
-  const {
-    getmeal,
-    getAllcategory,
-    deletedoc,
-    storecateImage,
-    updateImage,
-    alert,
-    setAlert,
-  } = useContext(OnlineContext);
+  const currentLanguage = i18n.language;
+  const [language, setLanguage] = useState(currentLanguage == "en" ? "en" : currentLanguage === "he" ? "he" : "ru");
+  const { getmeal, getAllcategory, deletedoc, storecateImage, updateImage, alert, setAlert } = useContext(OnlineContext);
 
   const openModal = (imageUrl) => {
     setCurrentImage(imageUrl);
@@ -112,11 +92,26 @@ export default function Category() {
   };
 
   const handleLanguageChange = (e) => {
+    if (e.target.value === "he") {
+      setHebrewState(true);
+    } else {
+      setHebrewState(false);
+    }
     setLanguage(e.target.value);
+    const selectedLanguage = e.target.value;
+    setInLocalStorage("lang", selectedLanguage);
+    i18n.changeLanguage(selectedLanguage);
   };
 
   useEffect(() => {
     getAllcategory();
+    if (currentLanguage == "he") {
+      setHebrewState(true);
+    } else {
+      setHebrewState(false);
+    }
+    // currentLanguage
+    // setInLocalStorage()
   }, []);
 
   return (
@@ -125,17 +120,9 @@ export default function Category() {
         <div className="col-lg-4">
           {alert.show && alert.visible && (
             <CAlert color={alert.type} className="d-flex align-items-center ">
-              <CIcon
-                icon={alert.type === "success" ? cilCheckCircle : cilWarning}
-                className="flex-shrink-0 me-2"
-                width={24}
-                height={24}
-              />
+              <CIcon icon={alert.type === "success" ? cilCheckCircle : cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
               <div>{alert.message}</div>
-              <CCloseButton
-                className="ms-auto"
-                onClick={() => setAlert({ ...alert, visible: false })}
-              />
+              <CCloseButton className="ms-auto" onClick={() => setAlert({ ...alert, visible: false })} />
             </CAlert>
           )}
         </div>
@@ -144,32 +131,24 @@ export default function Category() {
       <div className="row align-items-center">
         <div className="col-lg-4">
           <div className="mb-4">
-            <h3 className="text-center">Add Meal</h3>
+            <h3 className={` ${hebrewState ? "rtl" : "text-center"}`}>{t("addMeal")}</h3>
           </div>
 
           {/* laguage */}
           <div>
             <CCol xs>
-              <CFormInput
-                type="file"
-                id="formFile"
-                onChange={handleFileChange}
-              />
+              <CFormInput type="file" id="formFile" onChange={handleFileChange} />
             </CCol>
           </div>
 
           <div className="row align-items-center mt-4">
             <div className="col-lg-6">
-              <div className=" align-items-center gap-3">
-                <label htmlFor="">Select the language:</label>
-                <CFormSelect
-                  value={language}
-                  onChange={handleLanguageChange}
-                  className="widthselectbox mt-3"
-                >
+              <div className={`align-items-center gap-3 ${hebrewState ? "rtl" : "text-center"}`}>
+                <label htmlFor="">{t("selectLang")}</label>
+                <CFormSelect value={language} onChange={handleLanguageChange} className={`width select box mt-3 ${hebrewState ? "rtl" : "text-end"}`}>
                   <option value="en">English</option>
-                  <option value="he">Hebrew</option>
-                  <option value="ru">Russian</option>
+                  <option value="he">עִברִית</option>
+                  <option value="ru">Русский</option>
                 </CFormSelect>
               </div>
             </div>
@@ -177,30 +156,22 @@ export default function Category() {
             <div className="col-lg-6 mt-4 pt-3">
               <div>
                 <CCol xs>
-                  <CFormInput
-                    name={language}
-                    placeholder={`Enter Meal Name (${language})`}
-                    aria-label="Meal Name"
-                    value={category[language]}
-                    onChange={(e) =>
-                      setCategory({ ...category, [language]: e.target.value })
-                    }
-                  />
+                  <CFormInput name={language} placeholder={`${t("enterMealNameInput")}`} aria-label="Meal Name" className={`${hebrewState ? "rtl" : "text-left"}`} value={category[language]} onChange={(e) => setCategory({ ...category, [language]: e.target.value })} />
                 </CCol>
               </div>
             </div>
           </div>
 
           <div className="mt-4">
-            <CButton className="w-100" color="primary" onClick={handleSubmit}>
-              Add Meal
+            <CButton className={`w-100 ${hebrewState ? "rtl text-end" : "text-left"}`} color="primary" onClick={handleSubmit}>
+              {t("addMealBtn")}
             </CButton>
           </div>
         </div>
 
         <div className="category_list mt-lg-5 col-lg-8">
-          <div className="text-center mb-3">
-            <h3>All Meals</h3>
+          <div className={`${hebrewState ? "rtl" : "text-center"} mb-3`}>
+            <h3>{t("allMealTitle")}</h3>
           </div>
           <CTable>
             <CTableHead>
@@ -239,18 +210,9 @@ export default function Category() {
             </CTableBody>
           </CTable>
           <div className="popup">
-            <CModal
-              className="custom_modal"
-              alignment="center"
-              backdrop="static"
-              visible={visible}
-              onClose={() => setVisible(false)}
-              aria-labelledby="StaticBackdropExampleLabel"
-            >
+            <CModal className="custom_modal" alignment="center" backdrop="static" visible={visible} onClose={() => setVisible(false)} aria-labelledby="StaticBackdropExampleLabel">
               <CModalHeader>
-                <CModalTitle id="StaticBackdropExampleLabel">
-                  Edit Meal
-                </CModalTitle>
+                <CModalTitle id="StaticBackdropExampleLabel">Edit Meal</CModalTitle>
               </CModalHeader>
               <CModalBody>
                 <div className=" gap-2">
@@ -258,26 +220,12 @@ export default function Category() {
                     <label htmlFor="" className="mb-2">
                       Image
                     </label>
-                    <CFormInput
-                      type="file"
-                      id="formFile"
-                      onChange={handleFileChange}
-                    />
-                    {previousImage && (
-                      <img
-                        src={previousImage}
-                        alt="Previous"
-                        className="mt-2"
-                        style={{ width: "100px" }}
-                      />
-                    )}
+                    <CFormInput type="file" id="formFile" onChange={handleFileChange} />
+                    {previousImage && <img src={previousImage} alt="Previous" className="mt-2" style={{ width: "100px" }} />}
                   </CCol>
                   <CCol xs className="mt-3">
                     <label htmlFor="">Choose language</label>
-                    <CFormSelect
-                      value={language}
-                      onChange={handleLanguageChange}
-                    >
+                    <CFormSelect value={language} onChange={handleLanguageChange}>
                       <option value="en">English</option>
                       <option value="he">Hebrew</option>
                       <option value="ru">Russian</option>
@@ -285,20 +233,10 @@ export default function Category() {
                     <label htmlFor="" className="mb-2 mt-2">
                       Meal Name
                     </label>
-                    <CFormInput
-                      name={language}
-                      placeholder={`Enter Meal Name (${language})`}
-                      aria-label="Category Name"
-                      value={edit.Name[language]}
-                      onChange={handleChange}
-                    />
+                    <CFormInput name={language} placeholder={`Enter Meal Name (${language})`} aria-label="Category Name" value={edit.Name[language]} onChange={handleChange} />
                   </CCol>
                   <div className="text-center">
-                    <CButton
-                      color="primary"
-                      className="mt-3"
-                      onClick={handleUpdate}
-                    >
+                    <CButton color="primary" className="mt-3" onClick={handleUpdate}>
                       Update
                     </CButton>
                   </div>

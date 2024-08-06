@@ -25,3 +25,8 @@ height: 43px;
 .widthselectbox{
     width: 100%;
 }
+
+.rtl{
+    direction: rtl;
+    text-align: right;
+}
