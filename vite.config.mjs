@@ -6,7 +6,7 @@ import autoprefixer from 'autoprefixer';
 export default defineConfig({
   base: './',
   build: {
-    outDir: 'build',
+    outDir: 'dist',
   },
   css: {
     postcss: {
