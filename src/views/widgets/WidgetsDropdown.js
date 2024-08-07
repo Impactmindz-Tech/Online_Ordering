@@ -16,10 +16,11 @@ import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 
 const WidgetsDropdown = (props) => {
-  const{getmeal,getAllcategory,getAllproducts,foodprod,allcategorie } = useContext(OnlineContext);
+  const{getmeal,getAllcategory,getAllproducts,foodprod,allcategorie ,orders} = useContext(OnlineContext);
 
   const  totalpro = foodprod.length;
   const totalsub = allcategorie.length;
+  const totalorders = orders.length
 
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
@@ -107,7 +108,7 @@ const WidgetsDropdown = (props) => {
           color="warning"
           value={
             <>
-              2
+              {totalorders}
            
             </>
           }
