@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { app, storage, db } from "../config/Firebase";
+import { app, storage, db,auth } from "../config/Firebase";
 import {
   getDownloadURL,
   ref,
@@ -9,6 +9,7 @@ import {
 import { CAlert } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import {
   getDocs,
@@ -41,6 +42,25 @@ export const OnlineContextProvider = (props) => {
   const [orders, setOrders] = useState([]);
 
   //store Meals
+
+  const signup = async(data)=>{
+    const{email,password} = data;
+    console.log(data);
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+   
+    const user = userCredential.user;
+ 
+    console.log(user);
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+  }
+
+
   const storecateImage = async (file, category) => {
     try {
       // Check if the category already exists
@@ -50,7 +70,7 @@ export const OnlineContextProvider = (props) => {
 
       if (!querySnapshot.empty) {
         // Category already exists
-        console.log("A category with this name already exists");
+      
         setAlert({
           show: true,
           message: "A category with this name already exists",
@@ -70,10 +90,10 @@ export const OnlineContextProvider = (props) => {
         const imageRef = ref(storage, "mealsdemo/" + fileName);
 
         await uploadBytes(imageRef, blob);
-        console.log("File uploaded");
+       
 
         downloadUrl = await getDownloadURL(imageRef);
-        console.log(downloadUrl);
+
       }
 
       await Addcategory(downloadUrl, category);
@@ -126,7 +146,7 @@ export const OnlineContextProvider = (props) => {
 
     await setDoc(newDocRef, newCategoryData);
 
-    console.log("Category added successfully");
+    
   };
 
   // update meal
@@ -166,7 +186,7 @@ export const OnlineContextProvider = (props) => {
 
   const updatedata = async (id, data, downloadUrl) => {
     const docref = doc(db, "Mealsdemo", id);
-    console.log(downloadUrl);
+   
     try {
       await updateDoc(docref, {
         Name: {
@@ -201,15 +221,15 @@ export const OnlineContextProvider = (props) => {
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Mealsdemo", `${id}`));
-      console.log(`Document with id ${id} deleted`);
+
 
       // Reference to the image file in Firebase Storage
       const imageRef = ref(storage, imagePath);
-      console.log(imageRef);
+     
 
       // Delete the image file from Firebase Storage
       await deleteObject(imageRef);
-      console.log(`Image file at ${imagePath} deleted`);
+     
 
       setAlert({
         show: true,
@@ -249,7 +269,7 @@ export const OnlineContextProvider = (props) => {
   
       if (!querySnapshot.empty) {
         // Product already exists with the same name, category, and meal
-        console.log("A product with this name, category, and meal already exists");
+      
         setAlert({
           show: true,
           message: "A product with this name, category, and meal already exists",
@@ -271,9 +291,9 @@ export const OnlineContextProvider = (props) => {
           const imageRef = ref(storage, "Productsdemo/" + fileName);
   
           await uploadBytes(imageRef, blob);
-          console.log("File uploaded");
+        
           downloadUrl = await getDownloadURL(imageRef);
-          console.log("Download URL:", downloadUrl);
+     
         } catch (uploadError) {
           console.error("Error uploading file:", uploadError);
           setAlert({
@@ -318,7 +338,7 @@ export const OnlineContextProvider = (props) => {
       });
   
       if (!categoryData) {
-        console.log("No matching category found");
+       
         setAlert({
           show: true,
           message: "No matching category found.",
@@ -348,7 +368,7 @@ export const OnlineContextProvider = (props) => {
       });
   
       if (!mealData) {
-        console.log("No matching meal found");
+  
         setAlert({
           show: true,
           message: "No matching meal found.",
@@ -364,7 +384,7 @@ export const OnlineContextProvider = (props) => {
         id: mealData.id,
       };
   
-      console.log(filteredMealData, 'mealdata');
+     
   
       // Save product details
       await setDoc(doc(db, "Productsdemo", Date.now().toString()), {
@@ -429,7 +449,7 @@ export const OnlineContextProvider = (props) => {
   };
 
   const updateProductsDetails = async (formData, downloadUrl, uproductId) => {
-    console.log(formData);
+  
     try {
       const productRef = doc(db, `Productsdemo/${uproductId}`);
       await updateDoc(productRef, {
@@ -459,7 +479,7 @@ export const OnlineContextProvider = (props) => {
   };
 
   const deleteProduct = async (id, imagePath) => {
-    console.log(id);
+    
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Productsdemo", `${id}`));
@@ -504,7 +524,7 @@ export const OnlineContextProvider = (props) => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log(categories, "categorie");
+
 
       // Update state with fetched categories
       setmeal(categories);
@@ -529,7 +549,7 @@ export const OnlineContextProvider = (props) => {
       });
   
       if (!categoryData) {
-        console.log("No matching category found");
+     
         return;
       }
   
@@ -540,7 +560,7 @@ export const OnlineContextProvider = (props) => {
         en: categoryData.Name.en,
       };
   
-      console.log(filteredCategoryData,'jksdjk');
+  
 
     // Check if category or name is undefined
     if (!category || !name) {
@@ -567,9 +587,7 @@ export const OnlineContextProvider = (props) => {
 
     if (!querySnapshot.empty) {
       // Name already exists within the same category
-      console.log(
-        "An entry with this Name already exists in the same Category."
-      );
+   
       setAlert({
         show: true,
         message: "An entry with this Name already exists in the same Category",
@@ -741,14 +759,7 @@ export const OnlineContextProvider = (props) => {
           });
   
           // Log order details for debugging
-          console.log(`Order ID: ${order.id}`);
-          console.log(`Location: ${city}, ${state}, ${country}, ${postalCode}`);
-          console.log(`Schedule: Staying: ${schedule.Staying}, Tomorrow: ${schedule.Tomorrow}, Week: ${schedule.Week}`);
-          console.log('Summary:', {
-            breakfast,
-            lunch,
-            dinner
-          });
+       
         });
       },
       (error) => {
@@ -761,6 +772,8 @@ export const OnlineContextProvider = (props) => {
     return () => unsubscribe();
   };
   
+
+
   
 
   useEffect(() => {
@@ -796,7 +809,7 @@ export const OnlineContextProvider = (props) => {
     location,
     summary,
     Schedule,
-    orders
+    orders,signup
   
   };
 

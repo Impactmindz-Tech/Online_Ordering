@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-
+import { getAuth } from "firebase/auth";
 
 
 const firebaseConfig = {
@@ -18,6 +18,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Enable offline persistence
 enableIndexedDbPersistence(db)
@@ -32,4 +33,4 @@ enableIndexedDbPersistence(db)
 // Initialize Storage
 const storage = getStorage(app);
 
-export { app, db, storage };
+export { app, db, storage,auth };

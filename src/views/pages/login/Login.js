@@ -1,5 +1,7 @@
-import React from 'react'
+import React ,{useState}from 'react'
 import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { OnlineContext } from '../../../Provider/OrderProvider'
 import {
   CButton,
   CCard,
@@ -17,6 +19,22 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 
 const Login = () => {
+  const[data,setdata] = useState({
+    email:'',
+    password:''
+  })
+  const{signup} = useContext(OnlineContext);
+ const handelchange = (e)=>{
+  const{name,value} = e.target;
+  console.log(name,value);
+  setdata((prev)=>{
+    return {...prev,[name]:value}
+  })
+ }
+  const handleclick = (e)=>{
+    e.preventDefault();
+      signup(data);
+  }
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -26,35 +44,34 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
-                    <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <h1 className='text-center'>Login</h1>
+                    <p className="text-body-secondary text-center">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput name='email' value={data.email} placeholder="Useremail" autoComplete="useremail" onChange={handelchange} />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
+                      name="password"
+                        value= {data.password}
                         type="password"
                         placeholder="Password"
                         autoComplete="current-password"
+                        onChange={handelchange}
                       />
                     </CInputGroup>
-                    <CRow>
-                      <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                    <CRow className='justify-content-center'>
+                      <CCol xs={6} className='text-center' >
+                        <CButton onClick={handleclick} color="primary" className="px-4 ">
                           Login
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
-                        </CButton>
-                      </CCol>
+                    
                     </CRow>
                   </CForm>
                 </CCardBody>
