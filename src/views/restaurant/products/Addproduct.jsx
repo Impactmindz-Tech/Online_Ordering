@@ -1,8 +1,13 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { OnlineContext } from "../../../Provider/OrderProvider";
 import "./Product.css";
+
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
+import { useTranslation } from "react-i18next";
+import "../../../i18n.js";
+import camera from "../../../assets/images/camera.png";
+import { setInLocalStorage } from "../../../utils/LocalStorageUtills.js";
 import {
   CFormInput,
   CButton,
@@ -13,14 +18,16 @@ import {
   CAlert,
   CCloseButton,
 } from "@coreui/react";
-import camera from "../../../assets/images/camera.png";
 
 export default function Addproduct() {
   const { getmeal, saveproduct, allcategorie, alert, setAlert } = useContext(OnlineContext);
   const [file, setFile] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [hebrewState, setHebrewState] = useState(false);
 
-  console.log(allcategorie,'sdhjc')
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
+  const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage || "en");
+  const [editLanguage, setEditLanguage] = useState(currentLanguage || "en");
   const [formData, setFormData] = useState({
     dishName: { en: "", ru: "", he: "" },
     category: "",
@@ -55,16 +62,25 @@ export default function Addproduct() {
 
   const filteredCategories = allcategorie.filter((item) => item.Category.en === formData.meal);
 
-
-console.log(filteredCategories,'dsfasdkj');
   const handleSubmit = async () => {
     await saveproduct(file, formData);
     console.log(formData);
   };
 
+  useEffect(() => {
+    setHebrewState(currentLanguage === 'he');
+  }, [currentLanguage]);
+
+  const handleLanguageChange = (e) => {
+    const selectedLang = e.target.value;
+    setHebrewState(selectedLang === 'he');
+    setSelectedLanguage(selectedLang);
+    i18n.changeLanguage(selectedLang);
+  };
+
   return (
     <>
-      <div className="row justify-content-center">
+      <div className={`row justify-content-center ${hebrewState ? 'rtl' : ''}`}>
         <div className="col-lg-4">
           {alert.show && alert.visible && (
             <CAlert color={alert.type} className="d-flex align-items-center">
@@ -83,13 +99,13 @@ console.log(filteredCategories,'dsfasdkj');
           )}
         </div>
       </div>
-      <div className="row justify-content-center">
+      <div className={`row justify-content-center ${hebrewState ? 'rtl' : ''}`}>
         <div className="col-lg-2">
           <div className="image_preview">
             {file ? (
               <img src={file} alt="Image Preview" />
             ) : (
-              <img src={camera} alt="Image Preview" className="" />
+              <img src={camera} alt="Image Preview" />
             )}
           </div>
         </div>
@@ -101,29 +117,29 @@ console.log(filteredCategories,'dsfasdkj');
           </div>
         </div>
       </div>
-      <div className="row justify-content-center">
+      <div className={`row justify-content-center ${hebrewState ? 'rtl' : ''}`}>
         <div className="col-lg-7">
           <CRow>
             <CCol xs>
               <label className="mb-2" htmlFor="languageSelect">
-                Select Language
+                {t("selectLanguage")}
               </label>
               <CFormSelect
                 id="languageSelect"
                 value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
+                onChange={handleLanguageChange}
               >
                 <option value="en">English</option>
-                <option value="ru">Russian</option>
-                <option value="he">Hebrew</option>
+                <option value="ru">Русский</option>
+                <option value="he">עברית</option>
               </CFormSelect>
             </CCol>
             <CCol xs>
               <label className="mb-2" htmlFor={`dishName_${selectedLanguage}`}>
-                Dish Name ({selectedLanguage.toUpperCase()})
+                {t("dishName")} ({selectedLanguage.toUpperCase()})
               </label>
               <CFormInput
-                placeholder={`Dish Name (${selectedLanguage.toUpperCase()})`}
+                placeholder={`${t("dishName")} (${selectedLanguage.toUpperCase()})`}
                 name={`dishName_${selectedLanguage}`}
                 value={formData.dishName[selectedLanguage]}
                 onChange={handleChange}
@@ -133,14 +149,14 @@ console.log(filteredCategories,'dsfasdkj');
           <CRow className="mt-3">
             <CCol xs>
               <label className="mb-2" htmlFor="meal">
-                Choose Meal
+                {t("chooseMeal")}
               </label>
               <CFormSelect
                 name="meal"
                 value={formData.meal}
                 onChange={handleChange}
               >
-                <option value="">Choose Meal</option>
+                <option value="">{t("chooseMeal")}</option>
                 {getmeal.map((item) => (
                   <option key={item.id} value={item.Name.en}>
                     {item.Name.en}
@@ -150,14 +166,14 @@ console.log(filteredCategories,'dsfasdkj');
             </CCol>
             <CCol xs>
               <label className="mb-2" htmlFor="category">
-                Choose Category
+                {t("chooseCategory")}
               </label>
               <CFormSelect
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
               >
-                <option value="">Choose Category</option>
+                <option value="">{t("chooseCategory")}</option>
                 {filteredCategories.map((item) => (
                   <option key={item.id} value={item.Name.en}>
                     {item.Name.en}
@@ -167,23 +183,23 @@ console.log(filteredCategories,'dsfasdkj');
             </CCol>
             <CCol xs>
               <label className="mb-2" htmlFor="isAvailable">
-                Is Available
+                {t("isAvailable")}
               </label>
               <CFormSelect
                 name="isAvailable"
                 value={formData.isAvailable}
                 onChange={handleChange}
               >
-                <option value="">Choose One</option>
-                <option value="true">True</option>
-                <option value="false">False</option>
+                <option value="">{t("chooseOne")}</option>
+                <option value="true">{t("true")}</option>
+                <option value="false">{t("false")}</option>
               </CFormSelect>
             </CCol>
           </CRow>
           <CRow className="mt-3">
             <CCol xs>
               <label className="mb-2" htmlFor="dietaryInfo">
-                Dietary Info
+                {t("dietaryInfo")}
               </label>
               <CFormTextarea
                 id="dietaryInfo"
@@ -195,7 +211,7 @@ console.log(filteredCategories,'dsfasdkj');
             </CCol>
             <CCol xs>
               <label className="mb-2" htmlFor="description">
-                Description
+                {t("description")}
               </label>
               <CFormTextarea
                 id="description"
@@ -209,7 +225,7 @@ console.log(filteredCategories,'dsfasdkj');
         </div>
         <div className="text-center">
           <CButton className="ps-4 pe-4 mt-4" color="primary" onClick={handleSubmit}>
-            Add Product
+            {t("addProduct")}
           </CButton>
         </div>
       </div>

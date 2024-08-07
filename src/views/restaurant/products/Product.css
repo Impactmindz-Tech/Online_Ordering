@@ -47,3 +47,7 @@ border-radius: 100%;    background:rgb(184, 182, 182)
             cursor: pointer;
         }
         
+        .rtl{
+            direction: rtl;
+            text-align: right;
+        }
