@@ -9,8 +9,7 @@ import {
 import { CAlert } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-
+import { createUserWithEmailAndPassword ,signInWithEmailAndPassword} from "firebase/auth";
 import {
   getDocs,
   collection,
@@ -46,7 +45,7 @@ export const OnlineContextProvider = (props) => {
   const signup = async(data)=>{
     const{email,password} = data;
     console.log(data);
-createUserWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
    
     const user = userCredential.user;
