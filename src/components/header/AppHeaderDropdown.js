@@ -23,8 +23,20 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
+import { useContext } from 'react';
+import { OnlineContext } from '../../Provider/OrderProvider'
+import { useNavigate } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
+  const navigate = useNavigate();
+  const{auths,setauths } = useContext(OnlineContext);
+  const handleclick = (e)=>{
+    setauths(false);
+    console.log(auths);
+   
+     navigate('/login');
+
+  }
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -84,9 +96,9 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="#">
-          <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+        <CDropdownItem onClick={handleclick}>
+          <CIcon  icon={cilLockLocked} className="me-2" />
+          Log Out
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

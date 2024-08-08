@@ -9,7 +9,7 @@ import {
 import { CAlert } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
-import { createUserWithEmailAndPassword ,signInWithEmailAndPassword} from "firebase/auth";
+import { createUserWithEmailAndPassword ,signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth";
 import {
   getDocs,
   collection,
@@ -30,6 +30,7 @@ import { Category } from "@mui/icons-material";
 
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
+  const[auths,setauths] = useState(false);
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const [getmeal, setmeal] = useState([]);
   const [allcategorie, setcategories] = useState([]);
@@ -50,7 +51,7 @@ export const OnlineContextProvider = (props) => {
    
     const user = userCredential.user;
  
-    console.log(user);
+    
   })
   .catch((error) => {
     const errorCode = error.code;
@@ -58,6 +59,22 @@ export const OnlineContextProvider = (props) => {
     // ..
   });
   }
+
+  const checkuser = async()=>{
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+
+        const uid = user.uid;
+        setauths(true);
+       
+    
+      } else {
+          setauths(false);
+      }
+    });
+  }
+
+
 
 
   const storecateImage = async (file, category) => {
@@ -780,6 +797,8 @@ export const OnlineContextProvider = (props) => {
     getCategories();
     getAllproducts();
     getAllOrder();
+    checkuser();
+
   }, []);
 
   const contextValue = {
@@ -808,8 +827,9 @@ export const OnlineContextProvider = (props) => {
     location,
     summary,
     Schedule,
-    orders,signup
-  
+    orders,signup,
+    checkuser,auths
+    ,setauths  
   };
 
   return (

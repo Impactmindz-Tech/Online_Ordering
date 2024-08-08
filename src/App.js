@@ -1,7 +1,8 @@
 import React, { Suspense, useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-
+import { useContext } from 'react'
+import { OnlineContext } from './Provider/OrderProvider'
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
 
@@ -14,6 +15,7 @@ const Login = React.lazy(() => import('./views/pages/login/Login'))
 
 
 const App = () => {
+  const{auths} = useContext(OnlineContext);
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)
 
@@ -41,9 +43,11 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
-     
-          <Route path="*" name="Home" element={<DefaultLayout />} />
+         <Route path="*" name="Home" element={<DefaultLayout />} />
+          <Route exact path="/login" name="Login Page" element={<Login/>} /> 
+    
+         
+         
         </Routes>
       </Suspense>
     </HashRouter>

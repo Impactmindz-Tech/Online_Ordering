@@ -1,5 +1,5 @@
-import React ,{useState}from 'react'
-import { Link } from 'react-router-dom'
+import React ,{useState, useEffect}from 'react'
+import { Link ,useNavigate} from 'react-router-dom'
 import { useContext } from 'react'
 import { OnlineContext } from '../../../Provider/OrderProvider'
 import {
@@ -19,11 +19,12 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 
 const Login = () => {
+  const navigate = useNavigate();
   const[data,setdata] = useState({
     email:'',
     password:''
   })
-  const{signup} = useContext(OnlineContext);
+  const{signup,auths} = useContext(OnlineContext);
  const handelchange = (e)=>{
   const{name,value} = e.target;
   console.log(name,value);
@@ -32,9 +33,12 @@ const Login = () => {
   })
  }
   const handleclick = (e)=>{
-    e.preventDefault();
-      signup(data);
+
+     signup(data);
+    
+
   }
+
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
