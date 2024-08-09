@@ -1,118 +1,92 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
-import CategoryIcon from '@mui/icons-material/Category';
-import LunchDiningIcon from '@mui/icons-material/LunchDining';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
-import FoodBankIcon from '@mui/icons-material/FoodBank';
-import RemoveIcon from '@mui/icons-material/Remove';
+import React from "react";
+import CIcon from "@coreui/icons-react";
+import CategoryIcon from "@mui/icons-material/Category";
+import LunchDiningIcon from "@mui/icons-material/LunchDining";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import FoodBankIcon from "@mui/icons-material/FoodBank";
+import RemoveIcon from "@mui/icons-material/Remove";
 
-import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDescription,
-  cilDrop,
-  cilNotes,
-  cilPencil,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
-} from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { cilBell, cilCalculator, cilChartPie, cilCursor, cilDescription, cilDrop, cilNotes, cilPencil, cilPuzzle, cilSpeedometer, cilStar, cilLocationPin } from "@coreui/icons";
+import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
 const _nav = [
   {
     component: CNavItem,
-    name: 'Dashboard',
-    to: '/dashboard',
-    icon: <DashboardIcon style={{marginRight:'7px'}}/>
+    name: "Dashboard",
+    to: "/dashboard",
+    icon: <DashboardIcon style={{ marginRight: "7px" }} />,
   },
 
   {
     component: CNavGroup,
-    name: 'Restaurant',
-    to: '/restaurant',
-    icon: <LunchDiningIcon style={{marginRight:'7px'}} />,
+    name: "Restaurant",
+    to: "/restaurant",
+    icon: <LunchDiningIcon style={{ marginRight: "7px" }} />,
     items: [
       {
         component: CNavGroup,
-        name: 'Categories',
-        to: '/restaurant/meal',
-        icon:<CategoryIcon style={{marginRight:'7px'}}/>,
-        items:[
-          {
-            component: CNavItem,
-            name: 'Categories',
-            to: '/restaurant/addmeals',
-            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>
-          },
-          {
-            component: CNavItem,
-            name: 'Add Subcategories',
-            to: '/restaurant/addcategories',
-            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>,
-          }
-        ]
-      },
-
-
-
-      {
-        component: CNavGroup,
-        name: 'Product',
-        to: '/restaurant/products',
-        icon:<RestaurantMenuIcon style={{marginRight:'7px'}}/>,
+        name: "Categories",
+        to: "/restaurant/meal",
+        icon: <CategoryIcon style={{ marginRight: "7px" }} />,
         items: [
           {
             component: CNavItem,
-            name: 'All Product',
-            to: '/restaurant/allproducts',
-            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>
+            name: "Categories",
+            to: "/restaurant/addmeals",
+            icon: <RemoveIcon style={{ marginRight: "7px", marginLeft: "10px" }} />,
           },
           {
             component: CNavItem,
-            name: 'Add Products',
-            to: '/restaurant/addproducts',
-            icon:<RemoveIcon style={{marginRight:'7px' ,marginLeft:'10px'}}/>,
-          }
-          
+            name: "Add Subcategories",
+            to: "/restaurant/addcategories",
+            icon: <RemoveIcon style={{ marginRight: "7px", marginLeft: "10px" }} />,
+          },
+        ],
+      },
+
+      {
+        component: CNavGroup,
+        name: "Product",
+        to: "/restaurant/products",
+        icon: <RestaurantMenuIcon style={{ marginRight: "7px" }} />,
+        items: [
+          {
+            component: CNavItem,
+            name: "All Product",
+            to: "/restaurant/allproducts",
+            icon: <RemoveIcon style={{ marginRight: "7px", marginLeft: "10px" }} />,
+          },
+          {
+            component: CNavItem,
+            name: "Add Products",
+            to: "/restaurant/addproducts",
+            icon: <RemoveIcon style={{ marginRight: "7px", marginLeft: "10px" }} />,
+          },
         ],
       },
       {
         component: CNavItem,
-        name: 'Orders',
-        to: '/restaurant/orders',
-        icon:<FoodBankIcon style={{marginRight:'7px'}}/>
-       },
-
-
-
-
+        name: "Orders",
+        to: "/restaurant/orders",
+        icon: <FoodBankIcon style={{ marginRight: "7px" }} />,
+      },
     ],
   },
- 
- 
-  
-  
- 
-  
-  
+
   {
     component: CNavGroup,
-    name: 'Pages',
+    name: "Places",
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Login',
-        to: '/login',
+        name: "Add Place",
+        to: "/place",
       }
-    
+   
     ],
   },
+];
 
-]
-
-export default _nav
+export default _nav;

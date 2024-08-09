@@ -1,39 +1,89 @@
-import React from 'react'
+import React from "react";
+import { getFromLocalStorage } from "./utils/LocalStorageUtills";
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+const DashboardProtected = ({ children }) => {
+  const admin = getFromLocalStorage("useruid");
+  return admin ? children : <Navigate to="/login" />;
+};
+const Dashboard = React.lazy(() => import("./views/dashboard/Dashboard"));
 // const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 // const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
-const AddProduct = React.lazy(() => import('./views/restaurant/products/Addproduct'))
+const AddProduct = React.lazy(() => import("./views/restaurant/products/Addproduct"));
 
 //restaurantt
 
 // restaurant
 
+const Product = React.lazy(() => import("./views/restaurant/products/Product"));
+const Meal = React.lazy(() => import("./views/restaurant/meal/AddMeals"));
+const Order = React.lazy(() => import("./views/restaurant/orders/Order"));
+const Categories = React.lazy(() => import("./views/restaurant/meal/AddCategories"));
 
-const Product = React.lazy(() => import('./views/restaurant/products/Product'))
-const Meal = React.lazy(() => import('./views/restaurant/meal/AddMeals'));
-const Order = React.lazy(() => import('./views/restaurant/orders/Order'))
-const Categories = React.lazy(() => import('./views/restaurant/meal/AddCategories'));
-
-
-
-const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
-
+const Widgets = React.lazy(() => import("./views/widgets/Widgets"));
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-
-
-
-  { path: '/restaurant/allproducts', name: 'All Product', element: Product },
-  { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
-  { path: '/restaurant/addmeals', name: 'Add Meals', element: Meal },
-  { path: '/restaurant/addcategories', name: 'Add Categories', element: Categories },
-
-  { path: '/restaurant/orders', name: 'Orders', element: Order },
-
-  { path: '/widgets', name: 'Widgets', element: Widgets },
-]
-
-export default routes
+  { path: "/", exact: true, name: "Home" },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    element: (
+      <DashboardProtected>
+        <Dashboard />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/restaurant/allproducts",
+    name: "All Product",
+    element: (
+      <DashboardProtected>
+        <Product />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/restaurant/addproducts",
+    name: "Add Products",
+    element: (
+      <DashboardProtected>
+        <AddProduct />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/restaurant/addmeals",
+    name: "Add Meals",
+    element: (
+      <DashboardProtected>
+        <Meal />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/restaurant/addcategories",
+    name: "Add Categories",
+    element: (
+      <DashboardProtected>
+        <Categories />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/restaurant/orders",
+    name: "Orders",
+    element: (
+      <DashboardProtected>
+        <Order />
+      </DashboardProtected>
+    ),
+  },
+  {
+    path: "/widgets",
+    name: "Widgets",
+    element: (
+      <DashboardProtected>
+        <Widgets />
+      </DashboardProtected>
+    ),
+  },
+];
+export default routes;

@@ -1,7 +1,10 @@
 import React, { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
-
+const DashboardProtected = ({ children }) => {
+  const admin = getFromLocalStorage("useruid");
+  return admin ? children : <Navigate to="/login" />;
+};
 // routes config
 import routes from '../routes'
 
@@ -14,12 +17,12 @@ const AppContent = () => {
             return (
               route.element && (
                 <Route
-                  key={idx}
-                  path={route.path}
-                  exact={route.exact}
-                  name={route.name}
-                  element={<route.element />}
-                />
+              key={idx}
+              path={route.path}
+              exact={route.exact}
+              name={route.name}
+              element={route.element} // Use the element directly
+            />
               )
             )
           })}
