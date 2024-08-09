@@ -27,16 +27,15 @@ const Login = () => {
   const{signup,auths} = useContext(OnlineContext);
  const handelchange = (e)=>{
   const{name,value} = e.target;
-  console.log(name,value);
   setdata((prev)=>{
     return {...prev,[name]:value}
   })
  }
-  const handleclick = (e)=>{
+  const handleclick = async(e)=>{
 
-     signup(data);
-    
+    let userData=await signup(data);
 
+   
   }
 
   return (

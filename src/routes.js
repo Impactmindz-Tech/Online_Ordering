@@ -1,39 +1,43 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import AuthRoute from './AuthRoute'; // Import the AuthRoute component
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-// const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
-// const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
-const AddProduct = React.lazy(() => import('./views/restaurant/products/Addproduct'))
-
-//restaurantt
-
-// restaurant
-
-
-const Product = React.lazy(() => import('./views/restaurant/products/Product'))
+// Lazy-loaded components
+const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+const AddProduct = React.lazy(() => import('./views/restaurant/products/Addproduct'));
+const Product = React.lazy(() => import('./views/restaurant/products/Product'));
 const Meal = React.lazy(() => import('./views/restaurant/meal/AddMeals'));
-const Order = React.lazy(() => import('./views/restaurant/orders/Order'))
+const Order = React.lazy(() => import('./views/restaurant/orders/Order'));
 const Categories = React.lazy(() => import('./views/restaurant/meal/AddCategories'));
+const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
+const Login = React.lazy(() => import('./views/pages/login/Login')); // Assuming you have a Login component
 
+const isAuthenticated = () => {
+  // Check if user UID exists in localStorage
+  return !!localStorage.getItem('userUID');
+};
 
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public Route */}
+      <Route path="/login" element={<Login />} />
 
-const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
+      {/* Protected Routes */}
+      <Route element={<AuthRoute isAuthenticated={isAuthenticated()} />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/restaurant/allproducts" element={<Product />} />
+        <Route path="/restaurant/addproducts" element={<AddProduct />} />
+        <Route path="/restaurant/addmeals" element={<Meal />} />
+        <Route path="/restaurant/addcategories" element={<Categories />} />
+        <Route path="/restaurant/orders" element={<Order />} />
+        <Route path="/widgets" element={<Widgets />} />
+      </Route>
 
-const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+      {/* Redirect to /dashboard */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+};
 
-
-
-  { path: '/restaurant/allproducts', name: 'All Product', element: Product },
-  { path: '/restaurant/addproducts', name: 'Add Products', element: AddProduct },
-  { path: '/restaurant/addmeals', name: 'Add Meals', element: Meal },
-  { path: '/restaurant/addcategories', name: 'Add Categories', element: Categories },
-
-  { path: '/restaurant/orders', name: 'Orders', element: Order },
-
-  { path: '/widgets', name: 'Widgets', element: Widgets },
-]
-
-export default routes
+export default AppRoutes;

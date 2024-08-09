@@ -1,81 +1,57 @@
 import React, { createContext, useEffect, useState } from "react";
-import { app, storage, db,auth } from "../config/Firebase";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  deleteObject,
-} from "firebase/storage";
+import { app, storage, db, auth } from "../config/Firebase";
+import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
 import { CAlert } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilWarning } from "@coreui/icons";
-import { createUserWithEmailAndPassword ,signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth";
-import {
-  getDocs,
-  collection,
-  query,
-  orderBy,
-  limit,
-  setDoc,
-  doc,
-  getDoc,
-  getFirestore,
-  deleteDoc,
-  updateDoc,
-  where,
-  onSnapshot,
-  startAfter,
-} from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getDocs, collection, query, orderBy, limit, setDoc, doc, getDoc, getFirestore, deleteDoc, updateDoc, where, onSnapshot, startAfter } from "firebase/firestore";
 import { Category } from "@mui/icons-material";
+import { setInLocalStorage } from "../utils/LocalStorageUtills";
 
 export const OnlineContext = createContext(null);
 export const OnlineContextProvider = (props) => {
-  const[auths,setauths] = useState(false);
+  const [auths, setauths] = useState(false);
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const [getmeal, setmeal] = useState([]);
   const [allcategorie, setcategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [foodprod, setfoodProducts] = useState([]);
-  const[location,setlocation]  = useState([]);
-  const[summary,setSummary] = useState([]);
-  const[Schedule, setSchedule] = useState([]);
+  const [location, setlocation] = useState([]);
+  const [summary, setSummary] = useState([]);
+  const [Schedule, setSchedule] = useState([]);
   const [orders, setOrders] = useState([]);
 
   //store Meals
 
-  const signup = async(data)=>{
-    const{email,password} = data;
-    console.log(data);
-    signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-   
-    const user = userCredential.user;
- 
-    
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-  });
-  }
+  const signup = async (data) => {
+    const { email, password } = data;
 
-  const checkuser = async()=>{
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user) {
+          setInLocalStorage("useruid", user.uid);
+          setauths(true);
+        }
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+  };
+
+  const checkuser = async () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-
         const uid = user.uid;
         setauths(true);
-       
-    
       } else {
-          setauths(false);
+        setauths(false);
       }
     });
-  }
-
-
-
+  };
 
   const storecateImage = async (file, category) => {
     try {
@@ -86,7 +62,7 @@ export const OnlineContextProvider = (props) => {
 
       if (!querySnapshot.empty) {
         // Category already exists
-      
+
         setAlert({
           show: true,
           message: "A category with this name already exists",
@@ -106,10 +82,8 @@ export const OnlineContextProvider = (props) => {
         const imageRef = ref(storage, "mealsdemo/" + fileName);
 
         await uploadBytes(imageRef, blob);
-       
 
         downloadUrl = await getDownloadURL(imageRef);
-
       }
 
       await Addcategory(downloadUrl, category);
@@ -161,8 +135,6 @@ export const OnlineContextProvider = (props) => {
     }
 
     await setDoc(newDocRef, newCategoryData);
-
-    
   };
 
   // update meal
@@ -202,7 +174,7 @@ export const OnlineContextProvider = (props) => {
 
   const updatedata = async (id, data, downloadUrl) => {
     const docref = doc(db, "Mealsdemo", id);
-   
+
     try {
       await updateDoc(docref, {
         Name: {
@@ -238,14 +210,11 @@ export const OnlineContextProvider = (props) => {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Mealsdemo", `${id}`));
 
-
       // Reference to the image file in Firebase Storage
       const imageRef = ref(storage, imagePath);
-     
 
       // Delete the image file from Firebase Storage
       await deleteObject(imageRef);
-     
 
       setAlert({
         show: true,
@@ -272,20 +241,15 @@ export const OnlineContextProvider = (props) => {
       const productName = formData?.dishName;
       const productMeal = formData?.meal;
       const productCategory = formData?.category;
-  
+
       // Check if the product already exists with the same name, meal, and category
       const productsRef = collection(db, "Productsdemo");
-      const q = query(
-        productsRef,
-        where("Name", "==", productName),
-        where("category", "==", productCategory),
-        where("meal", "==", productMeal)
-      );
+      const q = query(productsRef, where("Name", "==", productName), where("category", "==", productCategory), where("meal", "==", productMeal));
       const querySnapshot = await getDocs(q);
-  
+
       if (!querySnapshot.empty) {
         // Product already exists with the same name, category, and meal
-      
+
         setAlert({
           show: true,
           message: "A product with this name, category, and meal already exists",
@@ -294,9 +258,9 @@ export const OnlineContextProvider = (props) => {
         });
         return;
       }
-  
+
       let downloadUrl = null;
-  
+
       // If a file is provided, proceed with uploading the image
       if (file) {
         try {
@@ -305,11 +269,10 @@ export const OnlineContextProvider = (props) => {
           if (!response.ok) throw new Error("File fetch failed");
           const blob = await response.blob();
           const imageRef = ref(storage, "Productsdemo/" + fileName);
-  
+
           await uploadBytes(imageRef, blob);
-        
+
           downloadUrl = await getDownloadURL(imageRef);
-     
         } catch (uploadError) {
           console.error("Error uploading file:", uploadError);
           setAlert({
@@ -321,7 +284,7 @@ export const OnlineContextProvider = (props) => {
           return;
         }
       }
-  
+
       // Save product details
       await saveproductDetail(formData, downloadUrl);
       setAlert({
@@ -330,7 +293,6 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
-  
     } catch (error) {
       console.error("Error adding product:", error);
       setAlert({
@@ -341,20 +303,19 @@ export const OnlineContextProvider = (props) => {
       });
     }
   };
-  
+
   const saveproductDetail = async (formData, downloadUrl) => {
     try {
       // Fetch category data
       const q = query(collection(db, "Categorydemo"), where("Name.en", "==", formData.category));
       const querySnapshot = await getDocs(q);
-  
+
       let categoryData = null;
       querySnapshot.forEach((doc) => {
         categoryData = doc.data(); // Assuming you want the first match
       });
-  
+
       if (!categoryData) {
-       
         setAlert({
           show: true,
           message: "No matching category found.",
@@ -363,28 +324,27 @@ export const OnlineContextProvider = (props) => {
         });
         return;
       }
-  
+
       // Extract only ar, he, and en values from category
       const filteredCategoryData = {
         ru: categoryData.Name.ru,
         he: categoryData.Name.he,
         en: categoryData.Name.en,
       };
-  
+
       // Fetch meal data
       const m = query(collection(db, "Mealsdemo"), where("Name.en", "==", formData.meal));
       const mSnapshot = await getDocs(m);
-  
+
       let mealData = null;
       mSnapshot.forEach((doc) => {
         mealData = {
           ...doc.data(), // Spread the document data
-          id: doc.id,   // Add the document id
+          id: doc.id, // Add the document id
         };
       });
-  
+
       if (!mealData) {
-  
         setAlert({
           show: true,
           message: "No matching meal found.",
@@ -393,15 +353,13 @@ export const OnlineContextProvider = (props) => {
         });
         return;
       }
-  
+
       // Extract Name and id from meal data
       const filteredMealData = {
         Name: mealData.Name.en,
         id: mealData.id,
       };
-  
-     
-  
+
       // Save product details
       await setDoc(doc(db, "Productsdemo", Date.now().toString()), {
         Name: formData?.dishName,
@@ -413,7 +371,6 @@ export const OnlineContextProvider = (props) => {
         Description: formData?.description,
         // Assuming Subcategory is part of formData
       });
-  
     } catch (error) {
       console.error("Error saving product details:", error);
       setAlert({
@@ -424,7 +381,6 @@ export const OnlineContextProvider = (props) => {
       });
     }
   };
-  
 
   const updateProducts = async (file, formData, uproductId) => {
     try {
@@ -433,14 +389,14 @@ export const OnlineContextProvider = (props) => {
       // Check if the file is a new image file or an existing URL
       if (!file.startsWith("http")) {
         const fileName = Date.now().toString() + ".jpg";
-       
+
         const response = await fetch(file);
-     
+
         const blob = await response.blob();
         const imageRef = ref(storage, "Productsdemo/" + fileName);
-    
+
         await uploadBytes(imageRef, blob);
- 
+
         downloadUrl = await getDownloadURL(imageRef);
         setAlert({
           show: true,
@@ -448,13 +404,11 @@ export const OnlineContextProvider = (props) => {
           type: "success",
           visible: true,
         });
-   
       }
 
       // Update product details with either the new or existing image URL
       updateProductsDetails(formData, downloadUrl, uproductId);
     } catch (error) {
-  
       setAlert({
         show: true,
         message: "Product Not Updated",
@@ -465,7 +419,6 @@ export const OnlineContextProvider = (props) => {
   };
 
   const updateProductsDetails = async (formData, downloadUrl, uproductId) => {
-  
     try {
       const productRef = doc(db, `Productsdemo/${uproductId}`);
       await updateDoc(productRef, {
@@ -495,19 +448,16 @@ export const OnlineContextProvider = (props) => {
   };
 
   const deleteProduct = async (id, imagePath) => {
-    
     try {
       // Delete the document from Firestore
       await deleteDoc(doc(db, "Productsdemo", `${id}`));
 
-
       // Reference to the image file in Firebase Storage
       const imageRef = ref(storage, imagePath);
-  
 
       // Delete the image file from Firebase Storage
       await deleteObject(imageRef);
-   
+
       // Call the function to refresh the categories
       setAlert({
         show: true,
@@ -541,7 +491,6 @@ export const OnlineContextProvider = (props) => {
         ...doc.data(),
       }));
 
-
       // Update state with fetched categories
       setmeal(categories);
     } catch (error) {
@@ -552,31 +501,27 @@ export const OnlineContextProvider = (props) => {
   //category
 
   const savecategories = async (formData) => {
-
     const category = formData?.meal; // Assuming 'meal' is the category
     const name = formData?.Name; // Ensure this matches the name field in formData
 
     const qs = query(collection(db, "Mealsdemo"), where("Name.en", "==", category));
-      const querySnapshots = await getDocs(qs);
-  
-      let categoryData = null;
-      querySnapshots.forEach((doc) => {
-        categoryData = doc.data(); // Assuming you want the first match
-      });
-  
-      if (!categoryData) {
-     
-        return;
-      }
-  
-      // Extract only ar, he, and en values from category
-      const filteredCategoryData = {
-        ru: categoryData.Name.ru,
-        he: categoryData.Name.he,
-        en: categoryData.Name.en,
-      };
-  
-  
+    const querySnapshots = await getDocs(qs);
+
+    let categoryData = null;
+    querySnapshots.forEach((doc) => {
+      categoryData = doc.data(); // Assuming you want the first match
+    });
+
+    if (!categoryData) {
+      return;
+    }
+
+    // Extract only ar, he, and en values from category
+    const filteredCategoryData = {
+      ru: categoryData.Name.ru,
+      he: categoryData.Name.he,
+      en: categoryData.Name.en,
+    };
 
     // Check if category or name is undefined
     if (!category || !name) {
@@ -594,16 +539,12 @@ export const OnlineContextProvider = (props) => {
     const subcategoryRef = collection(db, "Categorydemo");
 
     // Query to check if the name already exists within the same category
-    const q = query(
-      subcategoryRef,
-      where("Name", "==", name),
-      where("Category", "==", category)
-    );
+    const q = query(subcategoryRef, where("Name", "==", name), where("Category", "==", category));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       // Name already exists within the same category
-   
+
       setAlert({
         show: true,
         message: "An entry with this Name already exists in the same Category",
@@ -686,32 +627,27 @@ export const OnlineContextProvider = (props) => {
     const q = query(collection(db, "Productsdemo"));
 
     // Set up a real-time listener for the query
-    const unsubscribe = onSnapshot(
-      q,
-      { includeMetadataChanges: true },
-      (snapshot) => {
-        const products = [];
+    const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+      const products = [];
 
-        // Iterate through the document changes
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            // You can add additional handling for added documents if needed
-          }
-        });
+      // Iterate through the document changes
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          // You can add additional handling for added documents if needed
+        }
+      });
 
-        // Collect all documents data into the products array, including the document ID
-        snapshot.docs.forEach((doc) => {
-          products.push({ id: doc.id, ...doc.data() });
-        });
+      // Collect all documents data into the products array, including the document ID
+      snapshot.docs.forEach((doc) => {
+        products.push({ id: doc.id, ...doc.data() });
+      });
 
-        // Determine the source of the data
-        const source = snapshot.metadata.fromCache ? "local cache" : "server";
+      // Determine the source of the data
+      const source = snapshot.metadata.fromCache ? "local cache" : "server";
 
-        // Update the state with the new products data
-        setfoodProducts(products);
-        
-      }
-    );
+      // Update the state with the new products data
+      setfoodProducts(products);
+    });
 
     // Return the unsubscribe function to stop listening for updates when needed
     return unsubscribe;
@@ -719,7 +655,7 @@ export const OnlineContextProvider = (props) => {
 
   const getAllOrder = () => {
     const q = query(collection(db, "Orders")); // Example with ordering by timestamp
-  
+
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -728,28 +664,28 @@ export const OnlineContextProvider = (props) => {
           ...doc.data(),
         }));
         setOrders(orders);
-      
+
         // Process and log order details
         orders.forEach((order) => {
           const location = order.location || {};
           const summary = order.summary || {};
           const schedule = order.schedule || {};
-  
+
           // Extracting location details
-          const city = location.city || '';
-          const state = location.state || '';
-          const postalCode = location.postcode || '';
-          const country = location.country || '';
-          const railway = location.railway || '';
-          const road = location.road || '';
-          const stateDistrict = location.state_district || '';
-          const suburb = location.suburb || '';
-  
+          const city = location.city || "";
+          const state = location.state || "";
+          const postalCode = location.postcode || "";
+          const country = location.country || "";
+          const railway = location.railway || "";
+          const road = location.road || "";
+          const stateDistrict = location.state_district || "";
+          const suburb = location.suburb || "";
+
           // Extracting summary details
           const breakfast = summary.breakfast || [];
           const lunch = summary.lunch || [];
           const dinner = summary.dinner || [];
-  
+
           // Set the details or use as needed
           setlocation({
             city,
@@ -759,23 +695,22 @@ export const OnlineContextProvider = (props) => {
             railway,
             road,
             stateDistrict,
-            suburb
+            suburb,
           });
-  
+
           setSummary({
             breakfast,
             lunch,
-            dinner
+            dinner,
           });
-  
+
           setSchedule({
             staying: schedule.Staying || false,
             tomorrow: schedule.Tomorrow || false,
-            week: schedule.Week || false
+            week: schedule.Week || false,
           });
-  
+
           // Log order details for debugging
-       
         });
       },
       (error) => {
@@ -783,14 +718,10 @@ export const OnlineContextProvider = (props) => {
         // Handle the error appropriately
       }
     );
-  
+
     // Cleanup listener when no longer needed
     return () => unsubscribe();
   };
-  
-
-
-  
 
   useEffect(() => {
     getAllcategory();
@@ -798,7 +729,6 @@ export const OnlineContextProvider = (props) => {
     getAllproducts();
     getAllOrder();
     checkuser();
-
   }, []);
 
   const contextValue = {
@@ -827,14 +757,12 @@ export const OnlineContextProvider = (props) => {
     location,
     summary,
     Schedule,
-    orders,signup,
-    checkuser,auths
-    ,setauths  
+    orders,
+    signup,
+    checkuser,
+    auths,
+    setauths,
   };
 
-  return (
-    <OnlineContext.Provider value={contextValue}>
-      {props.children}
-    </OnlineContext.Provider>
-  );
+  return <OnlineContext.Provider value={contextValue}>{props.children}</OnlineContext.Provider>;
 };

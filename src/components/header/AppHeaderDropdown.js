@@ -1,42 +1,22 @@
-import React from 'react'
-import {
-  CAvatar,
-  CBadge,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-} from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilLockLocked,
-  cilSettings,
-  cilTask,
-  cilUser,
-} from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
+import React from "react";
+import { CAvatar, CBadge, CDropdown, CDropdownDivider, CDropdownHeader, CDropdownItem, CDropdownMenu, CDropdownToggle } from "@coreui/react";
+import { cilBell, cilCreditCard, cilCommentSquare, cilEnvelopeOpen, cilFile, cilLockLocked, cilSettings, cilTask, cilUser } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
-import avatar8 from './../../assets/images/avatars/8.jpg'
-import { useContext } from 'react';
-import { OnlineContext } from '../../Provider/OrderProvider'
-import { useNavigate } from 'react-router-dom'
+import avatar8 from "./../../assets/images/avatars/8.jpg";
+import { useContext } from "react";
+import { OnlineContext } from "../../Provider/OrderProvider";
+import { useNavigate } from "react-router-dom";
+import { removeFromLocalStorage } from "../../utils/LocalStorageUtills";
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate();
-  const{auths,setauths } = useContext(OnlineContext);
-  const handleclick = (e)=>{
+  const { auths, setauths } = useContext(OnlineContext);
+  const handleclick = (e) => {
     setauths(false);
-    console.log(auths);
-   
-     navigate('/login');
-
-  }
+    removeFromLocalStorage("useruid");
+    navigate("/login");
+  };
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -97,12 +77,12 @@ const AppHeaderDropdown = () => {
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem onClick={handleclick}>
-          <CIcon  icon={cilLockLocked} className="me-2" />
+          <CIcon icon={cilLockLocked} className="me-2" />
           Log Out
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>
-  )
-}
+  );
+};
 
-export default AppHeaderDropdown
+export default AppHeaderDropdown;
