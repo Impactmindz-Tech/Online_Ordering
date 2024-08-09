@@ -70,6 +70,11 @@ export const OnlineContextProvider = (props) => {
           type: "danger",
           visible: true,
         });
+            // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
         return;
       }
 
@@ -95,6 +100,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     } catch (error) {
       console.error("Error adding category: ", error);
       setAlert({
@@ -103,6 +113,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -162,6 +177,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     } catch (error) {
       console.error("Error updating image: ", error);
       setAlert({
@@ -170,6 +190,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -191,6 +216,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     } catch (error) {
       setAlert({
         show: true,
@@ -198,6 +228,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
 
     getAllcategory();
@@ -223,6 +258,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
       getAllcategory();
     } catch (error) {
       console.error("Error deleting document or image file:", error);
@@ -232,6 +272,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -257,6 +302,11 @@ export const OnlineContextProvider = (props) => {
           type: "danger",
           visible: true,
         });
+            // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
         return;
       }
 
@@ -282,6 +332,11 @@ export const OnlineContextProvider = (props) => {
             type: "danger",
             visible: true,
           });
+              // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
           return;
         }
       }
@@ -294,6 +349,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     } catch (error) {
       console.error("Error adding product:", error);
       setAlert({
@@ -302,6 +362,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -323,6 +388,11 @@ export const OnlineContextProvider = (props) => {
           type: "danger",
           visible: true,
         });
+            // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
         return;
       }
 
@@ -352,6 +422,11 @@ export const OnlineContextProvider = (props) => {
           type: "danger",
           visible: true,
         });
+            // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
         return;
       }
 
@@ -380,6 +455,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -405,6 +485,11 @@ export const OnlineContextProvider = (props) => {
           type: "success",
           visible: true,
         });
+            // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
       }
 
       // Update product details with either the new or existing image URL
@@ -416,6 +501,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -437,6 +527,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     } catch (error) {
       console.error("Error updating product: ", error);
       setAlert({
@@ -445,6 +540,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -466,6 +566,11 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
       getAllcategory();
     } catch (error) {
       // console.error("Error deleting document or image file:", error);
@@ -475,6 +580,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -503,87 +613,155 @@ export const OnlineContextProvider = (props) => {
 
   const savecategories = async (formData) => {
     const category = formData?.meal; // Assuming 'meal' is the category
-    const name = formData?.Name; // Ensure this matches the name field in formData
+    const nameData = formData?.Name; // Assuming 'Name' contains language-specific names
+  
+    // Check if category or nameData is undefined
+    if (!category || !nameData) {
+      console.error("Category or Name data is undefined.");
+      setAlert({
+        show: true,
+        message: "Category and Name data are required.",
+        type: "danger",
+        visible: true,
+      });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
 
+      return;
+    }
+  
+    // Validate that all required language inputs are provided
+    const { en, ru, he } = nameData;
+  
+    if (!en || !ru || !he) {
+      console.error("One or more language inputs are missing.");
+      setAlert({
+        show: true,
+        message: "All language inputs (English, Russian, Hebrew) are required.",
+        type: "danger",
+        visible: true,
+      });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
+      return;
+    }
+  
+    // Reference to the collection
     const qs = query(collection(db, "Mealsdemo"), where("Name.en", "==", category));
     const querySnapshots = await getDocs(qs);
-
+  
     let categoryData = null;
     querySnapshots.forEach((doc) => {
       categoryData = doc.data(); // Assuming you want the first match
     });
-
+  
     if (!categoryData) {
       return;
     }
-
+  
     // Extract only ar, he, and en values from category
     const filteredCategoryData = {
       ru: categoryData.Name.ru,
       he: categoryData.Name.he,
       en: categoryData.Name.en,
     };
-
-    // Check if category or name is undefined
-    if (!category || !name) {
-      console.error("Category or Name is undefined.");
-      setAlert({
-        show: true,
-        message: "Category or Name is required.",
-        type: "danger",
-        visible: true,
-      });
-      return;
-    }
-
-    // Reference to the collection
-    const subcategoryRef = collection(db, "Categorydemo");
-
+  
     // Query to check if the name already exists within the same category
-    const q = query(subcategoryRef, where("Name", "==", name), where("Category", "==", category));
+    const subcategoryRef = collection(db, "Categorydemo");
+    const q = query(subcategoryRef, where("Name", "==", en), where("Category", "==", category));
     const querySnapshot = await getDocs(q);
-
+  
     if (!querySnapshot.empty) {
       // Name already exists within the same category
-
       setAlert({
         show: true,
         message: "An entry with this Name already exists in the same Category",
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
       return;
     }
-
+  
     // If name doesn't exist within the same category, proceed to save the new entry
     await setDoc(doc(db, "Categorydemo", Date.now().toString()), {
-      Name: name,
+      Name: {
+        en,
+        ru,
+        he,
+      },
       Category: filteredCategoryData,
     });
-
+  
     setAlert({
       show: true,
       message: "New Category Added successfully",
       type: "success",
       visible: true,
     });
+        // Hide alert after 3 seconds
+        setTimeout(() => {
+          setAlert({ show: false });
+        }, 3000);
+    
   };
-
+  
   const updatesubcatdata = async (id, data) => {
-    const docref = doc(db, "Category", id);
-    await updateDoc(docref, {
-      Name: data.category,
-      Category: data.meals,
-    });
-    setAlert({
-      show: true,
-      message: "Category Updated successfully",
-      type: "success",
-      visible: true,
-    });
-    getAllcategory();
-  };
+    try {
+      
+      
+      // Reference to the specific document in the "Category" collection
+      const docRef = doc(db, "Categorydemo", id);
+  
+      // Update the document with the new values
+      await updateDoc(docRef, {
+        Name: {
+          en: data.Name?.en || "",
+          he: data.Name?.he || "",
+          ru: data.Name?.ru || ""
+        },
+        Category: data.meals,
+      });
+  
+      // Show success alert
+      setAlert({
+        show: true,
+        message: "Category Updated successfully",
+        type: "success",
+        visible: true,
+      });
+      // Hide alert after 3 seconds
+      setTimeout(() => {
+        setAlert({ show: false });
+      }, 3000);
+  
+      // Fetch the updated list of categories
+      getAllcategory();
+    } catch (error) {
+      console.error("Error updating document:", error);
+      setAlert({
+        show: true,
+        message: "Failed to update category",
+        type: "danger",
+        visible: true,
+      });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
 
+    }
+  };
+  
   // delete subcategories
   const deletesubdoc = async (id) => {
     try {
@@ -595,6 +773,10 @@ export const OnlineContextProvider = (props) => {
         type: "success",
         visible: true,
       });
+    // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
 
       getAllcategory();
     } catch (error) {
@@ -604,6 +786,11 @@ export const OnlineContextProvider = (props) => {
         type: "danger",
         visible: true,
       });
+          // Hide alert after 3 seconds
+    setTimeout(() => {
+      setAlert({ show: false });
+    }, 3000);
+
     }
   };
 
@@ -719,6 +906,7 @@ export const OnlineContextProvider = (props) => {
         // Handle the error appropriately
       }
     );
+
 
     // Cleanup listener when no longer needed
     return () => unsubscribe();

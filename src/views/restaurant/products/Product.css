@@ -51,3 +51,7 @@ border-radius: 100%;    background:rgb(184, 182, 182)
             direction: rtl;
             text-align: right;
         }
+
+        .image_preview {
+            margin: 0 auto;
+        }

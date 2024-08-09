@@ -85,20 +85,22 @@ export default function AddProduct() {
   };
 
   const handleModalChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
 
-    if (name === "Name") {
-      setEdit((prevState) => ({
-        ...prevState,
-        Name: { ...prevState.Name, [editLanguage]: value },
-      }));
-    } else {
-      setEdit((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    }
-  };
+  // Check if the name starts with "categoryname_" to identify language-specific inputs
+  if (name.startsWith("categoryname_")) {
+    const language = name.split("_")[1]; // Extract the language code (en, he, ru)
+    setEdit((prevState) => ({
+      ...prevState,
+      Name: { ...prevState.Name, [language]: value }, // Update the specific language in Name
+    }));
+  } else {
+    setEdit((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }
+};
 
   const handleSubmit = async () => {
     await savecategories(formData);
@@ -106,6 +108,7 @@ export default function AddProduct() {
 
   const handleUpdate = async () => {
     setVisible(false);
+    console.log(edit);
     await updatesubcatdata(id, edit);
   };
 
@@ -122,6 +125,7 @@ export default function AddProduct() {
       meals: findid.Category,
     });
     setId(id);
+    console.log(edit);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -173,70 +177,85 @@ export default function AddProduct() {
           </div>
 
           <CCol xs>
-            <div
-              className={`w-100 col-lg-6 ${
-                hebrewState ? "rtl float-right text-end" : "text-start"
-              }`}
-            >
-              <label
-                className={`mb-2 ${hebrewState ? "rtl" : ""}`}
-                htmlFor="languageSelect"
-              >
-                {t("addMeal")}
-              </label>
-              <CFormSelect
-                id="languageSelect"
-                value={selectedLanguage}
-                className={`${hebrewState ? "rtl" : "text-start"}`}
-                onChange={handleLanguageChange}
-              >
-                <option value="en">English</option>
-                <option value="he">עִברִית</option>
-                <option value="ru">Русский</option>
-              </CFormSelect>
-            </div>
-          </CCol>
+  <div
+    className={`w-100 col-lg-6 ${
+      hebrewState ? "rtl float-right text-end" : "text-start"
+    }`}
+  >
+    <label
+      className={`mb-2 ${hebrewState ? "rtl" : ""}`}
+      htmlFor="mealName"
+    >
+      {t("selectMealType")}
+    </label>
+    <CFormSelect
+      name="meal"
+      className={`${hebrewState ? "rtl text-end" : "text-start"}`}
+      value={formData.meal}
+      onChange={handleChange}
+    >
+      <option value="">{t("chooseMeal")}</option>
+      {getmeal.map((item) => (
+        <option key={item.id} value={item.Name[currentLanguage]}>
+          {item.Name[currentLanguage]}
+        </option>
+      ))}
+    </CFormSelect>
+  </div>
+</CCol>
 
-          <div className="row mt-3">
-            <div
-              className={`col-lg-6 ${
-                hebrewState ? "rtl float-right text-end" : "text-start"
-              }`}
-            >
-              <label className="mb-2" htmlFor="mealName">
-                {t("selectMealType")}
-              </label>
-              <CFormSelect
-                name="meal"
-                className={`${hebrewState ? "rtl text-end" : "text-start"}`}
-                value={formData.meal}
-                onChange={handleChange}
-              >
-                <option value="">{t("chooseMeal")}</option>
-                {getmeal.map((item) => (
-                  <option key={item.id} value={item.Name[currentLanguage]}>
-                    {item.Name[currentLanguage]}
-                  </option>
-                ))}
-              </CFormSelect>
-            </div>
-            <div
-              className={`col-lg-6 ${
-                hebrewState ? "rtl float-right text-end" : "text-start"
-              }`}
-            >
-              <label className="mb-2" htmlFor="categoryName">
-                {t("categoryName")}
-              </label>
-              <CFormInput
-                placeholder={t("categoryName")}
-                name={`categoryname_${selectedLanguage}`}
-                className={`${hebrewState ? "rtl text-end" : "text-start"}`}
-                value={formData.Name[selectedLanguage]}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+<div className="row mt-3">
+  <div
+    className={`col-lg-4 ${
+      hebrewState ? "rtl float-right text-end" : "text-start"
+    }`}
+  >
+    <label className="mb-2" htmlFor="categoryNameEn">
+      {t("categoryName")} (English)
+    </label>
+    <CFormInput
+      placeholder={t("categoryName")}
+      name="categoryname_en"
+      className={`${hebrewState ? "rtl text-end" : "text-start"}`}
+      value={formData.Name.en}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div
+    className={`col-lg-4 ${
+      hebrewState ? "rtl float-right text-end" : "text-start"
+    }`}
+  >
+    <label className="mb-2" htmlFor="categoryNameHe">
+      {t("categoryName")} (Hebrew)
+    </label>
+    <CFormInput
+      placeholder={t("categoryName")}
+      name="categoryname_he"
+      className={`${hebrewState ? "rtl text-end" : "text-start"}`}
+      value={formData.Name.he}
+      onChange={handleChange}
+    />
+  </div>
+
+  <div
+    className={`col-lg-4 ${
+      hebrewState ? "rtl float-right text-end" : "text-start"
+    }`}
+  >
+    <label className="mb-2" htmlFor="categoryNameRu">
+      {t("categoryName")} (Russian)
+    </label>
+    <CFormInput
+      placeholder={t("categoryName")}
+      name="categoryname_ru"
+      className={`${hebrewState ? "rtl text-end" : "text-start"}`}
+      value={formData.Name.ru}
+      onChange={handleChange}
+    />
+  </div>
+</div>
 
           <div className="mt-4 text-end">
             <CButton
@@ -292,76 +311,91 @@ export default function AddProduct() {
       </div>
 
       <CModal
-        className="custom_modal"
-        alignment="center"
-        backdrop="static"
-        visible={visible}
-        onClose={() => setVisible(false)}
-        aria-labelledby="StaticBackdropExampleLabel"
-      >
-        <CModalHeader>
-          <CModalTitle id="StaticBackdropExampleLabel">Edit Category</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <div className="gap-2">
-            <div className="row">
-              <div className="col-lg-6">
-                <label className="mb-2" htmlFor="mealName">
-                  Select The Meal
-                </label>
-                <CFormSelect
-                  name="meals"
-                  value={edit.meals}
-                  onChange={handleModalChange}
-                >
-                  <option value="">Choose Meal</option>
-                  {getmeal.map((item) => (
-                    <option key={item.id} value={item.Name[selectedLanguage]}>
-                      {item.Name.en}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </div>
-              <div className="col-lg-6">
-                <CCol xs>
-                  <label className="mb-2" htmlFor="editLanguageSelect">
-                    Select Language
-                  </label>
-                  <CFormSelect
-                    id="editLanguageSelect"
-                    value={editLanguage}
-                    onChange={(e) => setEditLanguage(e.target.value)}
-                  >
-                    <option value="en">English</option>
-                    <option value="ru">Russian</option>
-                    <option value="he">Hebrew</option>
-                  </CFormSelect>
-                </CCol>
+  className="custom_modal"
+  alignment="center"
+  backdrop="static"
+  visible={visible}
+  onClose={() => setVisible(false)}
+  aria-labelledby="StaticBackdropExampleLabel"
+>
+  <CModalHeader>
+    <CModalTitle id="StaticBackdropExampleLabel">Edit Category</CModalTitle>
+  </CModalHeader>
+  <CModalBody>
+    <div className="gap-2">
+      <div className="row">
+        {/* Meal Selection */}
+        <div className="col-lg-6">
+          <label className="mb-2" htmlFor="mealName">
+            Select The Meal
+          </label>
+          <CFormSelect
+            name="meals"
+            value={edit.meals || ""}
+            onChange={handleModalChange}
+          >
+            <option value="">Choose Meal</option>
+            {getmeal.map((item) => (
+              <option key={item.id} value={item.Name.en}>
+                {item.Name.en}
+              </option>
+            ))}
+          </CFormSelect>
+        </div>
 
-                <label className="mb-2 mt-3" htmlFor="categoryName">
-                  Category Name
-                </label>
-                <CFormInput
-                  name="Name"
-                  placeholder={`Category Name (${editLanguage})`}
-                  value={edit.Name[editLanguage]}
-                  onChange={handleModalChange}
-                />
-              </div>
-            </div>
+        {/* English Category Name Input */}
+        <div className="col-lg-6">
+          <label className="mb-2" htmlFor="categoryNameEn">
+            Category Name (English)
+          </label>
+          <CFormInput
+            name="categoryname_en"
+            placeholder="Category Name (English)"
+            value={edit.Name?.en || ""}
+            onChange={handleModalChange}
+          />
+        </div>
 
-            <div className="mt-4 text-end">
-              <CButton
-                className="w-100"
-                color="primary"
-                onClick={() => handleUpdate(edit.id)}
-              >
-                Update
-              </CButton>
-            </div>
-          </div>
-        </CModalBody>
-      </CModal>
+        {/* Hebrew Category Name Input */}
+        <div className="col-lg-6 mt-3">
+          <label className="mb-2" htmlFor="categoryNameHe">
+            Category Name (Hebrew)
+          </label>
+          <CFormInput
+            name="categoryname_he"
+            placeholder="Category Name (Hebrew)"
+            value={edit.Name?.he || ""}
+            onChange={handleModalChange}
+          />
+        </div>
+
+        {/* Russian Category Name Input */}
+        <div className="col-lg-6 mt-3">
+          <label className="mb-2" htmlFor="categoryNameRu">
+            Category Name (Russian)
+          </label>
+          <CFormInput
+            name="categoryname_ru"
+            placeholder="Category Name (Russian)"
+            value={edit.Name?.ru || ""}
+            onChange={handleModalChange}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 text-end">
+        <CButton
+          className="w-100"
+          color="primary"
+          onClick={() => handleUpdate(edit.id)}
+        >
+          Update
+        </CButton>
+      </div>
+    </div>
+  </CModalBody>
+</CModal>
+
     </>
   );
 }

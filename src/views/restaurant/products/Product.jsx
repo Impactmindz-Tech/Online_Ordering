@@ -8,27 +8,24 @@ import { OnlineContext } from "../../../Provider/OrderProvider";
 import "./Product.css";
 
 const Product = () => {
-  const { foodprod, getAllproducts, updateProducts, getmeal, allcategorie, getAllcategory, getcategory, deleteProduct, alert, setAlert } = useContext(OnlineContext);
+  const { foodprod, getAllproducts, updateProducts, getmeal, allcategorie, deleteProduct, alert, setAlert } = useContext(OnlineContext);
   const [visible, setVisible] = useState(false);
   const [file, setFile] = useState(null);
-  const [mealid, setMealid] = useState();
-  const [cateid, setCateid] = useState("");
-  const [umealId, setumealId] = useState("");
-  const [ucateId, setcateId] = useState("");
-  const [uproductId, setproductId] = useState("");
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const [formData, setFormData] = useState({
-    dishName: "",
-
+    dishName: {
+      en: "",
+      ru: "",
+      he: ""
+    },
     category: "",
-
     isAvailable: "",
     dietaryInfo: "",
     description: "",
-    meal: "",
+    meal: ""
   });
+
   const [currentProduct, setCurrentProduct] = useState(null);
 
   const handleFileChange = (e) => {
@@ -39,15 +36,26 @@ const Product = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    if (name.startsWith("dishName_")) {
+      const lang = name.split("_")[1];
+      setFormData((prevState) => ({
+        ...prevState,
+        dishName: {
+          ...prevState.dishName,
+          [lang]: value
+        }
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async () => {
     // Save product details with both category name and ID
-    await updateProducts(file, formData, uproductId);
+    await updateProducts(file, formData, currentProduct.id);
     setVisible(false); // Close the modal after saving
     await refreshProducts(); // Re-fetch the updated product list
   };
@@ -68,33 +76,32 @@ const Product = () => {
   const handleEdit = (product) => {
     // Set the form data and image for the current product
     setFormData({
-      dishName: product.Name,
-
+      dishName: {
+        en: product.Name.en || "",
+        ru: product.Name.ru || "",
+        he: product.Name.he || ""
+      },
       category: product.category,
-
       isAvailable: product.isAvailable,
       dietaryInfo: product.DietaryInfo,
       description: product.Description,
-      meal: product.meal,
+      meal: product.meal
     });
 
     setFile(product.ImageUrl); // Set the current image
-
+    setCurrentProduct(product);
     setVisible(true); // Open the modal
-
-    setproductId(product.id);
   };
 
-  const filterecate = allcategorie.filter((item) => {
-    return item.Category === formData.meal;
-  });
+console.log(formData.meal);
+  const filterecate = allcategorie.filter((item) => item.Category.en === formData.meal);
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(foodprod.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = foodprod.slice(indexOfFirstItem, indexOfLastItem);
-
+console.log(currentItems);
   // Pagination
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) {
@@ -102,12 +109,10 @@ const Product = () => {
     }
     setCurrentPage(pageNumber);
   };
-
-  console.log(foodprod, "food");
+  console.log(filterecate);
 
   return (
     <>
-      {" "}
       <div className="row justify-content-center">
         <div className="col-lg-4">
           {alert.show && alert.visible && (
@@ -119,18 +124,17 @@ const Product = () => {
           )}
         </div>
       </div>
-      <div className=" mt-lg-5 allcategoriess">
+      <div className="mt-lg-5 allcategoriess">
         <CTable>
           <CTableHead>
             <CTableRow>
               <CTableHeaderCell scope="col">Image</CTableHeaderCell>
               <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-              <CTableHeaderCell scope="col">meal</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Meal</CTableHeaderCell>
               <CTableHeaderCell scope="col">Category</CTableHeaderCell>
               <CTableHeaderCell scope="col">Description</CTableHeaderCell>
               <CTableHeaderCell scope="col">Dietary Info</CTableHeaderCell>
-
-              <CTableHeaderCell scope="col">is_available</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Available</CTableHeaderCell>
               <CTableHeaderCell scope="col">Action</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
@@ -145,7 +149,6 @@ const Product = () => {
                 <CTableDataCell>{item.category.en}</CTableDataCell>
                 <CTableDataCell>{item.Description}</CTableDataCell>
                 <CTableDataCell>{item.DietaryInfo}</CTableDataCell>
-
                 <CTableDataCell>{item.isAvailable}</CTableDataCell>
                 <CTableDataCell>
                   <CButton onClick={() => handleEdit(item)}>
@@ -183,9 +186,8 @@ const Product = () => {
           <CModalBody>
             <div className="row justify-content-center mt-5">
               <div className="col-lg-5">
-                <div className="mb-3 text-center ">
+                <div className="mb-3 text-center">
                   <div className="w-25 ms-auto me-auto">{file && <img src={file} alt="Selected" className="mb-3" style={{ width: "100%", marginTop: "10px" }} />}</div>
-
                   <CFormInput type="file" id="formFile" onChange={handleFileChange} accept="image/*" />
                 </div>
               </div>
@@ -194,53 +196,58 @@ const Product = () => {
               <div className="col-lg-10">
                 <CRow>
                   <CCol xs>
-                    <label className="mb-2" htmlFor="dishName">
-                      Dish Name
+                    <label className="mb-2" htmlFor="dishName_en">
+                      Dish Name (EN)
                     </label>
-                    <CFormInput placeholder="Dish Name" name="dishName" value={formData.dishName} onChange={handleChange} />
+                    <CFormInput placeholder="Dish Name (EN)" name="dishName_en" value={formData.dishName.en} onChange={handleChange} />
+                  </CCol>
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="dishName_ru">
+                      Dish Name (RU)
+                    </label>
+                    <CFormInput placeholder="Dish Name (RU)" name="dishName_ru" value={formData.dishName.ru} onChange={handleChange} />
+                  </CCol>
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="dishName_he">
+                      Dish Name (HE)
+                    </label>
+                    <CFormInput placeholder="Dish Name (HE)" name="dishName_he" value={formData.dishName.he} onChange={handleChange} />
                   </CCol>
                 </CRow>
                 <CRow className="mt-3">
-                  <div className="col-lg-6">
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <CCol xs>
-                          <label className="mb-2" htmlFor="meal">
-                            Choose Meal
-                          </label>
-                          <CFormSelect name="meal" value={formData.meal} onChange={handleChange}>
-                            <option value="">Choose Meal</option>
-                            {getmeal.map((item) => (
-                              <option key={item.id} value={item.Name}>
-                                {item.Name}
-                              </option>
-                            ))}
-                          </CFormSelect>
-                        </CCol>
-                      </div>
-                      <div className="col-lg-6">
-                        <CCol xs>
-                          <label className="mb-2" htmlFor="category">
-                            Choose Category
-                          </label>
-                          <CFormSelect name="category" value={formData.category} onChange={handleChange}>
-                            <option value="">Choose Category</option>
-                            {filterecate.map((item) => (
-                              <option key={item.id} value={item.Name}>
-                                {item.Name}
-                              </option>
-                            ))}
-                          </CFormSelect>
-                        </CCol>
-                      </div>
-                    </div>
-                  </div>
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="meal">
+                      Choose Meal
+                    </label>
+                    <CFormSelect name="meal" value={formData.meal} onChange={handleChange}>
+                      <option value="">Choose Meal</option>
+                      {getmeal.map((item) => (
+                        <option key={item.id} value={item.Name.en}>
+                          {item.Name.en}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </CCol>
+                  <CCol xs>
+                    <label className="mb-2" htmlFor="category">
+                      Choose Category
+                    </label>
+                    <CFormSelect name="category" value={formData.category} onChange={handleChange}>
+                      <option value="">Choose Category</option>
+                      {filterecate.map((item) => (
+                        <option key={item.id} value={item.Name.en}>
+                          {item.Name.en}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </CCol>
+                </CRow>
+                <CRow className="mt-3">
                   <CCol xs>
                     <label className="mb-2" htmlFor="isAvailable">
                       Is Available
                     </label>
                     <CFormSelect name="isAvailable" value={formData.isAvailable} onChange={handleChange}>
-                      {" "}
                       <option value="">Choose One</option>
                       <option value="true">True</option>
                       <option value="false">False</option>

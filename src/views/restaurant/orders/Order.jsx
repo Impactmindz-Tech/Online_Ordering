@@ -10,8 +10,7 @@ export default function Order() {
 
  
 
-
-console.log(location);
+console.log(orders);
 
   return (
 <div className='table_layout'>
@@ -24,11 +23,12 @@ console.log(location);
             <thead>
               <tr>
                 <th>Order ID</th>
-                <th>City</th>
+              
+                <th>City/Name</th>
                 <th>State</th>
                 <th>Country</th>
-                <th>Postal Code</th>
-                <th>State District</th>
+                <th>Pincode</th>
+                <th>Placename</th>
                 <th>Schedule</th>
                 <th>Breakfast</th>
                 <th>Lunch</th>
@@ -38,12 +38,14 @@ console.log(location);
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
+           
                   <td>{order.id}</td>
-                  <td>{order.location?.city || 'N/A'}</td>
-                  <td>{order.location?.state || 'N/A'}</td>
-                  <td>{order.location?.country || 'N/A'}</td>
-                  <td>{order.location?.postcode || 'N/A'}</td>
-                  <td>{order.location?.state_district || 'N/A'}</td>
+                  <td>{order.location?.location?.city|| order.location?.Name}</td>
+                  <td>{order.location?.location?.state || '-'}</td>
+                  <td>{order.location?.location?.country || '-'}</td>
+                  <td>{order.location?.location?.pincode
+                    || '-'}</td>
+                  <td>{order.location?.location?.placename || '-'}</td>
                   <td>
                     All My Staying: {order.schedule?.Staying ? (<b>Yes</b>) : (<b>No</b>)}<br />
                     Tomorrow: {order.schedule?.Tomorrow ? (<b>Yes</b>) : (<b>No</b>)}<br />
